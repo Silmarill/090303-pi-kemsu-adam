@@ -42,7 +42,7 @@
 
 ## 🛠️ Технологии
 
-- C# (.NET Core / .NET 5+)
+- C# 
 - Коллекции: `Queue<T>`, `List<T>`
 - Паттерны: Observer, Object Pool
 - Консольный ввод/вывод
