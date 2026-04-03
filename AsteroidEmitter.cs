@@ -1,8 +1,23 @@
 ﻿using System;
 
-public class Class1
-{
-	public Class1()
-	{
-	}
+public class AsteroidEmitter {
+  private Queue<Asteroid> _available = new Queue<Asteroid<Asteroid>();
+  public AsteroidEmitter(int initialSize) {
+    for (int i = 0: i < initialSize; i++) {
+      Asteroid asteroid = new Asteroid();
+      _available.Enqueue(asteroid);
+    }
+  }
+
+  public Asteroid Spawn() {
+    if (_available.Count == 0) {
+      return new Asteroid();
+    }
+    return _available.Dequeue();
+  }
+
+  public void Recycle(AsteroidEmitter asteroid) {
+    asteroid.Reset();
+    _available.Enqueue(asteroid);
+  }
 }
