@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Asteroids {
+namespace ConsoleApp16 {
   public interface IChroneListener {
     void OnChoneTrick();
   }
+   
   public class ChroneManager {
     private List<IChroneListener> _listenerList = new List<IChroneListener>();
 
@@ -25,5 +26,4 @@ namespace Asteroids {
       }
     }
   }
-
 }
