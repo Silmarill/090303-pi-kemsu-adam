@@ -6,7 +6,7 @@ namespace Asteroids {
 		private Queue<Asteroid> _availableAsteroids = new Queue<Asteroid>();
 
 		public AsteroidEmitter(int initialPoolSize) {
-			for (int asteroidIndex = 0; asteroidIndex < initialPoolSize; asteroidIndex++) {
+			for (int asteroidIndex = 0; asteroidIndex < initialPoolSize; ++asteroidIndex) {
 				Asteroid newAsteroid = new Asteroid();
 				_availableAsteroids.Enqueue(newAsteroid);
 			}

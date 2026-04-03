@@ -15,7 +15,7 @@ namespace Asteroids {
 			int chronTickCounter = 0;
 			Random randomGenerator = new Random();
 
-			for (int asteroidIndex = 0; asteroidIndex < startingAsteroidsCount; asteroidIndex++) {
+			for (int asteroidIndex = 0; asteroidIndex < startingAsteroidsCount; ++asteroidIndex) {
 				Asteroid newAsteroid = asteroidEmitter.Spawn();
 				activeAsteroidsList.Add(newAsteroid);
 				ChronoManager.AddListener(newAsteroid);
@@ -58,7 +58,7 @@ namespace Asteroids {
 						int newAsteroidsAmount = randomGenerator.Next(minSpawnAmount, maxSpawnAmount + 1);
 						Console.WriteLine("\n>>> Хрон #{0}: появилось {1} новых астероидов!", chronTickCounter, newAsteroidsAmount);
 
-						for (int asteroidIndex = 0; asteroidIndex < newAsteroidsAmount; asteroidIndex++) {
+						for (int asteroidIndex = 0; asteroidIndex < newAsteroidsAmount; ++asteroidIndex) {
 							Asteroid newAsteroid = asteroidEmitter.Spawn();
 							activeAsteroidsList.Add(newAsteroid);
 							ChronoManager.AddListener(newAsteroid);
