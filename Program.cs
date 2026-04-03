@@ -1,9 +1,12 @@
 using System;
 
-class Program
+namespace Asteroid
 {
-    public static class Main()
+   class Program
     {
-        
-    }
+        public static class Main()
+        {
+
+        }
+    } 
 }

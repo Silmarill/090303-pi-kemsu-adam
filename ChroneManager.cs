@@ -1,24 +1,27 @@
 using System;
 
-public static class ChroneManager
+namespace Asteroid
 {
-    private static List<IChroneListener> _listenerList = new List<IChroneListener>();
-
-    public void AddListener(IChroneListener listener)
+    public static class ChroneManager
     {
-        _listenerList.Add(listener);
-    }
+        private static List<IChroneListener> _listenerList = new List<IChroneListener>();
 
-    public void RemoveListener(IChroneListener listener)
-    {
-        _listenerList.Remove(listener);
-    }
-
-    public void MakeChroneTick()
-    {
-        foreach (var listener in _listenerList)
+        public void AddListener(IChroneListener listener)
         {
-            listener.OnChroneTick();
+            _listenerList.Add(listener);
+        }
+
+        public void RemoveListener(IChroneListener listener)
+        {
+            _listenerList.Remove(listener);
+        }
+
+        public void MakeChroneTick()
+        {
+            foreach (var listener in _listenerList)
+            {
+                listener.OnChroneTick();
+            }
         }
     }
 }

@@ -1,6 +1,9 @@
 using System;
 
-public interface IChroneListener
+namespace Asteroid
 {
-    void OnChroneTick();
+    public interface IChroneListener
+    {
+        void OnChroneTick();
+    }
 }
