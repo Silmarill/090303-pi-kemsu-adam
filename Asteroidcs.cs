@@ -50,6 +50,10 @@ namespace Konovalov {
     }
   }
 
-  class void Asteroid
-
+  class Asteroid {
+    
+    public Asteroid() {
+      this.CurrentEchos = CurrentEchos;
+    }
+  }
 }
