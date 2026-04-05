@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IChroneListener.cs" />
+    <Compile Include="Managers\AsteroidEmitter.cs" />
+    <Compile Include="Managers\ChroneManager.cs" />
     <Compile Include="Models\Asteroid.cs" />
     <Compile Include="Models\AsteroidState.cs" />
     <Compile Include="Program.cs" />
@@ -52,8 +54,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Managers\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

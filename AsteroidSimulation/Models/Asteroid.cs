@@ -14,7 +14,6 @@ namespace AsteroidSimulation.Models {
     public int DepletionAmount { get; private set; }
     public int MinEchos { get; private set; }
 
-    // Требуемые по заданию свойства
     public int CurrentEchos { get; private set; }
     public int MaxEchos { get; private set; }
     public AsteroidState State { get; private set; }
@@ -27,7 +26,6 @@ namespace AsteroidSimulation.Models {
       DepletionAmount = _random.Next(50, 151);  // от 50 до 150 (вокруг 100)
       MinEchos = 0;
 
-      // По заданию: MaxEchos от 100 до 1000
       MaxEchos = _random.Next(100, 1001);
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;
@@ -41,8 +39,6 @@ namespace AsteroidSimulation.Models {
     public void Reset() {
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;
-      // DepletionAmount и MinEchos НЕ сбрасываем — они остаются теми же
-      // SpawnID тоже не сбрасываем — он показывает количество спавнов
     }
 
     // Логика деградации на каждом хроне
