@@ -44,7 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Asteroid.cs" />
+    <Compile Include="AsteroidEmitter.cs" />
     <Compile Include="AsteroidState.cs" />
+    <Compile Include="ChroneManager.cs" />
+    <Compile Include="IChroneListener.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
