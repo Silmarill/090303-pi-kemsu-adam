@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Konovalov {
 
@@ -29,7 +30,7 @@ namespace Konovalov {
 
   public class AsteroidEmitter {
     private Queue<AsteroidEmitter> _available = new Queue<Asteroid>();
-      
+
     public AsteroidEmitter(int initialSize) {
       for (int i = 0; i < initialSize; ++i) {
         AsteroidEmitter asteroid = new Asteroid();
@@ -50,10 +51,6 @@ namespace Konovalov {
     }
   }
 
-  class Asteroid {
-    
-    public Asteroid() {
-      this.CurrentEchos = CurrentEchos;
-    }
-  }
+  class void Asteroid
+
 }
