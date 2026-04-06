@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp16 {
   public enum AsteroidState { Idle, Depleted }
-  public class Asteroid {
+  public class Asteroid : IChroneListener {
     public int CurrentEchos { get; set; }
     public int MaxEchos { get; set; }
     public AsteroidState State { get; set; } 
@@ -33,7 +33,10 @@ namespace ConsoleApp16 {
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;
       SpawnID++;
+    }
 
+    public void OnChoneTrick() {
+      OnChronTick();
     }
   }
 }

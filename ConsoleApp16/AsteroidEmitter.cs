@@ -21,6 +21,7 @@ namespace ConsoleApp16 {
       }
       return _available.Dequeue();
     }
+
     public void Recycle(Asteroid asteroid) {
       asteroid.Reset();
       _available.Enqueue(asteroid);

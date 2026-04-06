@@ -1,33 +1,72 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp16 {
-	class Program {
-		static void Main(string[] args) {
-      AsteroidEmitter emitter = new AsteroidEmitter(5);
+  class Program {
+    static void Main() {
+      var emitter = new AsteroidEmitter(5);
 
-      // Спавним астероид
-      Asteroid asteroid = emitter.Spawn();
-      Console.WriteLine($"Создан астероид ID={asteroid.CreateID}, макс. ресурс={asteroid.MaxEchos}");
+      List<Asteroid> activeAsteroids = new List<Asteroid>();
 
-      // Имитируем использование астероида (уменьшаем ресурс)
-      asteroid.OnChronTick();
-      asteroid.OnChronTick();
-      Console.WriteLine($"Ресурс после использования: {asteroid.CurrentEchos}, состояние: {asteroid.State}");
+      for (int asteroidIndex = 0; asteroidIndex < 3; asteroidIndex++) { 
+        var asteroid = emitter.Spawn();
+        activeAsteroids.Add(asteroid);
+        ChroneManager.AddListener(asteroid); 
+        Console.WriteLine($"Asteroid ID: {asteroid.CreateID}, MaxEchos: {asteroid.MaxEchos}, CurrentEchos: {asteroid.CurrentEchos}, State: {asteroid.State}, SpawnID: {asteroid.SpawnID}");
+      }
 
-      // Возвращаем астероид в пул (переиспользуем)
-      emitter.Recycle(asteroid);
-      Console.WriteLine("Астероид возвращён в пул.");
+      int chronCount = 0;
 
-      // Спавним следующий астероид (может быть переиспользованный)
-      Asteroid nextAsteroid = emitter.Spawn();
-      Console.WriteLine($"Следующий астероид ID={nextAsteroid.CreateID}, спавн ID={nextAsteroid.SpawnID}");
+      Console.WriteLine("\nНажмите Enter для перехода к следующему хрону, Esc — для выхода.");
 
-      Console.ReadLine();
+      while (true) {
+        var key = Console.ReadKey().KeyChar;
+
+        if (key == 27) {
+          break;
+        }
+
+        if (key == 13) {
+          chronCount++;
+          ProcessChron(chronCount, emitter, activeAsteroids);
+          DisplayAsteroids(activeAsteroids);
+        }
+      }
     }
-	}
+
+    static void ProcessChron(int chronCount, AsteroidEmitter emitter, List<Asteroid> activeAsteroids) {
+      ChroneManager.MakeChroneTick(); 
+
+      var depletedAsteroids = activeAsteroids.Where(a => a.State == AsteroidState.Depleted).ToList(); 
+      foreach (var asteroid in depletedAsteroids) {
+        activeAsteroids.Remove(asteroid);
+        emitter.Recycle(asteroid);
+        ChroneManager.RemoveListener(asteroid);
+        Console.WriteLine($"Астероид {asteroid.CreateID} исчерпан и возвращён в пул.");
+      }
+
+      if (chronCount % 5 == 0) {
+        var random = new Random();
+        var newCount = random.Next(1, 4); 
+        for (int asteroidIndex = 0; asteroidIndex < newCount; ++asteroidIndex) {
+          var newAsteroid = emitter.Spawn();
+          activeAsteroids.Add(newAsteroid);
+          ChroneManager.AddListener(newAsteroid); 
+          Console.WriteLine($"Спавн нового астероида: ID={newAsteroid.CreateID}, Echos={newAsteroid.CurrentEchos}");
+        }
+      }
+
+      Console.WriteLine($"Хрон {chronCount} обработан.");
+    }
+
+    static void DisplayAsteroids(List<Asteroid> activeAsteroids) {
+      Console.WriteLine("\nАктивные астероиды:");
+      foreach (var asteroid in activeAsteroids) {
+        Console.WriteLine($"ID: {asteroid.CreateID}, Echos: {asteroid.CurrentEchos}/{asteroid.MaxEchos}, Состояние: {asteroid.State}, SpawnID: {asteroid.SpawnID}");
+      }
+
+      Console.WriteLine();
+    }
+  }
 }
