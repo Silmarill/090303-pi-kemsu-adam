@@ -18,5 +18,20 @@ namespace ProjectAdam {
         ChroneManager.AddListener(asteroid);
       }
     }
+
+    void Print(List<Asteroid> asteroids) {
+      Console.WriteLine("\nActive asteroids: ");
+
+      foreach (var asteroid in asteroids) {
+        Console.WriteLine(
+          "----------------" +
+          $"ID: {asteroid.CreateID}" +
+          $"SpawnID: {asteroid.SpawnID}" +
+          $"Echos: {asteroid.CurrentEchos}" +
+          $"State: {asteroid.State}"+
+          "----------------");
+      }
+    }
+
   }
 }
