@@ -12,7 +12,7 @@ namespace AsteroidZoneSimulation.Models {
     public int SpawnID;
     public int CreateID;
 
-    public Random random = new Random();
+    public static Random random = new Random();
 
     public Asteroid() {
       MaxEchos = random.Next(100, 1001);
@@ -43,7 +43,7 @@ namespace AsteroidZoneSimulation.Models {
     }
 
     public string GetAsteroidInformation() {
-      return $"Create ID:{CreateID} | Spawn ID:{SpawnID} | Echoes:{CurrentEchos}/{MaxEchos} | State:{State}";
+      return $"Create ID: {CreateID} | Spawn ID: {SpawnID} | Echoes: {CurrentEchos}/{MaxEchos} | State: {State}";
     }
   }
 }

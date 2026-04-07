@@ -28,7 +28,7 @@ namespace AsteroidZoneSimulation {
         
       while (true) {
         Console.WriteLine("\n=======================================" +
-                          $"\n    ░▒▓█ХРОН #{chroneCounter}█▓▒░" +
+                          $"\n        ░▒▓█ХРОН #{chroneCounter}█▓▒░" +
                           "\n=======================================" +
                           "\n\nНажмите ENTER для следующего хрона или ESC для выхода");
             
@@ -50,7 +50,7 @@ namespace AsteroidZoneSimulation {
         
       Console.Clear();
       Console.WriteLine("\n=======================================" +
-                        $"\n    ░▒▓█ХРОН #{chroneCounter}█▓▒░" +
+                        $"\n        ░▒▓█ХРОН #{chroneCounter}█▓▒░" +
                         "\n=======================================");
         
       foreach (var asteroid in activeAsteroids) {
@@ -80,7 +80,7 @@ namespace AsteroidZoneSimulation {
       DisplayAsteroidsInfo();
         
       Console.WriteLine($"\nСвободных астероидов в пуле: {emitter.GetAvailableCount()}" +
-                        $"Всего спавнов: {activeAsteroids.Max(asteroid => asteroid.SpawnID)}");
+                        $"\nВсего спавнов: {activeAsteroids.Max(asteroid => asteroid.SpawnID)}");
     }
     
     static void SpawnNewAsteroid() {
