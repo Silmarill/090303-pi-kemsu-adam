@@ -37,7 +37,6 @@ namespace AsteroidPu {
     public void OnChoneTick() {
       if (State == AsteroidState.Idle) {
         --CurrentEchos;
-
       }
     }
   }
