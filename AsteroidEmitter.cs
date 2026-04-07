@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 
 namespace Asteroid
 {
     public class AsteroidEmitter
     {
         private Queue<Asteroid> _avaible = new Queue<Asteroid>();
+        private int _spawnCounter = 0;
 
         public AsteroidEmitter(int initialSize)
         {
@@ -17,16 +19,26 @@ namespace Asteroid
 
         public Asteroid Spawn()
         {
+            _spawnCounter++;
+            Asteroid asteroid;
+            
             if (_avaible.Count == 0)
             {
-                return new Asteroid();
+                Console.WriteLine("Пул пуст, создаются новые стероиды");
+                asteroid = new Asteroid();
             }
-            return _avaible.Dequeue();
+            else
+            {
+                asteroid = _avaible.Dequeue();
+            }
+
+            asteroid.Reset(_spawnCounter);
+            return asteroid;
         }
 
         public void Recycle(Asteroid asteroid)
         {
-            asteroid.Reset();
+            asteroid.Reset(0);
             _avaible.Enqueue(asteroid);
         }
     }
