@@ -10,28 +10,18 @@ namespace ProjectAdam {
     Idle,
     Depleted
   }
-  public class Asteroid : IChroneListener {
+  internal class Asteroid {
     public int CurrentEchos;
     public int MaxEchos;
     public AsteroidState State;
     public int SpawnID;
     public int CreateID;
 
-    private static int createCount = 0;
-    private static int spawnCount = 0;
-    private static Random random = new Random();
-
     public Asteroid() {
-      CreateID = ++createCount; //захотелось начинать ID с одного
-
+      Random random = new Random();
       MaxEchos = random.Next(100,1001);
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;    
-    }
-
-    public void OnSpawn() {
-      SpawnID = ++spawnCount; //захотелось начинать ID с одного
-      Reset();
     }
 
     public void Reset() {
@@ -39,7 +29,7 @@ namespace ProjectAdam {
       State = AsteroidState.Idle;
     }
 
-    public void OnChroneTick() {
+    public void OnChronTick() {
       if (State == AsteroidState.Idle) {
 
         CurrentEchos -= 100;
