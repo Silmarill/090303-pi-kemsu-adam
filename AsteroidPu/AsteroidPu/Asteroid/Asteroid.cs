@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AsteroidPu {
   public class Asteroid {
@@ -36,7 +32,13 @@ namespace AsteroidPu {
 
     public void OnChoneTick() {
       if (State == AsteroidState.Idle) {
-        --CurrentEchos;
+        CurrentEchos -= 100;
+        if (CurrentEchos < 0) {
+          CurrentEchos = 0;
+        }
+        if (CurrentEchos == 0) {
+          State = AsteroidState.Depleted;
+        }
       }
     }
   }

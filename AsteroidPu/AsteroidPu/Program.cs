@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AsteroidPu
-{
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-        }
+namespace AsteroidPu {
+  internal class Program {
+    static void Main(string[] args) {
+
+      AsteroidEmitter 
     }
+  }
 }

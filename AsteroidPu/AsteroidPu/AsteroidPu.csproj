@@ -43,13 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Asteroid.cs" />
-    <Compile Include="AsteroidState.cs" />
+    <Compile Include="Asteroid\AsteroidEmitter.cs" />
+    <Compile Include="Asteroid\Asteroid.cs" />
+    <Compile Include="Asteroid\AsteroidState.cs" />
+    <Compile Include="Chrones\ChroneManager.cs" />
+    <Compile Include="Chrones\IChroneListener.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
