@@ -20,8 +20,24 @@ namespace ProjectAdam {
 
       Print(activeAsteroids);
 
-    }
+      Console.WriteLine("\nEnter: next chrone, Esc: exit");
 
+      while (true) {
+        var key = Console.ReadKey(true);
+
+        if (key.Key == ConsoleKey.Escape)
+          break;
+
+        if (key.Key == ConsoleKey.Enter) {
+          chroneCount++;
+
+          Console.WriteLine($"\nChrone: {chroneCount}");
+
+          ChroneManager.MakeChroneTick();
+
+        }
+      }
+    }
 
 
     static void Print(List<Asteroid> asteroids) {
