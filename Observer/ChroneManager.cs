@@ -1,6 +1,8 @@
+using AsteroidSimulation.Common;
 using System;
+using System.Collections.Generic;
 
-namespace Asteroid
+namespace AsteroidSimulation.Observer
 {
     public static class ChroneManager
     {

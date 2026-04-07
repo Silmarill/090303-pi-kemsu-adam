@@ -1,7 +1,11 @@
-﻿using System;
+﻿using AsteroidSimulation.Entity;
+using AsteroidSimulation.ObjectPool;
+using AsteroidSimulation.Observer;
+using AsteroidSimulation.Common;
+using System;
 using System.Collections.Generic;
 
-namespace Asteroid
+namespace AsteroidSimulation
 {
     class Program
     {

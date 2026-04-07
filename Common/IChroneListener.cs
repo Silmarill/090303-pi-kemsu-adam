@@ -1,6 +1,6 @@
 using System;
 
-namespace Asteroid
+namespace AsteroidSimulation.Common
 {
     public interface IChroneListener
     {

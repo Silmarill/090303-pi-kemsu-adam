@@ -1,7 +1,7 @@
+using AsteroidSimulation.Common;
 using System;
-using System.Data;
 
-namespace Asteroid
+namespace AsteroidSimulation.Entity
 {
     public class Asteroid : IChroneListener
     {
