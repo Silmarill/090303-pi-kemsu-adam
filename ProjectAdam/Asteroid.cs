@@ -24,9 +24,9 @@ namespace ProjectAdam {
     public Asteroid() {
       CreateID = ++createCount; //захотелось начинать ID с одного
 
-      MaxEchos = random.Next(100,1001);
+      MaxEchos = random.Next(100, 1001);
       CurrentEchos = MaxEchos;
-      State = AsteroidState.Idle;    
+      State = AsteroidState.Idle;
     }
 
     public void OnSpawn() {
@@ -55,8 +55,6 @@ namespace ProjectAdam {
       } else {
         return;
       }
-
     }
-
   }
 }

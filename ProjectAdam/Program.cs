@@ -12,7 +12,7 @@ namespace ProjectAdam {
 
       int chroneCount = 0;
 
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < 3; ++i) {
         Asteroid asteroid = emitter.Spawn();
         activeAsteroids.Add(asteroid);
         ChroneManager.AddListener(asteroid);
@@ -29,16 +29,43 @@ namespace ProjectAdam {
           break;
 
         if (key.Key == ConsoleKey.Enter) {
-          chroneCount++;
+          ++chroneCount;
 
           Console.WriteLine($"\nChrone: {chroneCount}");
 
           ChroneManager.MakeChroneTick();
 
+          for (int i = activeAsteroids.Count - 1; i >= 0; --i) {
+            Asteroid asteroid = activeAsteroids[i];
+
+            if (asteroid.State == AsteroidState.Depleted) {
+              Console.WriteLine($"Asteroid {asteroid.CreateID} depleted and then removed ");
+
+              ChroneManager.RemoveListener(asteroid);
+              emitter.Recycle(asteroid);
+              activeAsteroids.RemoveAt(i);
+            }
+          }
+
+          if (chroneCount % 5 == 0) {
+            Console.WriteLine("New asteroids: ");
+            Random rand = new Random();
+            int spawnCount = rand.Next(1, 4);
+
+            for (int i = 0; i < spawnCount; ++i) {
+              Asteroid asteroid = emitter.Spawn();
+              activeAsteroids.Add(asteroid);
+              ChroneManager.AddListener(asteroid);
+
+              Console.WriteLine($"Spawned Asteroid CreateID: {asteroid.CreateID}, SpawnID: {asteroid.SpawnID}");
+            }
+          }
+
+          Print(activeAsteroids);
+
         }
       }
     }
-
 
     static void Print(List<Asteroid> asteroids) {
       Console.WriteLine("\nActive asteroids: ");
@@ -49,10 +76,9 @@ namespace ProjectAdam {
           $"\nCreateID: {asteroid.CreateID}" +
           $"\nSpawnID: {asteroid.SpawnID}" +
           $"\nEchos: {asteroid.CurrentEchos}" +
-          $"\nState: {asteroid.State}"+
+          $"\nState: {asteroid.State}" +
           "\n----------------\n");
       }
     }
-
   }
 }
