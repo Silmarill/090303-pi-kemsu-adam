@@ -9,18 +9,16 @@ namespace Project_Adam {
     private static List<IChroneListener> _listenerList = new List<IChroneListener>();
 
     public static void AddListener(IChroneListener listener) {
-      if (!_listenerList.Contains(listener)) {
-        _listenerList.Add(listener);
-      }
+      _listenerList.Add(listener);
     }
 
     public static void RemoveListener(IChroneListener listener) {
       _listenerList.Remove(listener);
     }
 
-    public static void MakeChroneTick() {
-      foreach (var listener in _listenerList.ToList()) { 
-        listener?.OnChroneTick(); 
+    public static void MakeChronTick() {
+      foreach (IChroneListener listener in _listenerList) {
+        listener.OnChroneTick();
       }
     }
   }

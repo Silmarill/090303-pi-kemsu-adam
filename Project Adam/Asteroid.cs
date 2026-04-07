@@ -24,7 +24,7 @@ namespace Project_Adam {
       State = AsteroidState.Idle;
     }
 
-    public void OnChronTick() {
+    public void OnChroneTick() {
       if (State == AsteroidState.Idle) {
         CurrentEchos -= 100;
         if (CurrentEchos <= 0) {
