@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Pattern_Observer_and_Object_pool__Laba_5 {
-  internal class Asteroid {
+  public interface IChroneListener {
+    void OnChroneTick();
   }
 }
