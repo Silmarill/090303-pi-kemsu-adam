@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Pattern_Observer_and_Object_pool__Laba_5{
   
-  public class Asteroid {
+  public class Asteroid : IChroneListener {
     
     public enum AsteroidState {
       Idle,
@@ -16,11 +16,16 @@ namespace Pattern_Observer_and_Object_pool__Laba_5{
     Random random = new Random();
     public int MaxEchos, CurrentEchos, SpawnID, CreateID;
     public AsteroidState State;
+    public static int StaticSpawnID, StaticCreateID;
 
     public Asteroid() {
       this.MaxEchos = random.Next(1, 1001);
       this.CurrentEchos = this.MaxEchos;
       State = AsteroidState.Idle;
+      this.SpawnID = StaticSpawnID;
+      ++StaticSpawnID;
+      this.CreateID = StaticCreateID;
+      ++StaticCreateID;
     }
 
     public void Reset() {

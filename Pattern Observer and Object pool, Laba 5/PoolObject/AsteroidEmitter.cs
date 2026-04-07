@@ -20,6 +20,7 @@ namespace Pattern_Observer_and_Object_pool__Laba_5.PoolObject {
         return new Asteroid();
       }
       return _available.Dequeue();
+      
     }
 
     public void Recycle(Asteroid asteroid) {
