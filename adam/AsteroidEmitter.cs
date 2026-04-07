@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 public class AsteroidEmitter {
   private Queue<Asteroid> _available = new Queue<Asteroid>();
-  public static int _nextSpawnId = 1;
 
   public AsteroidEmitter(int initialSize) {
-    for (int i = 0; i < initialSize; ++i) {
+    for (int asteroidCount = 0; asteroidCount < initialSize; ++asteroidCount) {
       Asteroid asteroid = new Asteroid();
       _available.Enqueue(asteroid);
     }
@@ -24,7 +23,7 @@ public class AsteroidEmitter {
       asteroid = _available.Dequeue();
     }
 
-    asteroid.SpawnID = _nextSpawnId++;
+    asteroid.SpawnID = ++Asteroid.nextSpawnId;
     return asteroid;
   }
 

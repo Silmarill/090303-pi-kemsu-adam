@@ -4,18 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class Asteroid {
+public class Asteroid : IChroneListener {
   public int CurrentEchos;
   public int MaxEchos;
   public AsteroidState State;
   public int SpawnID;
   public int CreateID;
+  public static int nextCreateId;
+  public static int nextSpawnId;
+  public static Random random = new Random();
 
   public Asteroid() {
-    Random random = new Random();
     MaxEchos = random.Next(100, 1001);
     CurrentEchos = MaxEchos;
     State = AsteroidState.Idle;
+    CreateID = ++nextCreateId;
   }
 
   public void Reset() {
@@ -23,7 +26,7 @@ public class Asteroid {
     State = AsteroidState.Idle;
   }
 
-  public void OnChronTick() {
+  public void OnChroneTick() {
     if (State == AsteroidState.Idle) {
       CurrentEchos -= 100;
       if (CurrentEchos <= 0) {
@@ -33,4 +36,3 @@ public class Asteroid {
     }
   }
 }
-
