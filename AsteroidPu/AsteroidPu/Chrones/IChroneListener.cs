@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AsteroidPu {
-  internal enum AsteroidState {
+namespace AsteroidPu.Chrones {
+  public interface IChroneListener {
+    void OnChroneTick();
   }
 }
