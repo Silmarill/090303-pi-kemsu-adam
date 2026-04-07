@@ -7,7 +7,7 @@ namespace Project_Adam {
     static void Main() {
       AsteroidEmitter asteroidEmitter = new AsteroidEmitter(5);
       List<Asteroid> activeAsteroids = new List<Asteroid>();
-      int chronCounter = 0;
+      int chroneCounter = 0;
       Random random = new Random();
 
       for (int asteroidIndex = 0; asteroidIndex < 3; ++asteroidIndex) {
@@ -18,7 +18,7 @@ namespace Project_Adam {
 
       while (true) {
         Console.Clear();
-        Console.WriteLine($"Chrone #{chronCounter}");
+        Console.WriteLine($"Chrone #{chroneCounter}");
         Console.WriteLine($"Active asteroids: {activeAsteroids.Count}");
         Console.WriteLine();
 
@@ -35,10 +35,10 @@ namespace Project_Adam {
         }
 
         if (pressedKey.Key == ConsoleKey.Enter) {
-          ++chronCounter;
+          ++chroneCounter;
           ChroneManager.MakeChroneTick();
 
-          if (chronCounter % 5 == 0) {
+          if (chroneCounter % 5 == 0) {
             int newAsteroidsCount = random.Next(1, 4);
             for (int asteroidIndex = 0; asteroidIndex < newAsteroidsCount; ++asteroidIndex) {
               Asteroid newAsteroid = asteroidEmitter.Spawn();
