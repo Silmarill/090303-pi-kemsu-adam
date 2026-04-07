@@ -16,7 +16,7 @@ namespace Project_Adam {
       _listenerList.Remove(listener);
     }
 
-    public static void MakeChronTick() {
+    public static void MakeChroneTick() {
       foreach (IChroneListener listener in _listenerList) {
         listener.OnChroneTick();
       }
