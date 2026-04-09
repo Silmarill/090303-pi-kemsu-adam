@@ -93,10 +93,7 @@ internal static class Program
       activeAsteroidCountForCleanup = activeAsteroids.Count;
       reverseCleanupStartIndex = activeAsteroidCountForCleanup - lastIndexOffsetFromCount;
 
-      for (
-        asteroidIndex = reverseCleanupStartIndex;
-        asteroidIndex >= 0;
-        --asteroidIndex)
+      for (asteroidIndex = reverseCleanupStartIndex; asteroidIndex >= 0; --asteroidIndex)
       {
         asteroid = activeAsteroids[asteroidIndex];
         if (asteroid.State == AsteroidState.Depleted)

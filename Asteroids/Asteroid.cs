@@ -13,11 +13,11 @@ public class Asteroid : IChroneListener
     s_random = new Random();
   }
 
-  public int CurrentEchos { get; private set; }
-  public int MaxEchos { get; private set; }
-  public AsteroidState State { get; private set; }
-  public int SpawnId { get; private set; }
-  public int CreateId { get; }
+  public int CurrentEchos;
+  public int MaxEchos;
+  public AsteroidState State;
+  public int SpawnId;
+  public int CreateId;
 
   public Asteroid()
   {
