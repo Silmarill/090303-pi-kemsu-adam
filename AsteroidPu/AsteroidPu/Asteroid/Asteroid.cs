@@ -3,11 +3,11 @@
 namespace AsteroidPu {
   public class Asteroid {
 
-    int CurrentEchos;
+    public int CurrentEchos;
     int MaxEchos;
-    AsteroidState State;
-    int SpawnID;
-    int CreateID;
+    public AsteroidState State;
+    public int SpawnID;
+    public int CreateID;
 
     public Asteroid() {
       Random countOfAsteroids = new Random();
