@@ -14,11 +14,12 @@ namespace ConsoleApp16 {
     public int CreateID; 
     public int EchosDecreasePerTick;
 
-
+    private int minMaxechos = 100;
+    private int maxMaxechos = 1001;
     private static int _createCounter = 0;
     public Asteroid() {
       CreateID = _createCounter++;
-      MaxEchos = new Random().Next(100, 1001);
+      MaxEchos = new Random().Next(minMaxechos, maxMaxechos);
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle; 
       SpawnID = 0;
