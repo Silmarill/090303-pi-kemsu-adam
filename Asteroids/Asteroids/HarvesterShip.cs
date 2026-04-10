@@ -14,6 +14,7 @@ namespace Asteroids {
     public int CargoCapacity;
     public int CargoCurrent;
     public int BiteSize;
+    public int Lvl;
 
     public HarvesterState StateHarvest { get; set; }
 
@@ -25,7 +26,17 @@ namespace Asteroids {
     {
         "Вадим Б12", "Копала", "Артур Копатель", "Копатель офлайн",
         "Лютейший бурила", "Закопышь", "БРБРБР", "Потерявший Астероид",
-        "Натуральный Бур", "Олег"
+        "Натуральный Бур", "Олег", "Друг Админа", "Копатель Копалкин",
+        "Бурящий Небеса", "ААААААААААААА", "Без Баб", "БезБурый",
+        "Два Бура Один Астероид", "Продам Гараж", "Где деньги взять", "ГойдаЛет 3000",
+        "Сиамский сиамец", "Человек продавший астероид", "Solid Snake", "Big Boss",
+        "Танк на бурах", "Человек Буривший Мир", "НеГей", "Шаролёт",
+        "Черный", "Натуральный Шахтер", "Утилязатор", "Space Station 14",
+        "Прямиком из Нанотрейзен", "НАНОТРЕЙЗЕН СОСААААТЬ!", "Слава Горлексу!", "Приколист из MI13",
+        "Шкебедедопдоп головного мозга", "Сэр есть Сэр", "На буре вертел", "Ебоштепсель",
+        "Бур длинной в метр", "Импотент", "Стальной бур - стальные яйца", "Я бурил - меня копали",
+        "Истинный Буритель", "Забурил досмерти", "А куда копать?", "Срочник",
+        "Огузок", "ПОМОГИТЕ Я ЗАСТРЯЛ!!!", "Крутое название", "КиррилУбиваторКосмосаИГалактикВсегоСущего3000"
     };
 
     private static int _idCounter = 0;
@@ -33,17 +44,21 @@ namespace Asteroids {
 
     public HarvesterShip() {
       ID = ++_idCounter;
-      CargoCapacity = random.Next(200, 1000);
-      BiteSize = random.Next(10, 100);
+      CargoCapacity = random.Next(100, 600);
+      BiteSize = random.Next(1, 200);
       Name = Names[random.Next(Names.Length)];
       StateHarvest = HarvesterState.Idle;
+      Lvl = (CargoCapacity / BiteSize);
     }
 
     public bool IsIdle => StateHarvest == HarvesterState.Idle;
 
     public void AssignAsteroid(Asteroid asteroid) {
       _targetAsteroid = asteroid;
+
       StateHarvest = HarvesterState.Mining;
+      asteroid.State = AsteroidState.Mining;
+
       _currentMined = 0;
     }
 
@@ -63,8 +78,9 @@ namespace Asteroids {
       }
 
       if (CargoCurrent >= CargoCapacity || _targetAsteroid.State == AsteroidState.Depleted) {
-        CargoCurrent = 0;
-        StateHarvest = HarvesterState.Idle;
+        if (_targetAsteroid.State != AsteroidState.Depleted) {
+          _targetAsteroid.State = AsteroidState.Idle;
+        }
 
         var report = new Report {
           JobNumber = ++_jobCounter,
@@ -72,10 +88,16 @@ namespace Asteroids {
           AmountMined = _currentMined
         };
 
+        CargoCurrent = 0;
+        StateHarvest = HarvesterState.Idle;
         _targetAsteroid = null;
+
+        CargoCapacity += random.Next(1, 70);
+        BiteSize += random.Next(1, 30);
+        Lvl += 1;
+
         return report;
       }
-
       return null;
     }
   }

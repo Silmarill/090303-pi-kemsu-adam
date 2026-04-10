@@ -23,7 +23,7 @@ namespace Asteroids {
 
     public Asteroid() {
       CreateID = ++_createCounter;
-      MaxEchos = random.Next(100, 1000);
+      MaxEchos = random.Next(300, 5000);
       Reset();
     }
     public void Reset() {
