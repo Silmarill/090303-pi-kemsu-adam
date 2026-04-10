@@ -2,8 +2,8 @@
 
 namespace Project_Adam {
   public class AsteroidEmitter {
-    private Queue<Asteroid> _available = new Queue<Asteroid>();
-    private int _totalSpawnedCount = 0;
+    public Queue<Asteroid> _available = new Queue<Asteroid>();
+    public int _totalSpawnedCount = 0;
 
     public AsteroidEmitter(int initialSize) {
       for (int asteroidIndex = 0; asteroidIndex < initialSize; ++asteroidIndex) {

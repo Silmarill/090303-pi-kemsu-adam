@@ -2,10 +2,10 @@
 
 namespace Project_Adam {
   public class Asteroid : IChroneListener {
-    private static int _nextCreateId = 0;
-    private static Random _random = new Random();
-    private int MinEchosRange = 100;
-    private int MaxEchosRange = 1001;
+    public int _nextCreateId = 0;
+    public Random _random = new Random();
+    public int MinEchosRange = 100;
+    public int MaxEchosRange = 1001;
 
     public int CurrentEchos;
     public int MaxEchos;
