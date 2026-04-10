@@ -17,7 +17,7 @@ public class AsteroidEmitter {
     Asteroid asteroid;
     if (_available.Count == 0) {
       // если пуст, создаём новый (автоматическое расширение)
-      Console.WriteLine("  [Pool] Warning: pool is empty, creating new Asteroid.");
+      Console.WriteLine("[Pool] Warning: pool is empty, creating new Asteroid.");
       asteroid = new Asteroid();
     } else {
       asteroid = _available.Dequeue();

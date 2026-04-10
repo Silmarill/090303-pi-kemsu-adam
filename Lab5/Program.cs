@@ -17,7 +17,7 @@ class Program {
 
     Console.Clear();
     Console.WriteLine("=== Asteroid Simulation ===");
-    Console.WriteLine("Enter — next chron  |  Esc — exit\n");
+    Console.WriteLine("Enter — next chron | Esc - exit\n");
     PrintActiveAsteroids(activeAsteroids, chronCounter);
 
     // цикл обработки хронов
@@ -71,12 +71,12 @@ class Program {
   static void PrintActiveAsteroids(List<Asteroid> activeAsteroids, int chron) {
     Console.WriteLine("=== Chron: " + chron + " | Active: " + activeAsteroids.Count + " ===\n");
     if (activeAsteroids.Count == 0) {
-      Console.WriteLine("  (no active asteroids)");
+      Console.WriteLine("(no active asteroids)");
     } else {
       foreach (var a in activeAsteroids) {
         a.PrintInfo();
       }
     }
-    Console.WriteLine("\nEnter — next chron  |  Esc — exit");
+    Console.WriteLine("\nEnter — next chron | Esc — exit");
   }
 }
