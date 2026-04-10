@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 public interface IChroneListener {
   void OnChroneTick();
@@ -11,13 +12,13 @@ public static class ChroneManager {
     _listenerList.Add(listener);
   }
 
-  public void RemoveListerner(IChroneListener listener) {
+  public void RemoveListener(IChroneListener listener) {
     _listenerList.Remove(listener);
   }
 
-  public void MakeChrineTick() {
+  public void MakeChroneTick() {
     foreach (var listener in _listenerList) {
-      listener.OnCroneTick();
+      listener.OnChroneTick();
     }
   }
 }

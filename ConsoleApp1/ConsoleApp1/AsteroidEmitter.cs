@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 
 public class AsteroidEmitter {
-  private Queue<Asteroid> _available = new Queue<Asteroid<Asteroid>();
+  private Queue<Asteroid> _available = new Queue<Asteroid>();
   public AsteroidEmitter(int initialSize) {
-    for (int i = 0: i < initialSize; i++) {
+    for (int i = 0; i < initialSize; i++) {
       Asteroid asteroid = new Asteroid();
       _available.Enqueue(asteroid);
     }
