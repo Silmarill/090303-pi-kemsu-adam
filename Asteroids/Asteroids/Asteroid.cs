@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using static System.Net.Mime.MediaTypeNames;
 public enum AsteroidState {
   Idle,
-  Depleted
+  Depleted,
+  Mining
 }
 
 namespace Asteroids {

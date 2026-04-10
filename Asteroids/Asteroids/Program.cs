@@ -8,7 +8,7 @@ class Program {
     int turn = 0;
     Random random = new Random();
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       var a = emitter.Spawn();
       activeAsteroids.Add(a);
       ChroneManager.AddListener(a);
@@ -25,14 +25,14 @@ class Program {
       if (turn % 5 == 0) {
         int count = random.Next(1, 4);
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ++i) {
           var a = emitter.Spawn();
           activeAsteroids.Add(a);
           ChroneManager.AddListener(a);
         }
       }
 
-      for (int i = activeAsteroids.Count - 1; i >= 0; i--) {
+      for (int i = activeAsteroids.Count - 1; i >= 0; ++i) {
         var a = activeAsteroids[i];
 
         if (a.State == AsteroidState.Depleted) {
