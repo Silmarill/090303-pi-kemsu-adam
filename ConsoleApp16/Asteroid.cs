@@ -12,6 +12,8 @@ namespace ConsoleApp16 {
     public AsteroidState State { get; set; } 
     public int SpawnID { get; set; }
     public int CreateID { get; set; }
+    public int EchosDecreasePerTick;
+
 
     private static int _createCounter = 0;
     public Asteroid() {
@@ -20,10 +22,11 @@ namespace ConsoleApp16 {
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle; 
       SpawnID = 0;
+      EchosDecreasePerTick = 100;
     }
 
     public void OnChronTick() {
-      CurrentEchos -= 100;
+      CurrentEchos -= EchosDecreasePerTick;
       if (CurrentEchos <= 0) {
         State = AsteroidState.Depleted; ;
       }
