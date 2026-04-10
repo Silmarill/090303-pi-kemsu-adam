@@ -3,6 +3,7 @@
 namespace Asteroids {
 	public enum AsteroidState {
 		Idle,
+		Mining,
 		Depleted
 	}
 
@@ -37,14 +38,15 @@ namespace Asteroids {
 		}
 
 		public void OnChronTick() {
+			/*
 			if (State == AsteroidState.Idle) {
 				CurrentEchos = CurrentEchos - echosLossPerTick;
 				if (CurrentEchos <= 0) {
 					CurrentEchos = 0;
 					State = AsteroidState.Depleted;
 				}
-			}
-		}
+			} */
+		} 
 
 		public void PrintInfo() {
 			Console.WriteLine("Астероид #{0} (спавн #{1}) | Echos: {2}/{3} | {4}",
