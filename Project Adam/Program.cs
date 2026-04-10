@@ -7,13 +7,14 @@ namespace Project_Adam {
     public static int MinAsteroidsPerSpawn = 1;
     public static int MaxAsteroidsPerSpawn = 4;
     public static int FifthSpawnIntervalInChrons = 5;
+    public static int InitialAsteroidsCount = 3;
     static void Main() {
       AsteroidEmitter asteroidEmitter = new AsteroidEmitter(5);
       List<Asteroid> activeAsteroids = new List<Asteroid>(); 
       int chroneCounter = 0;
       Random random = new Random();
 
-      for (int asteroidIndex = 0; asteroidIndex < 3; ++asteroidIndex) {
+      for (int asteroidIndex = 0; asteroidIndex < InitialAsteroidsCount; ++asteroidIndex) {
         Asteroid newAsteroid = asteroidEmitter.Spawn();
         activeAsteroids.Add(newAsteroid);
         ChroneManager.AddListener(newAsteroid);
