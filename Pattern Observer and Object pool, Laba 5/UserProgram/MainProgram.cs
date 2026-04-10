@@ -49,7 +49,7 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
         }
 
         if (key.Key == ConsoleKey.Enter) {
-          tickCounter++;
+          ++tickCounter;
 
           ChroneManager.MakeChroneTick();
 
@@ -61,7 +61,7 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
               Asteroid newAsteroid = emitter.Spawn();
               activeAsteroids.Add(newAsteroid);
               ChroneManager.AddListener(newAsteroid);
-              Console.WriteLine($" A new asteroid has been created! Resource\r\n: {newAsteroid.CurrentEchos}/{newAsteroid.MaxEchos}");
+              Console.WriteLine($"A new asteroid has been created! Resource\r\n: {newAsteroid.CurrentEchos}/{newAsteroid.MaxEchos}");
             }
           }
 
@@ -69,7 +69,7 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
             Asteroid asteroid = activeAsteroids[count];
 
             if (asteroid.State == Asteroid.AsteroidState.Depleted) {
-              Console.WriteLine($"  The asteroid is depleted! Return to the pool.");
+              Console.WriteLine($" The asteroid is depleted! Return to the pool.");
               activeAsteroids.RemoveAt(count);
               emitter.Recycle(asteroid);
             }

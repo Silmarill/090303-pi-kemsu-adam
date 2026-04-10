@@ -9,7 +9,7 @@ namespace Pattern_Observer_and_Object_pool__Laba_5.PoolObject {
     private Queue<Asteroid> _available = new Queue<Asteroid>();
 
     public AsteroidEmitter(int initialSize) {
-      for (int i = 0; i < initialSize; ++i) {
+      for (int count = 0; count < initialSize; ++count) {
         Asteroid asteroid = new Asteroid();
         _available.Enqueue(asteroid);
       }
