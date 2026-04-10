@@ -1,5 +1,6 @@
-﻿using AsteroidsLab.Managers;
-using AsteroidsLab.Asteroids;
+﻿using AsteroidsLab.Asteroids;
+using AsteroidsLab.Fleet;
+using AsteroidsLab.Managers;
 
 namespace AsteroidsLab;
 
@@ -7,66 +8,85 @@ internal static class Program
 {
   private static void Main()
   {
+    MotherShip motherShip;
     AsteroidEmitter asteroidEmitter;
-    List<Asteroid> activeAsteroids;
-    Random random;
     int chronCounter;
     bool exitRequested;
+    ConsoleKeyInfo pressedKey;
+    int worklogEveryNthChron;
     int initialIndex;
     Asteroid spawnedAsteroid;
-    int asteroidIndex;
-    ConsoleKeyInfo pressedKey;
-    int spawnBatchCount;
-    int spawnIndex;
-    Asteroid newAsteroid;
-    Asteroid asteroid;
-    int initialPoolSize;
-    int initialActiveAsteroidCount;
-    int spawnEveryNthChron;
-    int extraSpawnCountMinInclusive;
-    int extraSpawnCountMaxExclusive;
-    int reverseCleanupStartIndex;
-    int activeAsteroidCountForCleanup;
-    int lastIndexOffsetFromCount;
+    int harvesterFleetSize;
+    int harvesterCargoCapacity;
+    int harvesterBiteSize;
+    int asteroidPoolInitialSize;
+    int asteroidSpawnIntervalChrons;
+    int asteroidSpawnCountMinInclusive;
+    int asteroidSpawnCountMaxInclusive;
+    int simulationStartAsteroidCount;
 
-    initialPoolSize = 5;
-    initialActiveAsteroidCount = 3;
-    spawnEveryNthChron = 5;
-    extraSpawnCountMinInclusive = 1;
-    extraSpawnCountMaxExclusive = 4;
+    worklogEveryNthChron = 15;
 
-    asteroidEmitter = new AsteroidEmitter(initialPoolSize);
-    activeAsteroids = new List<Asteroid>();
-    random = new Random();
-    chronCounter = 0;
+    harvesterFleetSize = 5;
+    harvesterCargoCapacity = 500;
+    harvesterBiteSize = 50;
+    asteroidPoolInitialSize = 5;
+    asteroidSpawnIntervalChrons = 5;
+    asteroidSpawnCountMinInclusive = 4;
+    asteroidSpawnCountMaxInclusive = 5;
+    simulationStartAsteroidCount = 3;
 
-    for (initialIndex = 0; initialIndex < initialActiveAsteroidCount; ++initialIndex)
+    motherShip = new MotherShip(harvesterFleetSize, harvesterCargoCapacity, harvesterBiteSize);
+    asteroidEmitter = new AsteroidEmitter(
+      asteroidPoolInitialSize,
+      motherShip,
+      asteroidSpawnIntervalChrons,
+      asteroidSpawnCountMinInclusive,
+      asteroidSpawnCountMaxInclusive);
+    motherShip.SetEmitter(asteroidEmitter);
+
+    for (initialIndex = 0; initialIndex < simulationStartAsteroidCount; ++initialIndex)
     {
       spawnedAsteroid = asteroidEmitter.Spawn();
-      activeAsteroids.Add(spawnedAsteroid);
-      ChroneManager.AddListener(spawnedAsteroid);
+      motherShip.AddAsteroid(spawnedAsteroid);
     }
 
+    chronCounter = 0;
     exitRequested = false;
+
     while (!exitRequested)
     {
       Console.Clear();
       Console.WriteLine("Current chrone: " + chronCounter);
-      Console.WriteLine("Active asteroids: " + activeAsteroids.Count);
+      Console.WriteLine("Active asteroids: " + motherShip.GetActiveAsteroidsCount());
+      Console.WriteLine("Pool available: " + asteroidEmitter.GetAvailableCount());
       Console.WriteLine();
 
-      for (asteroidIndex = 0; asteroidIndex < activeAsteroids.Count; ++asteroidIndex)
-      {
-        activeAsteroids[asteroidIndex].PrintInfo();
-      }
+      motherShip.PrintAsteroidsInfo();
 
       Console.WriteLine();
-      Console.WriteLine("Enter = next chrone, Esc = exit.");
+      Console.WriteLine("--- Harvesters ---");
+      motherShip.PrintHarvestersInfo();
+
+      Console.WriteLine();
+      motherShip.PrintTotalMined();
+
+      Console.WriteLine();
+      Console.WriteLine("Enter = next chron | Esc = exit | R = totals");
 
       pressedKey = Console.ReadKey(intercept: true);
       if (pressedKey.Key == ConsoleKey.Escape)
       {
         exitRequested = true;
+        continue;
+      }
+
+      if (pressedKey.Key == ConsoleKey.R)
+      {
+        Console.WriteLine();
+        motherShip.PrintTotalMined();
+        Console.WriteLine("Press any key to continue...");
+        Console.ReadKey(intercept: true);
         continue;
       }
 
@@ -77,31 +97,14 @@ internal static class Program
 
       ++chronCounter;
       ChroneManager.MakeChroneTick();
+      motherShip.AssignIdleHarvesters();
 
-      if (chronCounter % spawnEveryNthChron == 0)
+      if (chronCounter % worklogEveryNthChron == 0)
       {
-        spawnBatchCount = random.Next(extraSpawnCountMinInclusive, extraSpawnCountMaxExclusive);
-        for (spawnIndex = 0; spawnIndex < spawnBatchCount; ++spawnIndex)
-        {
-          newAsteroid = asteroidEmitter.Spawn();
-          activeAsteroids.Add(newAsteroid);
-          ChroneManager.AddListener(newAsteroid);
-        }
-      }
-
-      lastIndexOffsetFromCount = 1;
-      activeAsteroidCountForCleanup = activeAsteroids.Count;
-      reverseCleanupStartIndex = activeAsteroidCountForCleanup - lastIndexOffsetFromCount;
-
-      for (asteroidIndex = reverseCleanupStartIndex; asteroidIndex >= 0; --asteroidIndex)
-      {
-        asteroid = activeAsteroids[asteroidIndex];
-        if (asteroid.State == AsteroidState.Depleted)
-        {
-          ChroneManager.RemoveListener(asteroid);
-          asteroidEmitter.Recycle(asteroid);
-          activeAsteroids.RemoveAt(asteroidIndex);
-        }
+        Console.Clear();
+        motherShip.PrintFullWorklog();
+        Console.WriteLine("Press any key to return to simulation...");
+        Console.ReadKey(intercept: true);
       }
     }
 

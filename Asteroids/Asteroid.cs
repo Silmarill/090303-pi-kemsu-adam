@@ -50,28 +50,6 @@ public class Asteroid : IChroneListener
 
   public void OnChroneTick()
   {
-    int newAmount;
-    int echosLostPerChron;
-
-    echosLostPerChron = 100;
-
-    if (State != AsteroidState.Idle)
-    {
-      return;
-    }
-
-    newAmount = CurrentEchos - echosLostPerChron;
-    if (newAmount < 0)
-    {
-      newAmount = 0;
-    }
-
-    CurrentEchos = newAmount;
-
-    if (CurrentEchos == 0)
-    {
-      State = AsteroidState.Depleted;
-    }
   }
 
   public void PrintInfo()
