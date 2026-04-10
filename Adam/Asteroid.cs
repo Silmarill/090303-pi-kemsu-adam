@@ -47,4 +47,4 @@ namespace Asteroids {
       Console.WriteLine($"Asteroid #{CreateID} (Spawn #{SpawnID}) | Echos: {CurrentEchos}/{MaxEchos} | {State}");
     }
   }
-}
+} 

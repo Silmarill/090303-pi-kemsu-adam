@@ -9,4 +9,4 @@ namespace Adam {
     Idle,
     Depleted
   }
-}
+} 

@@ -50,4 +50,4 @@ namespace Asteroids {
       _availableAsteroids.Enqueue(usedAsteroid);
     }
   }
-}
+} 

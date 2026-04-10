@@ -43,6 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Asteroid.cs" />
+    <Compile Include="AsteroidEmitter.cs" />
+    <Compile Include="AsteroidState.cs" />
+    <Compile Include="ChronoManager.cs" />
+    <Compile Include="IChronListener.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
