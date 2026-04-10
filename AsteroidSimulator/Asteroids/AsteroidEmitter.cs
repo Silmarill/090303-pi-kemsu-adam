@@ -38,7 +38,7 @@ public class AsteroidEmitter {
       asteroid = _available.Dequeue();
     }
 
-    asteroid.SetSpawnID();
+    asteroid.SetSpawnId();
     return asteroid;
   }
 

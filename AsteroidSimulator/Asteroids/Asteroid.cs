@@ -8,41 +8,60 @@ public class Asteroid : IChronListener {
   private static int _nextSpawnId = 1;
   private static Random _random = new Random();
 
-  public int CurrentEchos;
-  public int MaxEchos;
-  public AsteroidState State;
-  public int SpawnID;
-  public int CreateID;
+  public int currentEchos;    // Текущее количество ресурса Echos
+  public int maxEchos;        // Максимальное количество ресурса
+  public AsteroidState state;
+  public int spawnId;
+  public int createId;
 
-  private const int MinEchos = 1;
-  private const int MaxEchosValue = 10000000;
-  private const int DegradationAmount = 100;
+  private const int MinEchos = 100;
+  private const int MaxEchosValue = 1000;
 
   public Asteroid() {
-    CreateID = _nextCreateId++;
-    MaxEchos = _random.Next(MinEchos, MaxEchosValue + 1);
-    CurrentEchos = MaxEchos;
-    State = AsteroidState.Idle;
-    SpawnID = 0;
+    createId = _nextCreateId++;
+    maxEchos = _random.Next(MinEchos, MaxEchosValue + 1);
+    currentEchos = maxEchos;
+    state = AsteroidState.Idle;
+    spawnId = 0;
   }
 
   public void Reset() {
-    CurrentEchos = MaxEchos;
-    State = AsteroidState.Idle;
+    currentEchos = maxEchos;
+    state = AsteroidState.Idle;
   }
 
   public void OnChronTick() {
-    if (State == AsteroidState.Idle) {
-      CurrentEchos = CurrentEchos - DegradationAmount;
-
-      if (CurrentEchos <= 0) {
-        CurrentEchos = 0;
-        State = AsteroidState.Depleted;
-      }
-    }
+    // Деградация отключена - стабилизация зоны MotherShip
   }
 
-  public void SetSpawnID() {
-    SpawnID = _nextSpawnId++;
+  public void SetSpawnId() {
+    spawnId = _nextSpawnId++;
+  }
+
+  public int Mine(int biteSize) {
+    if (state != AsteroidState.Idle && state != AsteroidState.Mining) {
+      return 0;
+    }
+
+    int amountToMine = biteSize;
+    if (amountToMine > currentEchos) {
+      amountToMine = currentEchos;
+    }
+
+    currentEchos -= amountToMine;
+
+    if (currentEchos == 0) {
+      state = AsteroidState.Depleted;
+    } else {
+      state = AsteroidState.Mining;
+    }
+
+    return amountToMine;
+  }
+
+  public void SetIdle() {
+    if (state == AsteroidState.Mining) {
+      state = AsteroidState.Idle;
+    }
   }
 }
