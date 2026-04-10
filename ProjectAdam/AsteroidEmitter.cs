@@ -9,7 +9,7 @@ namespace ProjectAdam {
     private Queue<Asteroid> _available = new Queue<Asteroid>();
 
     public AsteroidEmitter(int initialSize) {
-      for (int i = 0; i < initialSize; ++i) {
+      for (int asteroidIndex = 0; asteroidIndex < initialSize; ++asteroidIndex) {
         Asteroid asteroid = new Asteroid();
         _available.Enqueue(asteroid);
       }

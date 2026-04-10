@@ -11,16 +11,20 @@ namespace ProjectAdam {
       List<Asteroid> activeAsteroids = new List<Asteroid>();
 
       int chroneCount = 0;
+      int minSpawnRange = 1;
+      int maxSpawnRange = 4;
+      int firstGroupNum = 3;
+      int spawnAstNum = 5;
 
-      for (int i = 0; i < 3; ++i) {
+      for (int astIndex = 0; astIndex < firstGroupNum; ++astIndex) {
         Asteroid asteroid = emitter.Spawn();
         activeAsteroids.Add(asteroid);
         ChroneManager.AddListener(asteroid);
       }
 
       Print(activeAsteroids);
-
       Console.WriteLine("\nEnter: next chrone, Esc: exit");
+
 
       while (true) {
         var key = Console.ReadKey(true);
@@ -35,24 +39,24 @@ namespace ProjectAdam {
 
           ChroneManager.MakeChroneTick();
 
-          for (int i = activeAsteroids.Count - 1; i >= 0; --i) {
-            Asteroid asteroid = activeAsteroids[i];
+          for (int actAstIndex = activeAsteroids.Count - 1; actAstIndex >= 0; --actAstIndex) {
+            Asteroid asteroid = activeAsteroids[actAstIndex];
 
             if (asteroid.State == AsteroidState.Depleted) {
               Console.WriteLine($"Asteroid {asteroid.CreateID} depleted and then removed ");
 
               ChroneManager.RemoveListener(asteroid);
               emitter.Recycle(asteroid);
-              activeAsteroids.RemoveAt(i);
+              activeAsteroids.RemoveAt(actAstIndex);
             }
           }
 
-          if (chroneCount % 5 == 0) {
+          if (chroneCount % spawnAstNum == 0) {
             Console.WriteLine("New asteroids: ");
             Random rand = new Random();
-            int spawnCount = rand.Next(1, 4);
+            int spawnCount = rand.Next(minSpawnRange, maxSpawnRange);
 
-            for (int i = 0; i < spawnCount; ++i) {
+            for (int iteration = 0; iteration < spawnCount; ++iteration) {
               Asteroid asteroid = emitter.Spawn();
               activeAsteroids.Add(asteroid);
               ChroneManager.AddListener(asteroid);
@@ -62,7 +66,7 @@ namespace ProjectAdam {
           }
 
           Print(activeAsteroids);
-
+          Console.WriteLine("\nEnter: next chrone, Esc: exit");
         }
       }
     }
