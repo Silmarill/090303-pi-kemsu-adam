@@ -12,3 +12,8 @@ namespace AsteroidSimulation.Models
     Depleted
   }
 }
+
+public enum HarvesterState {
+  Idle,
+  Mining
+}
