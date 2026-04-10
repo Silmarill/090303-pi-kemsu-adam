@@ -3,6 +3,7 @@
 namespace AsteroidPu {
   public enum AsteroidState {
     Idle,
-    Depleted
+    Depleted,
+    Mining
   }
 }
