@@ -17,8 +17,14 @@ namespace Asteroid {
     public int createId;
 
     public Asteroid() {
+      int asteroidResMin;
+      asteroidResMin = 100;
+
+      int asteroidResMax;
+      asteroidResMax = 1001;
+
       Random rnd = new Random();
-      maxEchos = rnd.Next(100, 1001);
+      maxEchos = rnd.Next(asteroidResMin, asteroidResMax);
       currentEchos = maxEchos;
       state = AsteroidState.Idle;
       createId = ++_nextCreateId;
