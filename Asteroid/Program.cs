@@ -9,7 +9,22 @@ namespace Asteroid
       List<Asteroid> active = new List<Asteroid>();
       Random rnd = new Random();
 
-      for (int index = 0; index < 3; ++index) {
+      int firstAstIndex;
+      firstAstIndex = 3;
+
+      int lifeMove;
+      lifeMove = 5;
+
+      int lifeCycleStart;
+      lifeCycleStart = 1;
+
+      int lifeCycleEnd;
+      lifeCycleEnd = 4;
+
+      int indexOffset;
+      indexOffset = 1;
+
+      for (int index = 0; index < firstAstIndex; ++index) {
         Asteroid firstAst = emitter.Spawn();
         ChronManager.AddListener(firstAst);
         active.Add(firstAst);
@@ -30,8 +45,8 @@ namespace Asteroid
         ChronManager.MakeChronTick();
         int chron = ChronManager.GetCurrentChron();
 
-        if (chron % 5 == 0 && chron > 0) {
-          int count = rnd.Next(1, 4);
+        if (chron % lifeMove == 0 && chron > 0) {
+          int count = rnd.Next(lifeCycleStart, lifeCycleEnd);
           Console.WriteLine($"\n>>> Chron {chron}: +{count} new asteroids");
 
           for (int index = 0; index < count; ++index) {
@@ -61,7 +76,7 @@ namespace Asteroid
           );
 
         for (int index = 0; index < active.Count; ++index) {
-          Console.WriteLine($"  {index + 1}. {active[index]}");
+          Console.WriteLine($"  {index + indexOffset}. {active[index]}");
         }
 
         Console.WriteLine("\nPress ENTER for next chron, ESC to exit");

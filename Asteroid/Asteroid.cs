@@ -10,11 +10,11 @@ namespace Asteroid {
   public class Asteroid : IChronListener {
     private static int _nextCreateId = 1;
 
-    public int currentEchos { get; private set; }
-    public int maxEchos { get; private set; }
-    public AsteroidState state { get; private set; }
-    public int spawnId { get; private set; }
-    public int createId { get; private set; }
+    public int currentEchos;
+    public int maxEchos;
+    public AsteroidState state;
+    public int spawnId;
+    public int createId;
 
     public Asteroid() {
       Random rnd = new Random();
@@ -32,12 +32,19 @@ namespace Asteroid {
     }
 
     public void OnChronTick() {
+      int degradationAmount;
+      degradationAmount = 100;
+
       if (state == AsteroidState.Idle) {
-        currentEchos -= 100;
+        currentEchos -= degradationAmount;
 
-        if (currentEchos < 0) currentEchos = 0;
+        if (currentEchos < 0) {
+          currentEchos = 0;
+        }
 
-        if (currentEchos == 0) state = AsteroidState.Depleted;
+        if (currentEchos == 0) {
+          state = AsteroidState.Depleted;
+        }
       }
     }
 
