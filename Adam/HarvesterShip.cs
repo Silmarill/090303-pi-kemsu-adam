@@ -34,6 +34,7 @@ namespace Harvester {
     public bool StartMining(Asteroid asteroid)
     {
       bool miningStarted;
+
       if (state == HarvesterState.Idle && asteroid != null && asteroid.state == AsteroidState.Idle)
       {
         miningStarted = asteroid.StartMining();
