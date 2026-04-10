@@ -1,10 +1,6 @@
 ﻿using System.Collections.Generic;
 
 namespace Core {
-  public interface IChroneListener {
-    void OnChroneTick();
-  }
-
   public static class ChroneManager {
     public static List<IChroneListener> listenerList = new List<IChroneListener>();
 

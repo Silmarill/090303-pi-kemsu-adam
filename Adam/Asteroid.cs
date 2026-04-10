@@ -3,35 +3,36 @@ using Core;
 
 namespace Asteroids {
   public class Asteroid : IChroneListener {
-    private static int EchosDecrement;
-    private static int MinEchosValue;
-    private static int MaxEchosValue;
-    private static int InitialSpawnId;
+    public int EchosDecrement;
+    public int MinEchosValue;
+    public int MaxEchosValue;
+    public int InitialSpawnId;
 
-    public static int nextCreateId;
+    public int nextCreateId;
     public int currentEchos;
     public int maxEchos;
     public AsteroidState state;
     public int spawnId;
     public int createId;
-    public static int nextSpawnId;
+    public int nextSpawnId;
 
-    static Asteroid()
+    public Asteroid()
     {
+      Random rand;
+      int maxEchosValueInclusive;
+      int offsetForRandom;
+
+      offsetForRandom = 1;
       EchosDecrement = 100;
       MinEchosValue = 100;
       MaxEchosValue = 1000;
       InitialSpawnId = -1;
       nextCreateId = 0;
       nextSpawnId = 0;
-    }
-
-    public Asteroid()
-    {
-      Random rand;
 
       rand = new Random();
-      maxEchos = rand.Next(MinEchosValue, MaxEchosValue + 1);
+      maxEchosValueInclusive = MaxEchosValue + offsetForRandom;
+      maxEchos = rand.Next(MinEchosValue, maxEchosValueInclusive);
       currentEchos = maxEchos;
       state = AsteroidState.Idle;
       createId = nextCreateId;
@@ -53,9 +54,26 @@ namespace Asteroids {
 
     public void OnChroneTick()
     {
-      if (state == AsteroidState.Idle)
+    }
+
+    public void PrintInfo()
+    {
+      Console.WriteLine($"  Астероид [CreateId: {createId}, SpawnId: {spawnId}] | " + $"Echos: {currentEchos}/{maxEchos} | Состояние: {state}");
+    }
+
+    public void Mine(int biteSize)
+    {
+      if (state == AsteroidState.Mining)
       {
-        currentEchos = currentEchos - EchosDecrement;
+        if (currentEchos >= biteSize)
+        {
+          currentEchos = currentEchos - biteSize;
+        }
+        else
+        {
+          currentEchos = 0;
+        }
+
         if (currentEchos <= 0)
         {
           currentEchos = 0;
@@ -64,10 +82,14 @@ namespace Asteroids {
       }
     }
 
-    public void PrintInfo()
+    public bool StartMining()
     {
-      Console.WriteLine($"  Астероид [CreateId: {createId}, SpawnId: {spawnId}] | " +
-                        $"Echos: {currentEchos}/{maxEchos} | Состояние: {state}");
+      if (state == AsteroidState.Idle)
+      {
+        state = AsteroidState.Mining;
+        return true;
+      }
+      return false;
     }
   }
 }

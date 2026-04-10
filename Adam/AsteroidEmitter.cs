@@ -18,7 +18,7 @@ namespace Asteroids {
       {
         newAsteroid = new Asteroid();
         available.Enqueue(newAsteroid);
-        ++totalCreated;
+        totalCreated = totalCreated + 1;
       }
       Console.WriteLine($"[Пул] Создан пул с {initialSize} астероидами");
     }
