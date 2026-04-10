@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AsteroidPu.Ship {
-  internal class HarvesterShip {
-
-
+namespace AsteroidPu.Ship.Harvester {
+  public enum HarvesterState {
+    Idle,
+    Mining
   }
 }
