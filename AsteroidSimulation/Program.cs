@@ -16,7 +16,7 @@ namespace AsteroidSimulation
 
     private static int InitialPoolSize = 5;                    
     private static int MinAsteroidsToSpawn = 1;       
-    private static int MaxAsteroidsToSpawn = 3;
+    private static int MaxAsteroidsToSpawn = 4;
     private static int SpawnInterval = 5;
 
     static void Main(string[] args) {

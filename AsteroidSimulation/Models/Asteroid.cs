@@ -22,7 +22,7 @@ namespace AsteroidSimulation.Models {
     private int MaxDepletionAmount = 150;
     private int DefaultMinEchos = 0;
     private int MinMaxEchos = 100;
-    private int MaxMaxEchos = 1000;
+    private int MaxMaxEchos = 1001;
 
     // Конструктор
     public Asteroid() {
