@@ -4,9 +4,12 @@ using System.Linq;
 
 namespace Project_Adam {
   class Program {
+    public static int MinAsteroidsPerSpawn = 1;
+    public static int MaxAsteroidsPerSpawn = 4;
+    public static int FifthSpawnIntervalInChrons = 5;
     static void Main() {
       AsteroidEmitter asteroidEmitter = new AsteroidEmitter(5);
-      List<Asteroid> activeAsteroids = new List<Asteroid>();
+      List<Asteroid> activeAsteroids = new List<Asteroid>(); 
       int chroneCounter = 0;
       Random random = new Random();
 
@@ -38,8 +41,8 @@ namespace Project_Adam {
           ++chroneCounter;
           ChroneManager.MakeChroneTick();
 
-          if (chroneCounter % 5 == 0) {
-            int newAsteroidsCount = random.Next(1, 4);
+          if (chroneCounter % FifthSpawnIntervalInChrons == 0) {
+            int newAsteroidsCount = random.Next(MinAsteroidsPerSpawn, MaxAsteroidsPerSpawn);
             for (int asteroidIndex = 0; asteroidIndex < newAsteroidsCount; ++asteroidIndex) {
               Asteroid newAsteroid = asteroidEmitter.Spawn();
               activeAsteroids.Add(newAsteroid);

@@ -4,6 +4,8 @@ namespace Project_Adam {
   public class Asteroid : IChroneListener {
     private static int _nextCreateId = 0;
     private static Random _random = new Random();
+    private int MinEchosRange = 100;
+    private int MaxEchosRange = 1001;
 
     public int CurrentEchos;
     public int MaxEchos;
@@ -12,7 +14,7 @@ namespace Project_Adam {
     public int CreateID;
 
     public Asteroid() {
-      MaxEchos = _random.Next(100, 1001);
+      MaxEchos = _random.Next(MinEchosRange, MaxEchosRange);
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;
       CreateID = ++_nextCreateId;
@@ -25,8 +27,10 @@ namespace Project_Adam {
     }
 
     public void OnChroneTick() {
+      int echoReduction = 100;
+
       if (State == AsteroidState.Idle) {
-        CurrentEchos -= 100;
+        CurrentEchos -= echoReduction;
         if (CurrentEchos <= 0) {
           CurrentEchos = 0;
           State = AsteroidState.Depleted;
