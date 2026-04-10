@@ -49,6 +49,7 @@ namespace AsteroidSimulation.Entity
     public enum AsteroidState
     {
         Idle,
-        Depleted
+        Depleted,
+        Mining
     }
 }
