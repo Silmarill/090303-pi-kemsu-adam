@@ -4,17 +4,26 @@ using System.Collections.Generic;
 namespace AsteroidSimulator.Asteroids;
 
 public class AsteroidEmitter {
-  private Queue<Asteroid> _available = new Queue<Asteroid>();
-  private int _totalCreated = 0;
+  private Queue<Asteroid> _available;
+  private int _totalCreated;
+  private const int InitialPoolSize = 5;
 
-  public int TotalCreated => _totalCreated;
-  public int AvailableCount => _available.Count;
+  public int TotalCreated {
+    get { return _totalCreated; }
+  }
 
-  public AsteroidEmitter(int initialSize) {
-    for (int i = 0; i < initialSize; ++i) {
+  public int AvailableCount {
+    get { return _available.Count; }
+  }
+
+  public AsteroidEmitter() {
+    _available = new Queue<Asteroid>();
+    _totalCreated = 0;
+
+    for (int i = 0; i < InitialPoolSize; i++) {
       Asteroid asteroid = new Asteroid();
       _available.Enqueue(asteroid);
-      _totalCreated++;
+      _totalCreated = _totalCreated + 1;
     }
   }
 
@@ -23,8 +32,8 @@ public class AsteroidEmitter {
 
     if (_available.Count == 0) {
       asteroid = new Asteroid();
-      _totalCreated++;
-      Console.WriteLine($"[Предупреждение] Пул пуст! Создан новый астероид (всего создано: {_totalCreated})");
+      _totalCreated = _totalCreated + 1;
+      Console.WriteLine("[Предупреждение] Пул пуст! Создан новый астероид (всего создано: " + _totalCreated + ")");
     } else {
       asteroid = _available.Dequeue();
     }

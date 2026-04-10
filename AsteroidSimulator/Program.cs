@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using AsteroidSimulator.Asteroids;
-using AsteroidSimulator.Core;
 
 namespace AsteroidSimulator;
 
@@ -9,6 +8,11 @@ class Program {
   private static AsteroidEmitter _asteroidEmitter;
   private static List<Asteroid> _activeAsteroids;
   private static int _chronCounter;
+
+  private const int SpawnInterval = 5;
+  private const int MinNewAsteroids = 1;
+  private const int MaxNewAsteroids = 3;
+  private const int InitialAsteroids = 3;
 
   static void Main(string[] args) {
     Console.Title = "Asteroid Simulator";
@@ -18,22 +22,34 @@ class Program {
   }
 
   static void InitializeSimulation() {
-    _asteroidEmitter = new AsteroidEmitter(5);
+    _asteroidEmitter = new AsteroidEmitter();
     _activeAsteroids = new List<Asteroid>();
     _chronCounter = 0;
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < InitialAsteroids; i++) {
       _activeAsteroids.Add(_asteroidEmitter.Spawn());
     }
 
-    Console.WriteLine("========================================\n         СИМУЛЯТОР АСТЕРОИДОВ\n========================================\n");
+    string header = "========================================\n" +
+                   "         СИМУЛЯТОР АСТЕРОИДОВ\n" +
+                   "========================================\n\n";
+
+    Console.Write(header);
+
     DisplayAsteroidsInfo();
-    Console.WriteLine("\n----------------------------------------\nКоманды:\n  ENTER - Следующий хрон\n  ESC   - Выход\n----------------------------------------\n");
+
+    string controls = "\n----------------------------------------\n" +
+                     "Команды:\n" +
+                     "  ENTER - Следующий хрон\n" +
+                     "  ESC   - Выход\n" +
+                     "----------------------------------------\n";
+
+    Console.Write(controls);
   }
 
   static void RunSimulationLoop() {
     while (true) {
-      Console.Write($"Хрон #{_chronCounter + 1} готов. Нажмите ENTER для продолжения, ESC для выхода: ");
+      Console.Write("Хрон #" + (_chronCounter + 1) + " готов. Нажмите ENTER для продолжения, ESC для выхода: ");
 
       ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
@@ -49,20 +65,20 @@ class Program {
   }
 
   static void ProcessChronTick() {
-    _chronCounter++;
+    _chronCounter = _chronCounter + 1;
 
     Console.Clear();
 
-    string output = $"========== ХРОН #{_chronCounter} ==========\n\n";
+    string output = "========== ХРОН #" + _chronCounter + " ==========\n\n";
 
-    foreach (var asteroid in _activeAsteroids) {
+    foreach (Asteroid asteroid in _activeAsteroids) {
       asteroid.OnChronTick();
     }
 
-    if (_chronCounter % 5 == 0) {
+    if (_chronCounter % SpawnInterval == 0) {
       Random random = new Random();
-      int newCount = random.Next(1, 4);
-      output += $"[СОБЫТИЕ] Появилось {newCount} новых астероидов!\n\n";
+      int newCount = random.Next(MinNewAsteroids, MaxNewAsteroids + 1);
+      output = output + "[СОБЫТИЕ] Появилось " + newCount + " новых астероидов!\n\n";
 
       for (int i = 0; i < newCount; i++) {
         _activeAsteroids.Add(_asteroidEmitter.Spawn());
@@ -70,53 +86,54 @@ class Program {
     }
 
     List<Asteroid> depleted = new List<Asteroid>();
-    foreach (var asteroid in _activeAsteroids) {
+    foreach (Asteroid asteroid in _activeAsteroids) {
       if (asteroid.State == AsteroidState.Depleted) {
         depleted.Add(asteroid);
       }
     }
 
-    foreach (var asteroid in depleted) {
+    foreach (Asteroid asteroid in depleted) {
       _activeAsteroids.Remove(asteroid);
       _asteroidEmitter.Recycle(asteroid);
-      output += $"[УТИЛИЗАЦИЯ] Астероид #{asteroid.CreateID} истощён\n";
+      output = output + "[УТИЛИЗАЦИЯ] Астероид #" + asteroid.CreateID + " (SpawnID:" + asteroid.SpawnID + ") истощён и возвращён в пул\n";
     }
 
     if (depleted.Count > 0) {
-      output += "\n";
+      output = output + "\n";
     }
 
-    output += "--- АКТИВНЫЕ АСТЕРОИДЫ ---\n";
+    output = output + "--- АКТИВНЫЕ АСТЕРОИДЫ ---\n";
+
     if (_activeAsteroids.Count == 0) {
-      output += "  Нет активных астероидов\n";
+      output = output + "  Нет активных астероидов\n";
     } else {
-      for (int i = 0; i < _activeAsteroids.Count; i++) {
-        var ast = _activeAsteroids[i];
-        output += $"  {i + 1}. ID:{ast.CreateID,3} | Спавн:{ast.SpawnID,3} | {ast.CurrentEchos,4}/{ast.MaxEchos,4} | {ast.State}\n";
+      for (int index = 0; index < _activeAsteroids.Count; index++) {
+        Asteroid asteroid = _activeAsteroids[index];
+        output = output + $"  {index + 1,2}. ID:{asteroid.CreateID,8} | Спавн:{asteroid.SpawnID,8} | {asteroid.CurrentEchos,8}/{asteroid.MaxEchos,8} | {asteroid.State}\n";
       }
-      output += $"  Всего: {_activeAsteroids.Count} активных астероидов\n";
+      output = output + "  Всего: " + _activeAsteroids.Count + " активных астероидов\n";
     }
 
-    output += $"\n--- СТАТИСТИКА ПУЛА ---\n";
-    output += $"  Доступно: {_asteroidEmitter.AvailableCount}\n";
-    output += $"  Всего создано: {_asteroidEmitter.TotalCreated}\n";
-    output += $"  Активных: {_activeAsteroids.Count}\n\n";
-    output += "========================================\n";
+    output = output + "\n--- СТАТИСТИКА ПУЛА ---\n";
+    output = output + "  Доступно: " + _asteroidEmitter.AvailableCount + "\n";
+    output = output + "  Всего создано: " + _asteroidEmitter.TotalCreated + "\n";
+    output = output + "  Активных: " + _activeAsteroids.Count + "\n\n";
+    output = output + "========================================\n";
 
-    Console.WriteLine(output);
+    Console.Write(output);
   }
 
   static void DisplayAsteroidsInfo() {
     string output = "--- АКТИВНЫЕ АСТЕРОИДЫ ---\n";
 
     if (_activeAsteroids.Count == 0) {
-      output += "  Нет активных астероидов\n";
+      output = output + "  Нет активных астероидов\n";
     } else {
-      for (int i = 0; i < _activeAsteroids.Count; i++) {
-        var ast = _activeAsteroids[i];
-        output += $"  {i + 1}. ID:{ast.CreateID,3} | Спавн:{ast.SpawnID,3} | {ast.CurrentEchos,4}/{ast.MaxEchos,4} | {ast.State}\n";
+      for (int index = 0; index < _activeAsteroids.Count; index++) {
+        Asteroid asteroid = _activeAsteroids[index];
+        output = output + $"  {index + 1,2}. ID:{asteroid.CreateID,8} | Спавн:{asteroid.SpawnID,8} | {asteroid.CurrentEchos,8}/{asteroid.MaxEchos,8} | {asteroid.State}\n";
       }
-      output += $"  Всего: {_activeAsteroids.Count} активных астероидов\n";
+      output = output + "  Всего: " + _activeAsteroids.Count + " активных астероидов\n";
     }
 
     Console.Write(output);
