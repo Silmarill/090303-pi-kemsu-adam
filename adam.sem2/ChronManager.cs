@@ -3,27 +3,24 @@ using AsteroidSimulator.Interfaces;
 
 namespace AsteroidSimulator.Managers {
   public static class ChronManager {
-    public static List<IChronListener> _listenerList = new List<IChronListener>();
+    public static List<IChronListener> Listeners;
 
-    public static void AddListener(IChronListener listener)
-    {
-      if (!_listenerList.Contains(listener))
-        _listenerList.Add(listener);
+    static ChronManager() {
+      Listeners = new List<IChronListener>();
     }
 
-    public static void RemoveListener(IChronListener listener)
-    {
-      _listenerList.Remove(listener);
+    public static void AddListener(IChronListener listener) {
+      Listeners.Add(listener);
     }
 
-    public static void MakeChronTick()
-    {
-      foreach (var listener in _listenerList)
-      {
-        listener.OnChronTick();
+    public static void RemoveListener(IChronListener listener) {
+      Listeners.Remove(listener);
+    }
+
+    public static void MakeChronTick() {
+      foreach (IChronListener currentListener in Listeners) {
+        currentListener.OnChronTick();
       }
     }
-
-    public static int ListenerCount => _listenerList.Count;
   }
 }

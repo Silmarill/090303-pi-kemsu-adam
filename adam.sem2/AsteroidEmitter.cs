@@ -3,33 +3,47 @@ using System.Collections.Generic;
 
 namespace AsteroidSimulator.Models {
   public class AsteroidEmitter {
-    public Queue<Asteroid> _available = new Queue<Asteroid>();
+    public Queue<Asteroid> Available;
 
     public AsteroidEmitter(int initialSize)
     {
-      for (int asteroidIndex = 0; asteroidIndex < initialSize; ++asteroidIndex)
+      int asteroidIndex;
+      Asteroid newAsteroid;
+
+      this.Available = new Queue<Asteroid>();
+
+      for (asteroidIndex = 0; asteroidIndex < initialSize; ++asteroidIndex)
       {
-        _available.Enqueue(new Asteroid());
+        newAsteroid = new Asteroid();
+        this.Available.Enqueue(newAsteroid);
       }
     }
 
     public Asteroid Spawn()
     {
-      if (_available.Count == 0)
+      Asteroid asteroidFromPool;
+
+      if (this.Available.Count == 0)
       {
         Console.WriteLine("WARNING: Pool is empty! Creating new asteroid on the fly.");
-        return new Asteroid();
+        asteroidFromPool = new Asteroid();
+        return asteroidFromPool;
       }
 
-      return _available.Dequeue();
+      asteroidFromPool = this.Available.Dequeue();
+      return asteroidFromPool;
     }
 
-    public void Recycle(Asteroid asteroid)
+    public void Recycle(Asteroid asteroidToRecycle)
     {
-      asteroid.Reset();
-      _available.Enqueue(asteroid);
+      asteroidToRecycle.Reset();
+      this.Available.Enqueue(asteroidToRecycle);
     }
 
-    public int PoolSize => _available.Count;
+    public int GetPoolSize() {
+      int poolSize;
+      poolSize = this.Available.Count;
+      return poolSize;
+    }
   }
 }

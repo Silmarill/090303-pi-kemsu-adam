@@ -2,57 +2,77 @@
 
 namespace AsteroidSimulator.Models {
   public class Asteroid : Interfaces.IChronListener {
-    public static int s_globalCreateCounter = 0;
-    public static int s_globalSpawnCounter = 0;
+    public static int GlobalCreateCounter;
+    public static int GlobalSpawnCounter;
 
-    public int CurrentEchos { get; private set; }
-    public int MaxEchos { get; private set; }
-    public AsteroidState State { get; private set; }
-    public int CreateId { get; private set; }
-    public int SpawnId { get; private set; }
+    public int CurrentEchos;
+    public int MaxEchos;
+    public AsteroidState State;
+    public int CreateId;
+    public int SpawnId;
 
-    public Asteroid()
+    static Asteroid()
     {
-      Random random = new Random();
-      int minEchos = 100;
-      int maxEchos = 1000;
-
-      MaxEchos = random.Next(minEchos, maxEchos);
-      CurrentEchos = MaxEchos;
-      State = AsteroidState.Idle;
-      CreateId = ++s_globalCreateCounter;
-      SpawnId = 0;
+      GlobalCreateCounter = 0;
+      GlobalSpawnCounter = 0;
     }
 
-    public void Reset()
-    {
-      Random random = new Random();
-      int minEchos = 100;
-      int maxEchos = 1000;
+    public Asteroid() {
+      Random randomNumber;
+      int minEchos;
+      int maxEchos;
+      int rangeOffset;
 
-      MaxEchos = random.Next(minEchos, maxEchos);
-      CurrentEchos = MaxEchos;
-      State = AsteroidState.Idle;
-      SpawnId = ++s_globalSpawnCounter;
+      randomNumber = new Random();
+      minEchos = 100;
+      maxEchos = 1000;
+      rangeOffset = 1;
+
+      this.MaxEchos = randomNumber.Next(minEchos, maxEchos + rangeOffset);
+      this.CurrentEchos = this.MaxEchos;
+      this.State = AsteroidState.Idle;
+      this.CreateId = ++GlobalCreateCounter;
+      this.SpawnId = 0;
     }
 
-    public void OnChronTick()
-    {
-      if (State == AsteroidState.Idle)
-      {
-        CurrentEchos -= 100;
+    public void Reset() {
+      Random randomNumber;
+      int minEchos;
+      int maxEchos;
+      int rangeOffset;
 
-        if (CurrentEchos <= 0)
-        {
-          CurrentEchos = 0;
-          State = AsteroidState.Depleted;
+      randomNumber = new Random();
+      minEchos = 100;
+      maxEchos = 1000;
+      rangeOffset = 1;
+
+      this.MaxEchos = randomNumber.Next(minEchos, maxEchos + rangeOffset);
+      this.CurrentEchos = this.MaxEchos;
+      this.State = AsteroidState.Idle;
+      this.SpawnId = ++GlobalSpawnCounter;
+    }
+
+    public void OnChronTick() {
+      int echosLossPerTick;
+
+      echosLossPerTick = 100;
+
+      if (this.State == AsteroidState.Idle) {
+        this.CurrentEchos = this.CurrentEchos - echosLossPerTick;
+
+        if (this.CurrentEchos <= 0) {
+          this.CurrentEchos = 0;
+          this.State = AsteroidState.Depleted;
         }
       }
     }
 
     public override string ToString()
     {
-      return $"Asteroid #{SpawnId} (Created: #{CreateId}) | Echos: {CurrentEchos}/{MaxEchos} | State: {State}";
+      string result;
+
+      result = "Asteroid #" + this.SpawnId + " (Created: #" + this.CreateId + ") | Echos: " + this.CurrentEchos + "/" + this.MaxEchos + " | State: " + this.State;
+      return result;
     }
   }
 }
