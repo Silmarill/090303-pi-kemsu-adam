@@ -14,12 +14,17 @@ namespace AsteroidSimulation
     private static int _chronCounter;
     private static readonly Random _random = new Random();
 
+    private static int InitialPoolSize = 5;                    
+    private static int MinAsteroidsToSpawn = 1;       
+    private static int MaxAsteroidsToSpawn = 3;
+    private static int SpawnInterval = 5;
+
     static void Main(string[] args) {
       Console.Title = "Asteroid Simulation - Observer & Object Pool";
       Console.CursorVisible = false;
 
       // Инициализация
-      _asteroidEmitter = new AsteroidEmitter(5);
+      _asteroidEmitter = new AsteroidEmitter(InitialPoolSize);
       _activeAsteroids = new List<Asteroid>();
       _chronCounter = 0;
 
@@ -66,7 +71,7 @@ namespace AsteroidSimulation
       const int chronIntervalForSpawning = 5;
 
       if (_chronCounter % chronIntervalForSpawning == 0) {
-        int newAsteroidsCount = _random.Next(1, 4);
+        int newAsteroidsCount = _random.Next(MinAsteroidsToSpawn, MaxAsteroidsToSpawn);
         Console.WriteLine($"\n[Событие] Каждые 5 хронов: спавн {newAsteroidsCount} новых астероидов");
         for (int asteroidIndex = 0; asteroidIndex < newAsteroidsCount; ++asteroidIndex) {
           SpawnNewAsteroid();
@@ -124,7 +129,7 @@ namespace AsteroidSimulation
       Console.WriteLine($"Текущий хрон: {_chronCounter}");
       Console.WriteLine($"Активных астероидов: {_activeAsteroids.Count}");
       Console.WriteLine($"Доступно в пуле: {_asteroidEmitter.AvailableCount}");
-      Console.WriteLine($"Следующий спавн через: {5 - (_chronCounter % 5)} хронов");
+      Console.WriteLine($"Следующий спавн через: {5 - (_chronCounter % SpawnInterval)} хронов");
       Console.WriteLine("-------------------\n");
     }
   }

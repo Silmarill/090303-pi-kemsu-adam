@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AsteroidSimulation.Managers {
   public class AsteroidEmitter {
-    private Queue<Asteroid> _available = new Queue<Asteroid>();
+    public Queue<Asteroid> _available = new Queue<Asteroid>();
     private int _nextSpawnId = 1;
 
     public AsteroidEmitter(int initialSize) {

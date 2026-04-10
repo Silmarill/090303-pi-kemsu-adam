@@ -10,23 +10,27 @@ namespace AsteroidSimulation.Models {
     private static int _nextCreateId = 1;
     private static readonly Random _random = new Random();
 
-    // Поля экземпляра (разные для каждого астероида)
-    public int DepletionAmount { get; private set; }
-    public int MinEchos { get; private set; }
+    public int CurrentEchos;
+    public int MaxEchos;
+    public AsteroidState State;
+    public int SpawnID;
+    public int CreateID;
+    public int DepletionAmount;
+    public int MinEchos;
 
-    public int CurrentEchos { get; private set; }
-    public int MaxEchos { get; private set; }
-    public AsteroidState State { get; private set; }
-    public int SpawnID { get; private set; }
-    public int CreateID { get; private set; }
+    private int MinDepletionAmount = 50;
+    private int MaxDepletionAmount = 150;
+    private int DefaultMinEchos = 0;
+    private int MinMaxEchos = 100;
+    private int MaxMaxEchos = 1000;
 
     // Конструктор
     public Asteroid() {
       // Уникальные значения для каждого астероида
-      DepletionAmount = _random.Next(50, 151);  // от 50 до 150 (вокруг 100)
-      MinEchos = 0;
+      DepletionAmount = _random.Next(MinDepletionAmount, MaxDepletionAmount);  // от 50 до 150 (вокруг 100)
+      MinEchos = DefaultMinEchos;
 
-      MaxEchos = _random.Next(100, 1001);
+      MaxEchos = _random.Next(MinMaxEchos, MaxMaxEchos);
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;
 
