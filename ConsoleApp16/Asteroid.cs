@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace ConsoleApp16 {
   public enum AsteroidState { Idle, Depleted }
   public class Asteroid : IChroneListener {
-    public int CurrentEchos { get; set; }
-    public int MaxEchos { get; set; }
-    public AsteroidState State { get; set; } 
-    public int SpawnID { get; set; }
-    public int CreateID { get; set; }
+    public int CurrentEchos;
+    public int MaxEchos;
+    public AsteroidState State;
+    public int SpawnID;
+    public int CreateID; 
     public int EchosDecreasePerTick;
 
 
