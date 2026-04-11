@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace AsteroidSimulation.Models {
   public enum AsteroidState {
     Idle,      // Ожидает
-    Depleted   // Истощён
+    Depleted,   // Истощён
+    Mining,    // В процессе добычи (захвачен харвестером)
   }
 }

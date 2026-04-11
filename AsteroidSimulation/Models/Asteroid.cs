@@ -10,6 +10,8 @@ namespace AsteroidSimulation.Models {
     private static int _nextCreateId = 1;
     private static readonly Random _random = new Random();
 
+    public static bool IsZoneStable = false;
+
     public int CurrentEchos;
     public int MaxEchos;
     public AsteroidState State;
@@ -47,6 +49,11 @@ namespace AsteroidSimulation.Models {
 
     // Логика деградации на каждом хроне
     public void OnChroneTick() {
+      if (IsZoneStable) {
+        return;
+      }
+        
+
       if (State == AsteroidState.Idle) {
         CurrentEchos -= DepletionAmount;
         if (CurrentEchos <= MinEchos) {

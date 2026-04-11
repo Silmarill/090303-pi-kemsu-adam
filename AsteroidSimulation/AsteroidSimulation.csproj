@@ -46,8 +46,12 @@
     <Compile Include="Interfaces\IChroneListener.cs" />
     <Compile Include="Managers\AsteroidEmitter.cs" />
     <Compile Include="Managers\ChroneManager.cs" />
+    <Compile Include="Managers\MotherShip.cs" />
     <Compile Include="Models\Asteroid.cs" />
     <Compile Include="Models\AsteroidState.cs" />
+    <Compile Include="Models\HarvesterShip.cs" />
+    <Compile Include="Models\HarvesterState.cs" />
+    <Compile Include="Models\Report.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
