@@ -21,8 +21,9 @@ namespace AsteroidPu {
 
     static void Main(string[] args) {
 
-      int countChrons = 0;
-      int countAsteroidItems = 5;
+      int countChrons = 0,
+        countAsteroidItems = 5,
+        countSpawnID = 0;
       AsteroidEmitter asteroidItems = new AsteroidEmitter(countAsteroidItems);
       List<Asteroid> activeAsteroid = new List<Asteroid>();
       bool isRun = true;
@@ -46,6 +47,9 @@ namespace AsteroidPu {
             int createdAsteroid = random.Next(1, 3);
             for (int indexI = 0; indexI < createdAsteroid; ++indexI) {
               Asteroid newAsteroid = asteroidItems.Spawn();
+              //Unique serial number
+              ++countSpawnID;
+              newAsteroid.SpawnID = countSpawnID;
               activeAsteroid.Add(newAsteroid);
             }
           }

@@ -4,7 +4,9 @@ namespace AsteroidPu {
   public class Asteroid {
 
     public int CurrentEchos;
-    int MaxEchos;
+    int stepEchos = 100,
+      MaxEchos,
+      minСorrectNum = 0;
     public AsteroidState State;
     public int SpawnID;
     public int CreateID;
@@ -16,13 +18,7 @@ namespace AsteroidPu {
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;
       //Genius CreateID
-      if (CreateID < MaxEchos) {
-        ++CreateID;
-      }
-      //No less genius SpawnID
-      if (CreateID % 3 == 0) {
-        ++SpawnID;
-      }
+      ++CreateID;
     }
 
     public void Reset() {
@@ -32,11 +28,11 @@ namespace AsteroidPu {
 
     public void OnChoneTick() {
       if (State == AsteroidState.Idle) {
-        CurrentEchos -= 100;
-        if (CurrentEchos < 0) {
-          CurrentEchos = 0;
+        CurrentEchos -= stepEchos;
+        if (CurrentEchos < minСorrectNum) {
+          CurrentEchos = minСorrectNum;
         }
-        if (CurrentEchos == 0) {
+        if (CurrentEchos == minСorrectNum) {
           State = AsteroidState.Depleted;
         }
       }
