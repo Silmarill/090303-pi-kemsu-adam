@@ -1,52 +1,57 @@
 ﻿using System;
 
 public class Asteroid : IChroneListener {
-  // Статический счетчик для генерации уникальных CreateID
+  // Публичные поля
+  public int CurrentEchos;
+  public int MaxEchos;
+  public AsteroidState State;
+  public int SpawnID;
+  public int CreateID;
+
+  // Величина уменьшения ресурса за один хрон
+  private const int ECHOS_DECREASE_PER_CHRON = 100;
+
   private static int _globalCreateIdCounter = 0;
-  // Статический объект Random для генерации случайного количества эхов
   private static Random _random = new Random();
 
-  public int CurrentEchos { get; private set; }
-  public int MaxEchos { get; private set; }
-  public AsteroidState State { get; private set; }
-  public int SpawnID { get; private set; }
-  public int CreateID { get; private set; }
-
-  // Конструктор для создания астероида с рандомным количеством эхов
+  // Конструктор, который инициализирует астероид с уникальным CreateID, случайным количеством Echos и начальным состоянием Idle
   public Asteroid() {
     CreateID = ++_globalCreateIdCounter;
 
-    // От 100 до 1000 включительно
     MaxEchos = _random.Next(100, 1001);
-
     CurrentEchos = MaxEchos;
     State = AsteroidState.Idle;
+    SpawnID = 0;
   }
 
-  // Метод для пула, чтобы задавать сквозной номер спавна
+  // Метод для установки SpawnID, который может быть вызван эмиттером при спавне астероида
   public void SetSpawnID(int spawnId) {
     SpawnID = spawnId;
   }
 
-  // Метод для сброса астероида в начальное состояние
+  // Метод для сброса астероида в начальное состояние, который может быть вызван эмиттером при ресете астероида
   public void Reset() {
     CurrentEchos = MaxEchos;
     State = AsteroidState.Idle;
   }
 
-  // Вызывается при каждом тике хронометра
+  // Метод, который вызывается хроном каждый тик, уменьшая количество Echos, если астероид в состоянии Idle
   public void OnChroneTick() {
     if (State == AsteroidState.Idle) {
-      CurrentEchos -= 100;
-      if (CurrentEchos <= 0) {
+      CurrentEchos -= ECHOS_DECREASE_PER_CHRON;
+
+      if (CurrentEchos < 0) {
         CurrentEchos = 0;
+      }
+
+      if (CurrentEchos == 0) {
         State = AsteroidState.Depleted;
       }
     }
   }
 
-  // Переопределение для удобного вывода
+  // Переопределение метода ToString для удобного отображения информации об астероиде
   public override string ToString() {
-    return $"[CreateID: {CreateID:D2} | SpawnID: {SpawnID:D2}] Echos: {CurrentEchos,4}/{MaxEchos,4} | State: {State}";
+    return $"[CreateID: {CreateID:D2} | SpawnID: {SpawnID:D2}] Echos: {CurrentEchos}/{MaxEchos} | State: {State}";
   }
 }
