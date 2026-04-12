@@ -1,12 +1,14 @@
 ﻿namespace AsteroidSimulator.Models {
   public class Report {
-    public int JobNumber { get; set; }
-    public int AsteroidSpawnID { get; set; }
-    public int AmountMined { get; set; }
+    public int JobNumber;
+    public int AsteroidSpawnID;
+    public int AmountMined;
 
-    public override string ToString()
-    {
-      return $"Job #{JobNumber} | Asteroid #{AsteroidSpawnID} | Mined {AmountMined}";
+    public override string ToString() {
+      string result;
+
+      result = "Job #" + this.JobNumber + " | Asteroid #" + this.AsteroidSpawnID + " | Mined " + this.AmountMined;
+      return result;
     }
   }
 }

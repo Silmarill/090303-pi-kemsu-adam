@@ -2,101 +2,131 @@
 
 namespace AsteroidSimulator.Models {
   public class HarvesterShip {
-    private static int nextId = 1;
+    public static int NextId;
 
-    public int Id { get; private set; }
-    public string Name { get; private set; }
-    public int AsteroidsMined { get; private set; }
-    public int CargoCapacity { get; private set; }
-    public int CargoCurrent { get; private set; }
-    public int BiteSize { get; private set; }
-    public HarvesterState State { get; private set; }
+    public int Id;
+    public string Name;
+    public int AsteroidsMined;
+    public int CargoCapacity;
+    public int CargoCurrent;
+    public int BiteSize;
+    public HarvesterState State;
+    public Asteroid CurrentAsteroid;
 
-    private Asteroid currentAsteroid;
+    public HarvesterShip(string shipName) {
+      int stepOne;
+      int defaultCargo;
+      int defaultBite;
 
-    public HarvesterShip(string name, int cargoCapacity = 500, int biteSize = 50)
-    {
-      Id = nextId++;
-      Name = name;
-      CargoCapacity = cargoCapacity;
-      BiteSize = biteSize;
-      CargoCurrent = 0;
-      AsteroidsMined = 0;
-      State = HarvesterState.Idle;
-      currentAsteroid = null;
+      stepOne = 1;
+      defaultCargo = 500;
+      defaultBite = 50;
+
+      this.Id = NextId + stepOne;
+      NextId = this.Id;
+      this.Name = shipName;
+      this.CargoCapacity = defaultCargo;
+      this.BiteSize = defaultBite;
+      this.CargoCurrent = 0;
+      this.AsteroidsMined = 0;
+      this.State = HarvesterState.Idle;
+      this.CurrentAsteroid = null;
     }
 
-    public bool IsIdle => State == HarvesterState.Idle;
-
-    public bool AssignAsteroid(Asteroid asteroid)
-    {
-      if (State != HarvesterState.Idle) return false;
-      if (asteroid == null || asteroid.State != AsteroidState.Idle) return false;
-
-      currentAsteroid = asteroid;
-      currentAsteroid.StartMining();
-      State = HarvesterState.Mining;
-      return true;
+    public bool IsIdle() {
+      return this.State == HarvesterState.Idle;
     }
 
-    public bool MineTick()
-    {
-      if (State != HarvesterState.Mining) return false;
-      if (currentAsteroid == null || currentAsteroid.State == AsteroidState.Depleted)
-      {
-        FinishMining();
+    public bool AssignAsteroid(Asteroid target) {
+      if (this.State != HarvesterState.Idle) {
         return false;
       }
 
-      int mined = currentAsteroid.Mine(BiteSize);
-      CargoCurrent += mined;
-
-      if (currentAsteroid.State == AsteroidState.Depleted)
-      {
-        FinishMining();
-        return true;
+      if (target == null) {
+        return false;
       }
 
-      if (CargoCurrent >= CargoCapacity)
-      {
-        FinishMining();
-        return true;
+      if (target.State != AsteroidState.Idle) {
+        return false;
       }
 
+      this.CurrentAsteroid = target;
+      this.CurrentAsteroid.StartMining();
+      this.State = HarvesterState.Mining;
       return true;
     }
 
-    private void FinishMining()
-    {
-      if (currentAsteroid != null)
-      {
-        currentAsteroid.StopMining();
-        currentAsteroid = null;
+    public void MineTick() {
+      int mined;
+
+      if (this.State != HarvesterState.Mining) {
+        return;
       }
-      State = HarvesterState.Idle;
+
+      if (this.CurrentAsteroid == null) {
+        this.FinishMining();
+        return;
+      }
+
+      if (this.CurrentAsteroid.State == AsteroidState.Depleted) {
+        this.FinishMining();
+        return;
+      }
+
+      mined = this.CurrentAsteroid.Mine(this.BiteSize);
+      this.CargoCurrent = this.CargoCurrent + mined;
+
+      if (this.CurrentAsteroid.State == AsteroidState.Depleted) {
+        this.FinishMining();
+        return;
+      }
+
+      if (this.CargoCurrent >= this.CargoCapacity) {
+        this.FinishMining();
+        return;
+      }
     }
 
-    public Report Unload(int jobNumber)
-    {
-      var report = new Report
-      {
-        JobNumber = jobNumber,
-        AsteroidSpawnID = currentAsteroid?.SpawnId ?? 0,
-        AmountMined = CargoCurrent
-      };
-      AsteroidsMined++;
-      CargoCurrent = 0;
-      return report;
+    private void FinishMining() {
+      if (this.CurrentAsteroid != null) {
+        this.CurrentAsteroid.StopMining();
+        this.CurrentAsteroid = null;
+      }
+
+      this.State = HarvesterState.Idle;
     }
 
-    public Report UnloadPartial(int jobNumber)
-    {
-      return Unload(jobNumber);
+    public Report Unload(int jobNumber) {
+      Report newReport;
+      int stepOne;
+      int asteroidSpawnIdentifier;
+      int zero;
+
+      stepOne = 1;
+      zero = 0;
+
+      if (this.CurrentAsteroid != null) {
+        asteroidSpawnIdentifier = this.CurrentAsteroid.SpawnId;
+      } else {
+        asteroidSpawnIdentifier = zero;
+      }
+
+      newReport = new Report();
+      newReport.JobNumber = jobNumber;
+      newReport.AsteroidSpawnID = asteroidSpawnIdentifier;
+      newReport.AmountMined = this.CargoCurrent;
+
+      this.AsteroidsMined = this.AsteroidsMined + stepOne;
+      this.CargoCurrent = zero;
+
+      return newReport;
     }
 
-    public override string ToString()
-    {
-      return $"{Name} (ID:{Id}) | {State} | Cargo:{CargoCurrent}/{CargoCapacity} | Mined:{AsteroidsMined}";
+    public override string ToString() {
+      string result;
+
+      result = this.Name + " (ID:" + this.Id + ") | " + this.State + " | Cargo:" + this.CargoCurrent + "/" + this.CargoCapacity + " | Mined:" + this.AsteroidsMined;
+      return result;
     }
   }
 }

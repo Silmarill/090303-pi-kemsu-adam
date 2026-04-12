@@ -5,45 +5,43 @@ namespace AsteroidSimulator.Models {
   public class AsteroidEmitter {
     public Queue<Asteroid> Available;
 
-    public AsteroidEmitter(int initialSize)
-    {
+    public AsteroidEmitter(int initialSize) {
       int asteroidIndex;
-      Asteroid newAsteroid;
+      int stepOne;
+      int zero;
+
+      stepOne = 1;
+      zero = 0;
 
       this.Available = new Queue<Asteroid>();
 
-      for (asteroidIndex = 0; asteroidIndex < initialSize; ++asteroidIndex)
-      {
+      for (asteroidIndex = zero; asteroidIndex < initialSize; asteroidIndex = asteroidIndex + stepOne) {
+        Asteroid newAsteroid;
+
         newAsteroid = new Asteroid();
         this.Available.Enqueue(newAsteroid);
       }
     }
 
-    public Asteroid Spawn()
-    {
-      Asteroid asteroidFromPool;
+    public Asteroid Spawn() {
+      int zero;
 
-      if (this.Available.Count == 0)
-      {
-        Console.WriteLine("WARNING: Pool is empty! Creating new asteroid on the fly.");
-        asteroidFromPool = new Asteroid();
-        return asteroidFromPool;
+      zero = 0;
+
+      if (this.Available.Count == zero) {
+        return new Asteroid();
       }
 
-      asteroidFromPool = this.Available.Dequeue();
-      return asteroidFromPool;
+      return this.Available.Dequeue();
     }
 
-    public void Recycle(Asteroid asteroidToRecycle)
-    {
-      asteroidToRecycle.Reset();
-      this.Available.Enqueue(asteroidToRecycle);
+    public void Recycle(Asteroid asteroid) {
+      asteroid.Reset();
+      this.Available.Enqueue(asteroid);
     }
 
     public int GetPoolSize() {
-      int poolSize;
-      poolSize = this.Available.Count;
-      return poolSize;
+      return this.Available.Count;
     }
   }
 }

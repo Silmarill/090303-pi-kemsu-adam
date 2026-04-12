@@ -1,107 +1,119 @@
 ﻿using System;
 using System.Collections.Generic;
 using AsteroidSimulator.Models;
-using AsteroidSimulator.Managers;
 
 namespace AsteroidSimulator {
   class Program {
-    public static AsteroidEmitter AsteroidEmitter;
-    public static List<Asteroid> ActiveAsteroids;
-    public static int ChronCounter;
-    public static Random RandomGenerator;
-
     static void Main(string[] args) {
+      int stepValue;
+      int zeroValue;
+      int chronCounter;
       int poolInitialSize;
       int startAsteroidsCount;
-      int spawnInterval;
-      int minNewAsteroids;
-      int maxNewAsteroids;
+      int spawnIntervalTicks;
+      int minSpawnAmount;
+      int maxSpawnAmount;
+      int warningThreshold;
+      int warningStepValue;
+      int worklogPrintInterval;
       int asteroidIndex;
       int newAsteroidsCount;
-      int depletedIndex;
+      int maxExclusiveValue;
+      int warningBaseValue;
       Asteroid newAsteroid;
       List<Asteroid> depletedAsteroids;
-      ConsoleKeyInfo pressedKey;
+      AsteroidEmitter asteroidPool;
+      List<Asteroid> activeAsteroids;
+      MotherShip motherStation;
+      Random randomGenerator;
 
-      Console.OutputEncoding = System.Text.Encoding.UTF8;
+      stepValue = 1;
+      zeroValue = 0;
+      chronCounter = zeroValue;
+      poolInitialSize = 10;
+      startAsteroidsCount = 5;
+      spawnIntervalTicks = 4;
+      minSpawnAmount = 1;
+      maxSpawnAmount = 2;
+      warningStepValue = 5;
+      worklogPrintInterval = 15;
+      warningBaseValue = poolInitialSize + warningStepValue;
+      warningThreshold = warningBaseValue;
 
-      poolInitialSize = 5;
-      startAsteroidsCount = 3;
-      spawnInterval = 5;
-      minNewAsteroids = 1;
-      maxNewAsteroids = 3;
+      asteroidPool = new AsteroidEmitter(poolInitialSize);
+      activeAsteroids = new List<Asteroid>();
+      motherStation = new MotherShip(5);
+      randomGenerator = new Random();
 
-      AsteroidEmitter = new AsteroidEmitter(poolInitialSize);
-      ActiveAsteroids = new List<Asteroid>();
-      RandomGenerator = new Random();
-      ChronCounter = 0;
-
-      for (asteroidIndex = 0; asteroidIndex < startAsteroidsCount; ++asteroidIndex) {
-        newAsteroid = AsteroidEmitter.Spawn();
-        ActiveAsteroids.Add(newAsteroid);
-        ChronManager.AddListener(newAsteroid);
+      for (asteroidIndex = zeroValue; asteroidIndex < startAsteroidsCount; asteroidIndex = asteroidIndex + stepValue) {
+        newAsteroid = asteroidPool.Spawn();
+        activeAsteroids.Add(newAsteroid);
       }
 
       while (true) {
-        int chronIncrement;
-
-        chronIncrement = 1;
-
         Console.Clear();
-        ChronCounter = ChronCounter + chronIncrement;
+        chronCounter = chronCounter + stepValue;
 
-        Console.WriteLine("CHRON #" + ChronCounter);
+        Console.WriteLine("===== CHRON #" + chronCounter + " =====");
 
-        ChronManager.MakeChronTick();
+        motherStation.OnChronTick(activeAsteroids);
 
-        if (ChronCounter % spawnInterval == 0) {
-          int rangeOffset;
-
-          rangeOffset = 1;
-          newAsteroidsCount = RandomGenerator.Next(minNewAsteroids, maxNewAsteroids + rangeOffset);
+        if (chronCounter % spawnIntervalTicks == zeroValue) {
+          maxExclusiveValue = maxSpawnAmount + stepValue;
+          newAsteroidsCount = randomGenerator.Next(minSpawnAmount, maxExclusiveValue);
           Console.WriteLine("Spawning " + newAsteroidsCount + " new asteroids!");
 
-          for (asteroidIndex = 0; asteroidIndex < newAsteroidsCount; ++asteroidIndex) {
-            newAsteroid = AsteroidEmitter.Spawn();
-            ActiveAsteroids.Add(newAsteroid);
-            ChronManager.AddListener(newAsteroid);
+          for (asteroidIndex = zeroValue; asteroidIndex < newAsteroidsCount; asteroidIndex = asteroidIndex + stepValue) {
+            newAsteroid = asteroidPool.Spawn();
+            activeAsteroids.Add(newAsteroid);
+
+            if (newAsteroid.CreateId > warningThreshold) {
+              Console.WriteLine("WARNING: Pool was empty, created new asteroid.");
+              warningThreshold = warningThreshold + warningStepValue;
+            }
           }
         }
 
         depletedAsteroids = new List<Asteroid>();
 
-        foreach (Asteroid currentAsteroid in ActiveAsteroids) {
+        foreach (Asteroid currentAsteroid in activeAsteroids) {
           if (currentAsteroid.State == AsteroidState.Depleted) {
             depletedAsteroids.Add(currentAsteroid);
           }
         }
 
-        for (depletedIndex = 0; depletedIndex < depletedAsteroids.Count; ++depletedIndex) {
-          Asteroid asteroidToRemove;
-
-          asteroidToRemove = depletedAsteroids[depletedIndex];
-          ActiveAsteroids.Remove(asteroidToRemove);
-          ChronManager.RemoveListener(asteroidToRemove);
-          AsteroidEmitter.Recycle(asteroidToRemove);
+        foreach (Asteroid deadAsteroid in depletedAsteroids) {
+          activeAsteroids.Remove(deadAsteroid);
+          asteroidPool.Recycle(deadAsteroid);
         }
 
-        Console.WriteLine("Active asteroids: " + ActiveAsteroids.Count);
-        Console.WriteLine("Pool size: " + AsteroidEmitter.GetPoolSize());
-        Console.WriteLine("--- Active asteroids ---");
+        Console.WriteLine("\nActive asteroids: " + activeAsteroids.Count);
 
-        if (ActiveAsteroids.Count == 0) {
-          Console.WriteLine("(no active asteroids)");
-        }
-        else {
-          foreach (Asteroid currentAsteroid in ActiveAsteroids)
-          {
-            Console.WriteLine(currentAsteroid.ToString());
-          }
+        foreach (Asteroid currentAsteroid in activeAsteroids) {
+          Console.WriteLine("  " + currentAsteroid.ToString());
         }
 
-        Console.WriteLine("Press Enter for next chron | ESC to exit");
+        Console.WriteLine("\nHarvester Fleet:");
 
+        foreach (HarvesterShip currentShip in motherStation.Fleet) {
+          Console.WriteLine("  " + currentShip.ToString());
+        }
+
+        Console.WriteLine("\nTotal mined (Echos):");
+
+        foreach (KeyValuePair<string, int> miningEntry in motherStation.GetTotalMined()) {
+          Console.WriteLine("  " + miningEntry.Key + ": " + miningEntry.Value);
+        }
+
+        if (chronCounter % worklogPrintInterval == zeroValue) {
+          motherStation.PrintWorklog();
+        }
+
+        Console.WriteLine("\nPress Enter for next chron | ESC to exit");
+
+        ConsoleKeyInfo pressedKey;
         pressedKey = Console.ReadKey(true);
+
         if (pressedKey.Key == ConsoleKey.Escape) {
           break;
         }
