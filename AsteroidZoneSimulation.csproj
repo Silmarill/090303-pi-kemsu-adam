@@ -48,6 +48,7 @@
     <Compile Include="Models\Asteroid.cs" />
     <Compile Include="Models\AsteroidEmitter.cs" />
     <Compile Include="Models\AsteroidState.cs" />
+    <Compile Include="Models\HarvesterShip.cs" />
     <Compile Include="Models\HarvesterState.cs" />
     <Compile Include="Models\Report.cs" />
     <Compile Include="Program.cs" />
