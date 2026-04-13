@@ -1,31 +1,61 @@
 ﻿using AsteroidPu.Chrones;
 using AsteroidPu.Ship.Harvester;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AsteroidPu.Ship {
   public class HarvesterShip : IChroneListener {
-    int harvesterID,
-      cargoCapasity,
-      cargoCurrent,
+    int harvesterID = 0,
+      cargoCapasity = 10,
+      cargoCurrent = 0,
       biteSize;
     string nameHarvester;
-    int sateroidItemsMined = 0;
+    int asteroidItemsMined = 0;
     HarvesterState state;
-    Asteroid currentAsteroid = new Asteroid();
+    public Asteroid currentAsteroid;
     MotherShip HomeStation;
 
-    public HarvesterShip(string name, int capasity, int sizeForBites) {
+    public HarvesterShip(string name, int capasity, int sizeForBites, MotherShip station) {
       nameHarvester = name;
       cargoCapasity = capasity;
       biteSize = sizeForBites;
+      HomeStation = station;
+      ++harvesterID;
     }
 
     public void OnChroneTick() {
+      if (state == HarvesterState.Mining && currentAsteroid != null) {
 
+        currentAsteroid.CurrentEchos -= biteSize;
+
+        if (currentAsteroid.CurrentEchos < currentAsteroid.minСorrectNum) {
+          currentAsteroid.CurrentEchos = currentAsteroid.minСorrectNum;
+        }
+
+        ++cargoCurrent;
+
+        if (currentAsteroid.State == AsteroidState.Depleted || cargoCurrent == cargoCapasity) {
+          HomeStation.FinishHarvest(this);
+        }
+      }
+    }
+
+    public void StartMining(Asteroid asteroid) {
+      currentAsteroid = asteroid;
+      asteroid.State = AsteroidState.Mining;
+      state = HarvesterState.Mining;
+
+    }
+
+    public Report CreateReport() {
+
+    }
+
+    public void PrintInfo() {
+      Console.Write($"\nInfo about {harvesterID} harvester: ");
+      Console.WriteLine($"\nName: {nameHarvester}"+
+                        $"\nCapasity: {cargoCapasity}"+
+                        $"\nCurrent: {cargoCurrent}"+
+                        $"\nState: {state}");
     }
 
   }

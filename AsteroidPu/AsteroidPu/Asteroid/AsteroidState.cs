@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AsteroidPu {
+﻿namespace AsteroidPu {
   public enum AsteroidState {
     Idle,
     Depleted,

@@ -5,16 +5,16 @@ namespace AsteroidPu {
 
     public int CurrentEchos;
     int stepEchos = 100,
-      MaxEchos,
-      minСorrectNum = 0;
+      MaxEchos;
+    public int minСorrectNum = 0;
     public AsteroidState State;
     public int SpawnID;
     public int CreateID;
 
     public Asteroid() {
-      Random countOfAsteroids = new Random();
+      Random randomEchos = new Random();
 
-      MaxEchos = countOfAsteroids.Next(100, 1000);
+      MaxEchos = randomEchos.Next(100, 1000);
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;
       //Genius CreateID
@@ -36,6 +36,14 @@ namespace AsteroidPu {
           State = AsteroidState.Depleted;
         }
       }
+    }
+
+    public void PrintInfo() {
+      Console.Write($"Info about {this.SpawnID} asteroid:\n\n");
+      Console.WriteLine($"CurrentEchos: {this.CurrentEchos}\n" +
+                      $"Asteroid Create ID: {this.CreateID}\n" +
+                      $"Asteroid Spawn ID: {this.SpawnID}");
+      Console.WriteLine("\nEnter esc for exit or enter to contine");
     }
   }
 }

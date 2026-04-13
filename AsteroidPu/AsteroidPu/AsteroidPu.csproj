@@ -53,6 +53,7 @@
     <Compile Include="Ship\Harvester\HarvesterShip.cs" />
     <Compile Include="Ship\Harvester\HarvesterState.cs" />
     <Compile Include="Ship\MotherShip.cs" />
+    <Compile Include="Ship\Report.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

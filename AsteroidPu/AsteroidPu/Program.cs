@@ -1,29 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AsteroidPu {
   internal class Program {
-
-    public static void PrintInfo(List<Asteroid> list) {
-      Console.Clear();
-      Console.WriteLine("Info about all asteroids:");
-      for (int indexI = 0; indexI < list.Count; ++indexI) {
-        Console.Write($"Asteroid {indexI}, CurrentEchos: {list[indexI].CurrentEchos}\n" +
-                      $"Asteroid Create ID: {list[indexI].CreateID}\n" +
-                      $"Asteroid Spawn ID: {list[indexI].SpawnID}");
-
-      }
-      Console.WriteLine("\nEnter esc for exit or enter to contine");
-    }
 
     static void Main(string[] args) {
 
       int countChrons = 0,
         countAsteroidItems = 5,
-        countSpawnID = 0;
+        countSpawnID = 0,
+        minCorrectNum = 0;
       AsteroidEmitter asteroidItems = new AsteroidEmitter(countAsteroidItems);
       List<Asteroid> activeAsteroid = new List<Asteroid>();
       bool isRun = true;
@@ -43,7 +29,7 @@ namespace AsteroidPu {
             asteroid.OnChoneTick();
           }
 
-          if (countChrons % countAsteroidItems == 0) {
+          if (countChrons % countAsteroidItems == minCorrectNum) {
             int createdAsteroid = random.Next(1, 3);
             for (int indexI = 0; indexI < createdAsteroid; ++indexI) {
               Asteroid newAsteroid = asteroidItems.Spawn();
@@ -54,14 +40,14 @@ namespace AsteroidPu {
             }
           }
 
-          for (int indexI = activeAsteroid.Count - 1; indexI >= 0; --indexI) {
+          for (int indexI = activeAsteroid.Count - 1; indexI >= minCorrectNum; --indexI) {
             if (activeAsteroid[indexI].State == AsteroidState.Depleted) {
               asteroidItems.Recycle(activeAsteroid[indexI]);
               activeAsteroid.RemoveAt(indexI);
             }
           }
 
-          PrintInfo(activeAsteroid);
+          PrintInfo
         }
       }
     }
