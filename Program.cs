@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using AsteroidZoneSimulation.Models;
 using AsteroidZoneSimulation.Core;
 
@@ -56,7 +53,7 @@ namespace AsteroidZoneSimulation {
           Console.WriteLine("\nНажмите любую клавишу для продолжения...");
           Console.ReadKey(true);
         } else {
-          Console.WriteLine("Введена неверная клавиша! Используйте ENTER или ESC");
+          Console.WriteLine("\nВведена неверная клавиша! Используйте ENTER или ESC");
         }
       }
     }
@@ -65,9 +62,6 @@ namespace AsteroidZoneSimulation {
       ++chroneCounter;
         
       Console.Clear();
-      Console.WriteLine("\n=======================================" +
-                        $"\n        ░▒▓█ХРОН #{chroneCounter}█▓▒░" +
-                        "\n=======================================");
         
       ChroneManager.MakeChroneTick();
 
@@ -76,8 +70,6 @@ namespace AsteroidZoneSimulation {
       if (chroneCounter % 15 == 0) {
         _motherShip.PrintFullWorklog();
       }
-
-      Thread.Sleep(30);
     }
   }
 }

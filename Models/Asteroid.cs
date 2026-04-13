@@ -4,7 +4,6 @@ using AsteroidZoneSimulation.Core;
 namespace AsteroidZoneSimulation.Models {
   public class Asteroid : IChroneListener {
     int globalCreateCounter = 0;
-    int losingEchos = 100;
 
     public int CurrentEchos;
     public int MaxEchos;
@@ -46,8 +45,8 @@ namespace AsteroidZoneSimulation.Models {
       return actualAmount;
     }
 
-    public string GetAsteroidInformation() {
-      return $"Create ID: {CreateID} | Spawn ID: {SpawnID} | Echoes: {CurrentEchos}/{MaxEchos} | State: {State}";
+    public void DisplayAsteroidInformation() {
+      Console.WriteLine($"Create ID: {CreateID} | Spawn ID: {SpawnID} | Echoes: {CurrentEchos}/{MaxEchos} | State: {State}");
     }
   }
 }

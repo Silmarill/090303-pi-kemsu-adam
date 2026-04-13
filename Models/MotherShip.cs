@@ -71,11 +71,11 @@ namespace AsteroidZoneSimulation.Models {
       Asteroid asteroid = harvester.CurrentAsteroid;
       if (asteroid != null) {
         if (asteroid.State == AsteroidState.Depleted) {
-          Console.WriteLine($"  Астероид (SpawnID):{asteroid.SpawnID} истощён! Возвращается в пул");
+          Console.WriteLine($"  Астероид (SpawnID): {asteroid.SpawnID} истощён! Возвращается в пул");
           RemoveAsteroid(asteroid);
         } else {
           asteroid.State = AsteroidState.Idle;
-          Console.WriteLine($"  Астероид (SpawnID):{asteroid.SpawnID} освобождён (осталось {asteroid.CurrentEchos} ед.)");
+          Console.WriteLine($"  Астероид (SpawnID): {asteroid.SpawnID} освобождён (осталось {asteroid.CurrentEchos} ед.)");
         }
       }
 
@@ -90,7 +90,7 @@ namespace AsteroidZoneSimulation.Models {
         Console.WriteLine("  Нет активных астероидов");
       } else {
         foreach (var asteroid in _activeAsteroids) {
-          asteroid.GetAsteroidInformation();
+          asteroid.DisplayAsteroidInformation();
         }
       }
     }
