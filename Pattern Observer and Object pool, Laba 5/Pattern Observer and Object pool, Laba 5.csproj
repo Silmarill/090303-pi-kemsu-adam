@@ -43,8 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UserProgram\Asteroid.cs" />
-    <Compile Include="AsteroidRealisation\Class1.cs" />
+    <Compile Include="UserProgram\MainProgram.cs" />
+    <Compile Include="AsteroidRealisation\Asteroid.cs" />
     <Compile Include="Observer\ChroneManager.cs" />
     <Compile Include="Observer\IChroneListener.cs" />
     <Compile Include="PoolObject\AsteroidEmitter.cs" />

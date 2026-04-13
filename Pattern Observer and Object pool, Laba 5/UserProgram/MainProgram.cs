@@ -7,79 +7,53 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
   public class MainProgram {
 
     static void Main() {
-      AsteroidEmitter emitter = new AsteroidEmitter(5);
+      List<Asteroid> activeAsteroid;
+      AsteroidEmitter asteroid = new AsteroidEmitter(5);
+      activeAsteroid = new List<Asteroid>();
+      int chroneCount;
 
-      List<Asteroid> activeAsteroids = new List<Asteroid>();
+      chroneCount = 0;
 
-      Asteroid firstAsteroid = emitter.Spawn();
-      Asteroid secondAsteroid = emitter.Spawn();
-      Asteroid thirdAsteroid = emitter.Spawn();
+      Asteroid asteroid1 = asteroid.Spawn();
+      Asteroid asteroid2 = asteroid.Spawn();
+      Asteroid asteroid3 = asteroid.Spawn();
 
-      activeAsteroids.Add(firstAsteroid);
-      activeAsteroids.Add(secondAsteroid);
-      activeAsteroids.Add(thirdAsteroid);
+      ChroneManager.AddListener(asteroid1);
+      ChroneManager.AddListener(asteroid2);
+      ChroneManager.AddListener(asteroid3);
 
-      ChroneManager.AddListener(firstAsteroid);
-      ChroneManager.AddListener(secondAsteroid);
-      ChroneManager.AddListener(thirdAsteroid);
+      activeAsteroid.Add(asteroid1);
+      activeAsteroid.Add(asteroid2);
+      activeAsteroid.Add(asteroid3);
 
-      int tickCounter = 0;
-
-      Random random = new Random();
+      Console.WriteLine("Press Enter to continue: ");
 
       while (true) {
-        Console.Clear();
-        Console.WriteLine($"CHRONE #{tickCounter}");
-        Console.WriteLine($"Active asteroid: {activeAsteroids.Count}");
-        Console.WriteLine();
-
-        for (int counter = 0; counter < activeAsteroids.Count; counter++) {
-          var asteroid = activeAsteroids[counter];
-          Console.WriteLine($"Asteroid {counter + 1}: resource {asteroid.CurrentEchos}/{asteroid.MaxEchos}, status: {asteroid.State}");
-        }
-
-        Console.WriteLine();
-        Console.WriteLine("Press Enter for the next chrono");
-        Console.WriteLine("Press Esc to exit");
-
         ConsoleKeyInfo key = Console.ReadKey(true);
-
-        if (key.Key == ConsoleKey.Escape) {
-          break;
-        }
-
         if (key.Key == ConsoleKey.Enter) {
-          ++tickCounter;
+          Console.WriteLine($"Chron {++chroneCount}");
+          Console.WriteLine($"asteroid1 Characteristics: Max Echo: {asteroid1.MaxEchos}, Current Echo: {asteroid1.CurrentEchos}, AsteroidState: {asteroid1.State}");
+          Console.WriteLine($"asteroid2 Characteristics: Max Echo: {asteroid2.MaxEchos}, Current Echo: {asteroid2.CurrentEchos}, AsteroidState: {asteroid2.State}");
+          Console.WriteLine($"asteroid3 Characteristics: Max Echo: {asteroid3.MaxEchos}, Current Echo: {asteroid3.CurrentEchos}, AsteroidState: {asteroid3.State} \n");
 
           ChroneManager.MakeChroneTick();
 
-          if (tickCounter % 5 == 0) {
-            int newAsteroidsCount = random.Next(1, 4);
-            Console.WriteLine($"\n5th chron! Spawn {newAsteroidsCount} new asteroids\r\n");
-
-            for (int count = 0; count < newAsteroidsCount; ++count) {
-              Asteroid newAsteroid = emitter.Spawn();
-              activeAsteroids.Add(newAsteroid);
-              ChroneManager.AddListener(newAsteroid);
-              Console.WriteLine($"A new asteroid has been created! Resource\r\n: {newAsteroid.CurrentEchos}/{newAsteroid.MaxEchos}");
-            }
+          if (asteroid1.CurrentEchos == 0) {
+            asteroid1.Reset();
+            asteroid.Recycle(asteroid1);
           }
 
-          for (int count = activeAsteroids.Count - 1; count >= 0; --count) {
-            Asteroid asteroid = activeAsteroids[count];
-
-            if (asteroid.State == Asteroid.AsteroidState.Depleted) {
-              Console.WriteLine($" The asteroid is depleted! Return to the pool.");
-              activeAsteroids.RemoveAt(count);
-              emitter.Recycle(asteroid);
-            }
+          if (asteroid2.CurrentEchos == 0) {
+            asteroid2.Reset();
+            asteroid.Recycle(asteroid2);
           }
 
-          Console.WriteLine("\nPress any button to continue...");
-          Console.ReadKey(true);
+          if (asteroid3.CurrentEchos == 0) {
+            asteroid3.Reset();
+            asteroid.Recycle(asteroid3);
+          }
         }
       }
-      Console.WriteLine("Program over");
     }
   }
 }
