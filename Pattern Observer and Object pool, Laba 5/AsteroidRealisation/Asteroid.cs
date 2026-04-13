@@ -13,7 +13,7 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
       Depleted
     }
 
-    Random random = new Random();
+    static Random random = new Random();
     public int MaxEchos;
     public int CurrentEchos;
     public int SpawnID;
@@ -42,6 +42,7 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
         CurrentEchos -= 100;
         if (CurrentEchos < 0) {
           CurrentEchos = 0;
+          State = AsteroidState.Depleted;
         }
       }
     }
