@@ -1,52 +1,150 @@
-# Laboratory Work №5: Observer and Object Pool Patterns
+# Group Stage 6 — Matriarch
 
-### Author
-**Me**
+## Story
 
-**Variant:** Asteroid Field Simulation & Resource Management
+After mastering the stabilization of the first anomalous zones, the Galactic Academy deployed space stations of the **“Matriarch” class**. These massive platforms not only stabilize space but also serve as bases for a fleet of collectors — small harvester ships that extract a mysterious resource called **Echos**.
 
----
+The “Matriarch” station keeps detailed statistics about its cycles: how many asteroids were processed, how much Echos was extracted, and how many cycles were spent. This information is stored in a **Worklog**, which is later analyzed by the academy to improve fleet efficiency.
 
-### Objective
-Exploration of behavioral and creational design patterns in C#. Implementation of the Observer pattern for synchronized time-step (chron) management and the Object Pool pattern for efficient memory allocation and reuse of game objects.
+While the station is active, asteroids do not decay over time — the Matriarch’s stabilization field protects them. All extraction work is handled by the harvester ships.
 
----
-
-### Project Structure
-* **Program.cs:** Main entry point handling the simulation loop, user input, and real-time console rendering.
-* **Asteroid.cs:** Core entity class representing an asteroid with resource degradation logic and state tracking.
-* **AsteroidEmitter.cs:** Service implementing the Object Pool pattern for spawning and recycling asteroid instances.
-* **ChroneManager.cs:** Static service implementing the Observer pattern to notify listeners about time-step events.
-* **IChroneListener.cs:** Interface defining the contract for objects that react to time-step ticks.
-* **AsteroidState.cs:** Enumeration defining the lifecycle stages of an asteroid (Idle, Depleted).
-* **AsteroidsLab.csproj:** Modern SDK-style project file configured for .NET environment.
+Your task is to implement the station, a fleet of five harvesters, a mining system with cargo limits, and a reporting system.
 
 ---
 
-### Coding Standards Applied
-* **Indentation:** Strictly 2 spaces (no tabs).
-* **Naming Convention:** lowerCamelCase for variables, local properties, and descriptive loop indices (e.g., ++asteroidIndex).
-* **Logic Separation:** Explicit separation between variable declaration and initialization/calculation.
-* **State Management:** Use of the AsteroidState enum to manage object lifecycles without violating encapsulation.
-* **Memory Optimization:** Use of the Object Pool (Queue-based) to minimize GC pressure by reusing objects.
-* **Formatting:** All increments use prefix notation (++index). Comments are placed strictly above the code lines.
+## Objectives
+
+### 1. MotherShip (Matriarch station)
+
+The station must:
+
+* Contain a fleet of 5 harvesters (`List<HarvesterShip>`)
+* Stabilize the zone (asteroids do not lose Echos over time)
+* Maintain a Worklog (`Dictionary<string, List<Report>>`)
+* Provide output:
+
+  * total mined resources per harvester (on key press R)
+  * full Worklog on the 15th cycle
 
 ---
 
-### Key Features
-* **Object Pooling:** Efficient management of asteroids to prevent constant memory allocation and deallocation.
-* **Observer Mechanism:** Centralized time management system that notifies all active objects simultaneously.
-* **Resource Degradation:** Automated reduction of "Echos" resources based on synchronized time-steps.
-* **Dynamic Spawning:** Adaptive system that populates the simulation with new asteroids at specific intervals.
-* **Console UI:** Real-time dashboard showing the status, IDs, and resource levels of all active entities.
+### 2. Asteroid
+
+* Add a `Mining` state (asteroid is currently being mined)
 
 ---
 
-### How to Run
-1.  **Environment:** Ensure you have .NET SDK installed.
-2.  **Navigate:** Open your terminal in the project folder: cd AsteroidsLab.
-3.  **Clean (Optional):** `dotnet clean`.
-4.  **Run:** Execute the application using:
-```powershell
-dotnet run
-```
+### 3. HarvesterShip
+
+Fields:
+
+* `ID`
+* `Name`
+* `AsteroidsMined`
+* `CargoCapacity` (e.g. 500)
+* `CargoCurrent`
+* `BiteSize` (e.g. 50)
+
+States:
+
+* `Idle`
+* `Mining`
+
+Mining logic (`Mine(Asteroid asteroid)`):
+
+* reduces `CurrentEchos` by `BiteSize`
+* increases `CargoCurrent`
+* if `CurrentEchos == 0` → asteroid becomes `Depleted`
+* if `CargoCurrent >= CargoCapacity` → return to station and unload
+
+---
+
+### 4. Report
+
+Fields:
+
+* `JobNumber`
+* `AsteroidSpawnID`
+* `AmountMined`
+
+---
+
+## Game Logic
+
+* At start:
+
+  * create station
+  * create 5 harvesters
+  * create 3 asteroids
+
+* Each cycle:
+
+  * idle harvesters select available `Idle` asteroids
+  * set asteroid state to `Mining`
+  * start mining
+
+* During mining:
+
+  * each cycle harvester calls `Mine`
+  * asteroid resource decreases
+  * cargo fills up
+
+* On completion:
+
+  * if asteroid is depleted → `Depleted`
+  * if cargo is full → return to station
+  * unload cargo (reset `CargoCurrent`)
+  * create a `Report`
+  * add it to Worklog
+  * set harvester back to `Idle`
+
+* Depleted asteroids are returned to the pool via `Recycle`
+
+---
+
+## Output
+
+Each cycle:
+
+* asteroid states
+* harvester states
+* total mined resources
+
+Every 15 cycles:
+
+* full Worklog output
+
+---
+
+## Key Classes
+
+* `Asteroid` — resource container and state holder
+* `HarvesterShip` — mining unit
+* `MotherShip` — fleet manager and logging system
+* `Report` — mining record
+* `ChroneManager` — tick system
+
+---
+
+## Checklist
+
+* 5 harvesters are created at start
+* 3 asteroids are created at start
+* asteroid locking via `Mining` works correctly
+* resource is only reduced by harvesters
+* asteroids do not decay over time
+* Worklog and Summary work correctly
+* full Worklog prints every 15 cycles
+* asteroid pooling system works
+* program exits on `Esc`
+
+---
+
+## Expected Result
+
+The system simulates Echos extraction:
+
+* harvesters mine asteroids
+* asteroids deplete and are recycled
+* the station records all activity
+* every 15th cycle outputs a full report
