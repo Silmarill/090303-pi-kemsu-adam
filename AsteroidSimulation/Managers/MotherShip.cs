@@ -68,7 +68,7 @@ namespace AsteroidSimulation.Managers {
       foreach (var harvester in Fleet) {
         int total = 0;
         if (Worklog.ContainsKey(harvester.Name)) {
-          total = Worklog[harvester.Name].Sum(r => r.AmountMined);
+          total = Worklog[harvester.Name].Sum(report => report.AmountMined);
         }
         Console.WriteLine($"{harvester.Name}: {total} ед. (всего астероидов:{harvester.AsteroidsMined})");
       }
@@ -93,7 +93,7 @@ namespace AsteroidSimulation.Managers {
 
     // Получить свободного харвестера (Idle)
     public HarvesterShip GetIdleHarvester() {
-      return Fleet.FirstOrDefault(h => h.State == HarvesterState.Idle);
+      return Fleet.FirstOrDefault(harvester => harvester.State == HarvesterState.Idle);
     }
 
     // Получить список всех харвестеров
