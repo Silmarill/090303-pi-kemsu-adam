@@ -1,7 +1,7 @@
 ﻿public class Report {
-  public int JobNumber { get; set; }
-  public int AsteroidSpawnID { get; set; }
-  public int AmountMined { get; set; }
+  public int JobNumber;
+  public int AsteroidSpawnID;
+  public int AmountMined;
 
   // Конструктор для создания отчета
   public Report(int jobNumber, int asteroidSpawnID, int amountMined) {

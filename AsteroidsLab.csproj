@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Asteroid.cs" />
+    <Compile Include="Entities\HarvesterShip.cs" />
     <Compile Include="Entities\HarvesterState.cs" />
     <Compile Include="Entities\Report.cs" />
     <Compile Include="Services\AsteroidEmitter.cs" />
