@@ -50,6 +50,7 @@
     <Compile Include="Models\AsteroidState.cs" />
     <Compile Include="Models\HarvesterShip.cs" />
     <Compile Include="Models\HarvesterState.cs" />
+    <Compile Include="Models\MotherShip.cs" />
     <Compile Include="Models\Report.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

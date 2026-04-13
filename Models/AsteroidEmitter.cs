@@ -12,7 +12,7 @@ namespace AsteroidZoneSimulation.Models {
     private int _chroneCounter = 0;
     private int _nextSpawnID = 1;
 
-    public AsteroidEmitter(int initialPoolSize, Mothership motherShip, int spawnInterval, int minSpawnAmount, int maxSpawnAmount) {
+    public AsteroidEmitter(int initialPoolSize, MotherShip motherShip, int spawnInterval, int minSpawnAmount, int maxSpawnAmount) {
       _motherShip = motherShip;
       _spawnInterval = spawnInterval;
       _minSpawnAmount = minSpawnAmount;
