@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 class Program {
   static void Main(string[] args) {
-    // Блок объявления
+    // Объявление
     int initialPoolSize;
     int startAsteroidsCount;
     int spawnInterval;
@@ -11,15 +11,16 @@ class Program {
     int maxSpawnCount;
     int fullLogInterval;
     int newAsteroidsCount;
+    int chroneCounter;
     bool isSpawnTick;
 
+    // Поля
     AsteroidEmitter emitter;
     List<Asteroid> activeAsteroids;
     Random random;
-    int chroneCounter;
     MotherShip motherShip;
 
-    // Блок инициализации
+    // Инициализация
     initialPoolSize = 5;
     startAsteroidsCount = 3;
     spawnInterval = 5;
@@ -27,6 +28,7 @@ class Program {
     maxSpawnCount = 4;
     fullLogInterval = 15;
 
+    // Экземпляры
     emitter = new AsteroidEmitter(initialPoolSize);
     activeAsteroids = new List<Asteroid>();
     random = new Random();

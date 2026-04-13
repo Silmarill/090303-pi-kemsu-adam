@@ -19,6 +19,8 @@ public class MotherShip : IChroneListener {
 
   // Конструктор
   public MotherShip() {
+    string harvesterName;
+
     fleet = new List<HarvesterShip>();
     worklog = new Dictionary<string, List<Report>>();
 
@@ -27,7 +29,7 @@ public class MotherShip : IChroneListener {
 
     // Инициализация флота харвестеров и добавление их в список слушателей хрона
     for (int harvesterIndex = 1; harvesterIndex <= fleetSize; ++harvesterIndex) {
-      string harvesterName = $"Harvester-{harvesterIndex:D2}";
+      harvesterName = $"Harvester-{harvesterIndex:D2}";
 
       // Создание харвестера и установка ссылки на MotherShip
       HarvesterShip ship = new HarvesterShip(harvesterIndex, harvesterName);
@@ -127,6 +129,8 @@ public class MotherShip : IChroneListener {
   }
 
   public void PrintFullWorklog() {
+    string harvesterName;
+
     Console.WriteLine("\n=== Full Worklog ===");
 
     // Получение списка имен харвестеров из журнала работ для итерации
@@ -134,7 +138,7 @@ public class MotherShip : IChroneListener {
 
     // Проход по каждому харвестеру в журнале работ и печать его имени, количества отчетов и каждого отчета, связанного с ним
     for (int harvesterIndex = 0; harvesterIndex < harvesterNames.Count; ++harvesterIndex) {
-      string harvesterName = harvesterNames[harvesterIndex];
+      harvesterName = harvesterNames[harvesterIndex];
       List<Report> reports = worklog[harvesterName];
 
       Console.WriteLine($"Harvester: {harvesterName} ({reports.Count})");
@@ -149,13 +153,15 @@ public class MotherShip : IChroneListener {
   }
 
   public void PrintSummary() {
+    int totalMined;
+
     Console.WriteLine("\n=== Summary ===");
 
     // Проход по каждому харвестеру в флоте для суммирования количества добытых эхосов из всех отчетов, связанных с этим харвестером, а также количества добытых астероидов
     for (int shipIndex = 0; shipIndex < fleet.Count; ++shipIndex) {
       HarvesterShip ship = fleet[shipIndex];
 
-      int totalMined = 0;
+      totalMined = 0;
 
       if (worklog.ContainsKey(ship.name)) {
         List<Report> reports = worklog[ship.name];
