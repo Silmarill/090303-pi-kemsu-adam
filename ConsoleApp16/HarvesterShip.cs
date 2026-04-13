@@ -18,14 +18,13 @@ namespace ConsoleApp16 {
     private int _currentJobNumber;
     private static int DefaultCargoCapacity = 500;
     private static int DefaultBiteSize = 50;
-    private static int _nextId = 1;
+    private static int _nextId = 0;
 
     public HarvesterShip(string shipName) : this(shipName, DefaultCargoCapacity, DefaultBiteSize) { 
     }
 
     public HarvesterShip(string shipName, int cargoCapacity, int biteSize) {
-      ++_nextId;
-      ID = _nextId;
+      ID = ++_nextId;
       Name = shipName;
       CargoCapacity = cargoCapacity;
       BiteSize = biteSize;

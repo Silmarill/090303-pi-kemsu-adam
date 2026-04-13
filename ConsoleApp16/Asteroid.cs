@@ -16,20 +16,22 @@ namespace ConsoleApp16 {
 
     private int minMaxechos = 100;
     private int maxMaxechos = 1001;
+    private int DefaultEchosDecreasePerTick = 100;
     private static int _createCounter = 0;
     private static int _spawnCounter = 0;
+
     public Asteroid() {
       CreateID = ++_createCounter;
       MaxEchos = new Random().Next(minMaxechos, maxMaxechos);
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle; 
       SpawnID = 0;
-      EchosDecreasePerTick = 100;
+      EchosDecreasePerTick = DefaultEchosDecreasePerTick;
       SpawnID = ++_spawnCounter;
     }
 
     public void OnChronTick() {
-      CurrentEchos -= EchosDecreasePerTick;
+      // CurrentEchos -= EchosDecreasePerTick;
       if (CurrentEchos <= 0) {
         State = AsteroidState.Depleted; ;
       }
@@ -38,7 +40,7 @@ namespace ConsoleApp16 {
     public void Reset() {
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;
-      SpawnID++;
+      // SpawnID++;
     }
 
     public void OnChoneTrick() {

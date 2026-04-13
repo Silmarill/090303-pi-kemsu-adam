@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ConsoleApp16 {
   public class MotherShip {
@@ -11,9 +10,7 @@ namespace ConsoleApp16 {
     private List<Asteroid> _activeAsteroids;
     private int _chronCounter;
 
-    private const int FleetSize = 5;
-    private const int WorklogDisplayInterval = 15;
-    private const int NewAsteroidSpawnInterval = 5;
+    private int FleetSize = 5;
 
     private string[] HarvesterNames = { "Alpha", "Beta", "Gamma", "Delta", "Epsilon" };
 
@@ -36,17 +33,10 @@ namespace ConsoleApp16 {
     }
 
     public void ProcessChron() {
-      ++_chronCounter;  // Префиксный инкремент
+      ++_chronCounter;
 
       AssignMiningTasks();
       ProcessMining();
-
-      DisplayHarvestersInfo();
-      DisplayTotalMined();
-
-      if (_chronCounter % WorklogDisplayInterval == 0) {
-        DisplayFullWorklog();
-      }
     }
 
     private void AssignMiningTasks() {
@@ -98,48 +88,6 @@ namespace ConsoleApp16 {
           }
         }
       }
-    }
-
-    private void DisplayHarvestersInfo() {
-      Console.WriteLine("\n=== Состояние флота ===");
-      foreach (HarvesterShip currentHarvester in Fleet) {
-        Console.WriteLine(currentHarvester.GetHarvesterInfo());
-      }
-    }
-
-    private void DisplayTotalMined() {
-      Console.WriteLine("\n=== Суммарная добыча ===");
-      foreach (HarvesterShip currentHarvester in Fleet) {
-        int totalMined = 0;
-        foreach (Report currentReport in Worklog[currentHarvester.Name]) {
-          totalMined += currentReport.AmountMined;
-        }
-        Console.WriteLine(currentHarvester.Name + ": " + totalMined + " ед. Echos (астероидов: " + currentHarvester.AsteroidMined + ")");
-      }
-    }
-
-    private void DisplayFullWorklog() {
-      Console.WriteLine("\n" + new string('=', 60));
-      Console.WriteLine("ПОЛНЫЙ ЖУРНАЛ РАБОТ (Хрон #" + _chronCounter + ")");
-      Console.WriteLine(new string('=', 60));
-
-      foreach (HarvesterShip currentHarvester in Fleet) {
-        Console.WriteLine("\n" + currentHarvester.Name + ":");
-        if (Worklog[currentHarvester.Name].Count == 0) {
-          Console.WriteLine("  Нет завершённых заданий");
-        } else {
-          foreach (Report currentReport in Worklog[currentHarvester.Name]) {
-            Console.WriteLine("  " + currentReport.GetReportString());
-          }
-          int totalMined = 0;
-          foreach (Report currentReport in Worklog[currentHarvester.Name]) {
-            totalMined += currentReport.AmountMined;
-          }
-          Console.WriteLine("  Итого: " + totalMined + " ед. Echos");
-        }
-      }
-
-      Console.WriteLine(new string('=', 60));
     }
 
     public int GetTotalMined() {
