@@ -2,57 +2,56 @@
 using System.Collections.Generic;
 
 public class AsteroidEmitter {
-  private Queue<Asteroid> _available = new Queue<Asteroid>();
+  // Пул доступных астероидов
+  private Queue<Asteroid> _available;
 
   // Счетчик для генерации уникальных номеров спавна
-  private int _spawnCounter = 0;
+  private int _spawnCounter;
 
   // Инициализация пула астероидов
   public AsteroidEmitter(int initialSize) {
+    _available = new Queue<Asteroid>();
+    _spawnCounter = 0;
+
     int poolIndex;
 
-    // Заполнение пула начальными астероидами
     for (poolIndex = 0; poolIndex < initialSize; ++poolIndex) {
-      Asteroid newAsteroid;
-
-      newAsteroid = new Asteroid();
-      _available.Enqueue(newAsteroid);
+      Asteroid asteroid = new Asteroid();
+      _available.Enqueue(asteroid);
     }
   }
 
   // Метод для получения астероида из пула
   public Asteroid Spawn() {
     Asteroid asteroid;
-    bool isPoolEmpty;
 
-    isPoolEmpty = (_available.Count == 0);
-
-    // Если пул пуст, создаётся новый астероид и выдаем предупреждение
-    if (isPoolEmpty) {
+    /*
+     * Если пул пуст, создаем новый астероид. В реальной игре можно было бы ограничить максимальное количество астероидов и не создавать новые,
+     * а просто не спавнить, но для демонстрации работы пула я решил позволить создавать новые экземпляры, если пул закончится.
+    */
+    if (_available.Count == 0) {
       Console.ForegroundColor = ConsoleColor.Yellow;
-      Console.WriteLine(">> Предупреждение: Пул пуст. Создан новый объект Asteroid!");
+      Console.WriteLine(">> Warning: Asteroid pool is empty. Creating new instance!");
       Console.ResetColor();
 
       asteroid = new Asteroid();
-    }
-    else {
+    } else {
       asteroid = _available.Dequeue();
     }
 
-    // Присвоение уникального номера спавна
     asteroid.SetSpawnId(++_spawnCounter);
 
-    // Подписка на уведомления о тактах времени
     ChroneManager.AddListener(asteroid);
 
     return asteroid;
   }
 
+  // Возврат астероида в пул
   public void Recycle(Asteroid asteroid) {
-    // Отписка от уведомлений и возврат в очередь
     ChroneManager.RemoveListener(asteroid);
 
     asteroid.Reset();
+
     _available.Enqueue(asteroid);
   }
 }

@@ -17,7 +17,8 @@ public static class ChroneManager {
 
   // Метод для уведомления всех подписчиков о хроне
   public static void MakeChroneTick() {
-    foreach (var listener in _listenerList) {
+    for (int listenerIndex = 0; listenerIndex < _listenerList.Count; ++listenerIndex) {
+      IChroneListener listener = _listenerList[listenerIndex];
       listener.OnChroneTick();
     }
   }

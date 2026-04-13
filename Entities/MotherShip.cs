@@ -2,14 +2,22 @@
 using System.Collections.Generic;
 
 public class MotherShip : IChroneListener {
+  // Флот харвестеров
   public List<HarvesterShip> fleet;
+
+  // Журнал работ (ключ — имя харвестера)
   public Dictionary<string, List<Report>> worklog;
 
+  // Размер флота
   private const int fleetSize = 5;
 
+  // Счетчик заданий
   private int globalJobCounter;
+
+  // Список активных астероидов
   private List<Asteroid> activeAsteroids;
 
+  // Конструктор
   public MotherShip() {
     fleet = new List<HarvesterShip>();
     worklog = new Dictionary<string, List<Report>>();
@@ -17,21 +25,31 @@ public class MotherShip : IChroneListener {
     globalJobCounter = 0;
     activeAsteroids = null;
 
-    for (int i = 1; i <= fleetSize; ++i) {
-      string name = $"Harvester-{i:D2}";
+    // Инициализация флота харвестеров и добавление их в список слушателей хрона
+    for (int harvesterIndex = 1; harvesterIndex <= fleetSize; ++harvesterIndex) {
+      string harvesterName = $"Harvester-{harvesterIndex:D2}";
 
-      HarvesterShip ship = new HarvesterShip(i, name);
+      // Создание харвестера и установка ссылки на MotherShip
+      HarvesterShip ship = new HarvesterShip(harvesterIndex, harvesterName);
       ship.SetMotherShip(this);
 
+      // Добавление харвестера в флот и инициализация его журнала работ
       fleet.Add(ship);
-      worklog[name] = new List<Report>();
+      worklog[harvesterName] = new List<Report>();
 
+      // Добавление харвестера в список слушателей хрона
       ChroneManager.AddListener(ship);
     }
 
+    // Добавление MotherShip в список слушателей хрона для получения уведомлений о каждом тике времени
     ChroneManager.AddListener(this);
   }
 
+  /*
+   * Метод, вызываемый при каждом тике времени (ChroneTick), который отвечает за назначение целей харвестерам, находящимся в состоянии Idle.
+   * Он проходит по каждому харвестеру и каждому активному астероиду, проверяя их состояния,
+   * и если харвестер может начать добычу с астероида, он назначает его в качестве цели для харвестера.
+  */
   public void OnChroneTick() {
     AssignTargets();
   }
@@ -41,25 +59,36 @@ public class MotherShip : IChroneListener {
       return;
     }
 
-    for (int i = 0; i < fleet.Count; ++i) {
-      var ship = fleet[i];
+    // Проход по каждому харвестеру в флоте
+    for (int shipIndex = 0; shipIndex < fleet.Count; ++shipIndex) {
+      HarvesterShip ship = fleet[shipIndex];
 
+      // Проверка, находится ли харвестер в состоянии Idle. Если нет, переходим к следующему харвестеру
       if (ship.state != HarvesterState.Idle) {
         continue;
       }
 
-      for (int j = 0; j < activeAsteroids.Count; ++j) {
-        var asteroid = activeAsteroids[j];
+      // Проход по каждому активному астероиду
+      for (int asteroidIndex = 0; asteroidIndex < activeAsteroids.Count; ++asteroidIndex) {
+        Asteroid asteroid = activeAsteroids[asteroidIndex];
 
-        if (asteroid.state == AsteroidState.Idle) {
-          if (ship.TryAssignTarget(asteroid)) {
-            break;
-          }
+        // Проверка, находится ли астероид в состоянии Idle. Если нет, переходим к следующему астероиду
+        if (asteroid.state != AsteroidState.Idle) {
+          continue;
+        }
+
+        // Проверка, может ли харвестер начать добычу с астероида. Если да, назначаем его в качестве цели для харвестера и переходим к следующему харвестеру
+        if (ship.TryAssignTarget(asteroid)) {
+          break;
         }
       }
     }
   }
 
+  /*
+   * Метод для установки списка активных астероидов, который будет использоваться для назначения целей харвестерам.
+   * Он принимает список активных астероидов и сохраняет его в поле activeAsteroids для дальнейшего использования при назначении целей.
+  */
   public void SetActiveAsteroids(List<Asteroid> activeAsteroids) {
     this.activeAsteroids = activeAsteroids;
   }
@@ -71,31 +100,48 @@ public class MotherShip : IChroneListener {
 
     globalJobCounter++;
 
-    var report = new Report(globalJobCounter, spawnId, amountMined);
+    // Создание нового отчета с использованием глобального счетчика заданий, идентификатора спавна астероида и количества добытых эхосов
+    Report report = new Report(globalJobCounter, spawnId, amountMined);
 
-    string key = null;
+    /*
+     * Поиск имени харвестера, который завершил задание, путем проверки каждого харвестера в флоте на наличие добытых астероидов.
+     * Если найден харвестер с добытыми астероидами, сохраняем его имя для добавления отчета в журнал работ.
+    */
+    string targetHarvesterName = null;
 
-    // ищем владельца по текущему харвестеру (упрощённо по факту работы)
-    for (int i = 0; i < fleet.Count; ++i) {
-      if (fleet[i].asteroidsMined > 0) {
-        key = fleet[i].name;
+    // Проход по каждому харвестеру в флоте для поиска того, который завершил задание
+    for (int shipIndex = 0; shipIndex < fleet.Count; ++shipIndex) {
+      HarvesterShip ship = fleet[shipIndex];
+
+      if (ship.asteroidsMined > 0) {
+        targetHarvesterName = ship.name;
         break;
       }
     }
 
-    if (key != null && worklog.ContainsKey(key)) {
-      worklog[key].Add(report);
+    if (targetHarvesterName != null) {
+      if (worklog.ContainsKey(targetHarvesterName)) {
+        worklog[targetHarvesterName].Add(report);
+      }
     }
   }
 
   public void PrintFullWorklog() {
     Console.WriteLine("\n=== Full Worklog ===");
 
-    foreach (var kv in worklog) {
-      Console.WriteLine($"Harvester: {kv.Key} ({kv.Value.Count})");
+    // Получение списка имен харвестеров из журнала работ для итерации
+    List<string> harvesterNames = new List<string>(worklog.Keys);
 
-      for (int i = 0; i < kv.Value.Count; ++i) {
-        Console.WriteLine($"  {kv.Value[i]}");
+    // Проход по каждому харвестеру в журнале работ и печать его имени, количества отчетов и каждого отчета, связанного с ним
+    for (int harvesterIndex = 0; harvesterIndex < harvesterNames.Count; ++harvesterIndex) {
+      string harvesterName = harvesterNames[harvesterIndex];
+      List<Report> reports = worklog[harvesterName];
+
+      Console.WriteLine($"Harvester: {harvesterName} ({reports.Count})");
+
+      // Печать каждого отчета, связанного с текущим харвестером, для отображения подробной информации о каждом задании, выполненном этим харвестером
+      for (int reportIndex = 0; reportIndex < reports.Count; ++reportIndex) {
+        Console.WriteLine($"  {reports[reportIndex]}");
       }
     }
 
@@ -105,20 +151,22 @@ public class MotherShip : IChroneListener {
   public void PrintSummary() {
     Console.WriteLine("\n=== Summary ===");
 
-    for (int i = 0; i < fleet.Count; ++i) {
-      var ship = fleet[i];
+    // Проход по каждому харвестеру в флоте для суммирования количества добытых эхосов из всех отчетов, связанных с этим харвестером, а также количества добытых астероидов
+    for (int shipIndex = 0; shipIndex < fleet.Count; ++shipIndex) {
+      HarvesterShip ship = fleet[shipIndex];
 
-      int total = 0;
+      int totalMined = 0;
 
       if (worklog.ContainsKey(ship.name)) {
-        var list = worklog[ship.name];
+        List<Report> reports = worklog[ship.name];
 
-        for (int j = 0; j < list.Count; ++j) {
-          total += list[j].amountMined;
+        // Суммирование количества добытых эхосов из всех отчетов, связанных с текущим харвестером, для получения общего количества добытых эхосов этим харвестером
+        for (int reportIndex = 0; reportIndex < reports.Count; ++reportIndex) {
+          totalMined += reports[reportIndex].amountMined;
         }
       }
 
-      Console.WriteLine($"{ship.name}: {total} Echos | Asteroids mined: {ship.asteroidsMined}");
+      Console.WriteLine($"{ship.name}: {totalMined} Echos | Asteroids mined: {ship.asteroidsMined}");
     }
   }
 }
