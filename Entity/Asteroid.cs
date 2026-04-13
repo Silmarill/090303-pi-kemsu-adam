@@ -33,7 +33,7 @@ namespace AsteroidSimulation.Entity
 
         public void OnChroneTick()
         {
-            if (State == AsteroidState.Idle)
+            /*if (State == AsteroidState.Idle)
             {
                 CurrentEchos -= ResourceDamage;
                 
@@ -42,7 +42,7 @@ namespace AsteroidSimulation.Entity
                     CurrentEchos = 0;
                     State = AsteroidState.Depleted;
                 }
-            }
+            }*/
         }
     }
     

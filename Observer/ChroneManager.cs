@@ -8,6 +8,8 @@ namespace AsteroidSimulation.Observer
     {
         private static List<IChroneListener> _listenerList = new List<IChroneListener>();
 
+        public static int CurrentChrone = 0;
+
         public static void AddListener(IChroneListener listener)
         {
             _listenerList.Add(listener);
@@ -20,6 +22,8 @@ namespace AsteroidSimulation.Observer
 
         public static void MakeChroneTick()
         {
+            ++CurrentChrone;
+            
             foreach (var listener in _listenerList)
             {
                 listener.OnChroneTick();
