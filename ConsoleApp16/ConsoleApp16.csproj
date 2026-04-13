@@ -43,16 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Asteroid.cs" />
-    <Compile Include="AsteroidEmitter.cs" />
-    <Compile Include="ChroneManager.cs" />
-    <Compile Include="HarvesterState.cs" />
-    <Compile Include="IChronListener.cs" />
-    <Compile Include="HarvesterShip.cs" />
-    <Compile Include="MotherShip.cs" />
+    <Compile Include="Asteroids\Asteroid.cs" />
+    <Compile Include="Asteroids\AsteroidEmitter.cs" />
+    <Compile Include="Core\ChroneManager.cs" />
+    <Compile Include="Harvesters\HarvesterState.cs" />
+    <Compile Include="Core\IChronListener.cs" />
+    <Compile Include="Harvesters\HarvesterShip.cs" />
+    <Compile Include="Station\MotherShip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Report.cs" />
+    <Compile Include="Data\Report.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
