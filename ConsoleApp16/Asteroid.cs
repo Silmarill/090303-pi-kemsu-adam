@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ConsoleApp16 {
-  public enum AsteroidState { Idle, Depleted }
+  public enum AsteroidState { Idle, Mining, Depleted }
   public class Asteroid : IChroneListener {
     public int CurrentEchos;
     public int MaxEchos;
@@ -17,13 +17,15 @@ namespace ConsoleApp16 {
     private int minMaxechos = 100;
     private int maxMaxechos = 1001;
     private static int _createCounter = 0;
+    private static int _spawnCounter = 0;
     public Asteroid() {
-      CreateID = _createCounter++;
+      CreateID = ++_createCounter;
       MaxEchos = new Random().Next(minMaxechos, maxMaxechos);
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle; 
       SpawnID = 0;
       EchosDecreasePerTick = 100;
+      SpawnID = ++_spawnCounter;
     }
 
     public void OnChronTick() {
