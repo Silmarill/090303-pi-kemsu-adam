@@ -9,21 +9,28 @@ class Program {
     const int minSpawn = 1;
     const int maxSpawn = 4;
 
+    // Инициализация
     AsteroidEmitter emitter = new AsteroidEmitter(initialPoolSize);
     List<Asteroid> activeAsteroids = new List<Asteroid>();
     Random random = new Random();
     int chroneCounter = 0;
 
-    // Начальное наполнение активного списка
-    for (int asteroidIndex = 0; asteroidIndex < startAsteroidsCount; ++asteroidIndex) {
+    // Создание станции-матриарха
+    MotherShip motherShip = new MotherShip();
+
+    // Начальное наполнение
+    for (int i = 0; i < startAsteroidsCount; i++) {
       activeAsteroids.Add(emitter.Spawn());
     }
 
-    PrintInfo(chroneCounter, activeAsteroids);
+    // Для поиска целей
+    motherShip.SetActiveAsteroids(activeAsteroids);
 
-    // Главный цикл программы
+    PrintInfo(chroneCounter, activeAsteroids, motherShip);
+
+    // Основной цикл
     while (true) {
-      Console.WriteLine("\nНажмите [Enter] для следующего хрона или [Esc] для выхода...");
+      Console.WriteLine("\nНажмите [Enter] — следующий хрон | [R] — суммарная добыча | [Esc] — выход");
       ConsoleKey key = Console.ReadKey(true).Key;
 
       if (key == ConsoleKey.Escape) {
@@ -34,59 +41,60 @@ class Program {
         chroneCounter++;
         bool isSpawnTick = (chroneCounter % spawnInterval == 0);
 
-        // Уведомление всех астероидов о новом хроне
         ChroneManager.MakeChroneTick();
 
-        // Спавн новых астероидов каждые 5 хронов
         if (isSpawnTick) {
-          int newAsteroidsCount = random.Next(minSpawn, maxSpawn);
-
-          for (int spawnIndex = 0; spawnIndex < newAsteroidsCount; ++spawnIndex) {
+          int count = random.Next(minSpawn, maxSpawn);
+          for (int i = 0; i < count; i++) {
             activeAsteroids.Add(emitter.Spawn());
           }
         }
 
-        // Возврат истощённых астероидов в пул (обратный цикл для безопасного удаления)
-        for (int asteroidIndex = activeAsteroids.Count - 1; asteroidIndex >= 0; --asteroidIndex) {
-          if (activeAsteroids[asteroidIndex].State == AsteroidState.Depleted) {
-            emitter.Recycle(activeAsteroids[asteroidIndex]);
-            activeAsteroids.RemoveAt(asteroidIndex);
+        // Удаление Depleted
+        for (int i = activeAsteroids.Count - 1; i >= 0; i--) {
+          if (activeAsteroids[i].State == AsteroidState.Depleted) {
+            emitter.Recycle(activeAsteroids[i]);
+            activeAsteroids.RemoveAt(i);
           }
         }
 
-        PrintInfo(chroneCounter, activeAsteroids);
+        // Автоматический вывод полного журнала на 15-м хроне
+        if (chroneCounter % 15 == 0) {
+          motherShip.PrintFullWorklog();
+        }
+
+        PrintInfo(chroneCounter, activeAsteroids, motherShip);
+      }
+      else if (key == ConsoleKey.R) {
+        motherShip.PrintSummary();
       }
     }
   }
 
-  static void PrintInfo(int chrone, List<Asteroid> activeAsteroids) {
-    const int lineLength = 50;
-    const int criticalResourceLevel = 200;
-    const int mediumResourceLevel = 500;
-
+  static void PrintInfo(int chrone, List<Asteroid> activeAsteroids, MotherShip motherShip) {
     Console.Clear();
-    Console.WriteLine($"=== Хрон: {chrone} === Активных астероидов: {activeAsteroids.Count}");
-    Console.WriteLine(new string('-', lineLength));
+    Console.WriteLine($"=== Хрон: {chrone} === Активных астероидов: {activeAsteroids.Count} === Матриарх активен ===");
+    Console.WriteLine(new string('-', 70));
 
-    if (activeAsteroids.Count == 0) {
-      Console.WriteLine("Нет активных астероидов.");
-    } else {
-      foreach (var asteroid in activeAsteroids) {
-        if (asteroid.CurrentEchos <= criticalResourceLevel) {
-          Console.ForegroundColor = ConsoleColor.Red;
-        }
-        else if (asteroid.CurrentEchos <= mediumResourceLevel) {
-          Console.ForegroundColor = ConsoleColor.DarkYellow;
-        }
-        else {
-          Console.ForegroundColor = ConsoleColor.Green;
-        }
+    Console.WriteLine("=== АСТЕРОИДЫ ===");
+    foreach (var ast in activeAsteroids) {
+      ConsoleColor color = ast.State == AsteroidState.Mining ? ConsoleColor.Cyan :
+                           ast.CurrentEchos <= 200 ? ConsoleColor.Red :
+                           ast.CurrentEchos <= 500 ? ConsoleColor.DarkYellow : ConsoleColor.Green;
 
-        Console.WriteLine(asteroid.ToString());
-        Console.ResetColor();
-      }
+      Console.ForegroundColor = color;
+      Console.WriteLine(ast);
+      Console.ResetColor();
     }
 
-    Console.WriteLine(new string('-', lineLength));
+    Console.WriteLine(new string('-', 70));
+    Console.WriteLine("=== ФЛОТ ХАРВЕСТЕРОВ ===");
+
+    foreach (var ship in motherShip.Fleet) {
+      Console.WriteLine(ship);
+    }
+
+    // Краткий вывод на каждый хрон
+    motherShip.PrintSummary();
   }
 }

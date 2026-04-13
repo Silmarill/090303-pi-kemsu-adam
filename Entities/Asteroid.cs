@@ -37,13 +37,12 @@ public class Asteroid : IChroneListener {
 
   // Метод, который вызывается хроном каждый тик, уменьшая количество Echos, если астероид в состоянии Idle
   public void OnChroneTick() {
+    // Только Idle теряет ресурс
     if (State == AsteroidState.Idle) {
       CurrentEchos -= ECHOS_DECREASE_PER_CHRON;
-
       if (CurrentEchos < 0) {
         CurrentEchos = 0;
       }
-
       if (CurrentEchos == 0) {
         State = AsteroidState.Depleted;
       }
