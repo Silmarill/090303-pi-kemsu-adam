@@ -9,8 +9,11 @@ namespace ConsoleApp16 {
     private static int NewAsteroidSpawnInterval = 5;
     private static int MinNewAsteroidsPerSpawn = 1;
     private static int MaxNewAsteroidsPerSpawn = 4;
+    private static int RandomOffset = 1;
     private static int WorklogDisplayInterval = 15;
 
+    private static int EnterKeyCode = 13;
+    private static int EscapeKeyCode = 27;
     static void Main() {
       var emitter = new AsteroidEmitter(InitialAsteroidPoolSize);
 
@@ -31,11 +34,11 @@ namespace ConsoleApp16 {
       while (true) {
         var key = Console.ReadKey().KeyChar;
 
-        if (key == 27) {
+        if (key == EscapeKeyCode) {
           break;
         }
 
-        if (key == 13) {
+        if (key == EnterKeyCode) {
           chronCount++;
           ProcessChron(chronCount, emitter, activeAsteroids);
           DisplayAsteroids(activeAsteroids);
@@ -64,7 +67,7 @@ namespace ConsoleApp16 {
 
       if (chronCount % NewAsteroidSpawnInterval == 0) {
         var random = new Random();
-        var newCount = random.Next(MinNewAsteroidsPerSpawn, MaxNewAsteroidsPerSpawn + 1);
+        var newCount = random.Next(MinNewAsteroidsPerSpawn, MaxNewAsteroidsPerSpawn + RandomOffset);
         for (int asteroidIndex = 0; asteroidIndex < newCount; ++asteroidIndex) {
           var newAsteroid = emitter.Spawn();
           activeAsteroids.Add(newAsteroid);

@@ -40,7 +40,7 @@ namespace ConsoleApp16 {
     public void Reset() {
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;
-      // SpawnID++;
+      SpawnID++;
     }
 
     public void OnChoneTrick() {
