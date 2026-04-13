@@ -2,55 +2,65 @@
 
 public class Asteroid : IChroneListener {
   // Публичные поля
-  public int CurrentEchos;
-  public int MaxEchos;
-  public AsteroidState State;
-  public int SpawnID;
-  public int CreateID;
+  public int currentEchos;
+  public int maxEchos;
+  public AsteroidState state;
+  public int spawnId;
+  public int createId;
 
-  // Величина уменьшения ресурса за один хрон
-  private const int ECHOS_DECREASE_PER_CHRON = 100;
+  // Внутренние параметры
+  private int echosDecreasePerChron;
 
-  private static int _globalCreateIdCounter = 0;
-  private static Random _random = new Random();
+  private static int globalCreateIdCounter;
+  private static Random random;
 
-  // Конструктор, который инициализирует астероид с уникальным CreateID, случайным количеством Echos и начальным состоянием Idle
+  // Конструктор
   public Asteroid() {
-    CreateID = ++_globalCreateIdCounter;
+    // Инициализация статических полей (при первом создании)
+    if (random == null) {
+      random = new Random();
+      globalCreateIdCounter = 0;
+    }
 
-    MaxEchos = _random.Next(100, 1001);
-    CurrentEchos = MaxEchos;
-    State = AsteroidState.Idle;
-    SpawnID = 0;
+    createId = ++globalCreateIdCounter;
+
+    maxEchos = random.Next(100, 1001);
+    currentEchos = maxEchos;
+
+    state = AsteroidState.Idle;
+    spawnId = 0;
+
+    echosDecreasePerChron = 100;
   }
 
-  // Метод для установки SpawnID, который может быть вызван эмиттером при спавне астероида
-  public void SetSpawnID(int spawnId) {
-    SpawnID = spawnId;
+  // Установка SpawnId
+  public void SetSpawnId(int spawnId) {
+    this.spawnId = spawnId;
   }
 
-  // Метод для сброса астероида в начальное состояние, который может быть вызван эмиттером при ресете астероида
+  // Сброс состояния
   public void Reset() {
-    CurrentEchos = MaxEchos;
-    State = AsteroidState.Idle;
+    currentEchos = maxEchos;
+    state = AsteroidState.Idle;
   }
 
-  // Метод, который вызывается хроном каждый тик, уменьшая количество Echos, если астероид в состоянии Idle
+  // Обработка хрона
   public void OnChroneTick() {
-    // Только Idle теряет ресурс
-    if (State == AsteroidState.Idle) {
-      CurrentEchos -= ECHOS_DECREASE_PER_CHRON;
-      if (CurrentEchos < 0) {
-        CurrentEchos = 0;
+    if (state == AsteroidState.Idle) {
+      currentEchos -= echosDecreasePerChron;
+
+      if (currentEchos < 0) {
+        currentEchos = 0;
       }
-      if (CurrentEchos == 0) {
-        State = AsteroidState.Depleted;
+
+      if (currentEchos == 0) {
+        state = AsteroidState.Depleted;
       }
     }
   }
 
-  // Переопределение метода ToString для удобного отображения информации об астероиде
+  // Вывод
   public override string ToString() {
-    return $"[CreateID: {CreateID:D2} | SpawnID: {SpawnID:D2}] Echos: {CurrentEchos}/{MaxEchos} | State: {State}";
+    return $"[CreateId: {createId:D2} | SpawnId: {spawnId:D2}] Echos: {currentEchos}/{maxEchos} | State: {state}";
   }
 }

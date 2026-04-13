@@ -1,101 +1,105 @@
 ﻿using System;
 
 public class HarvesterShip : IChroneListener {
-  // Основные данные харвестера
-  public readonly int ID;
-  public readonly string Name;
-  public int AsteroidsMined;
+  // Основные данные
+  public readonly int id;
+  public readonly string name;
+  public int asteroidsMined;
 
   // Параметры добычи
-  public int CargoCapacity;
-  public int BiteSize;
+  public int cargoCapacity;
+  public int biteSize;
 
-  // Текущее состояние
-  public int CargoCurrent;
-  public HarvesterState State;
+  // Состояние
+  public int cargoCurrent;
+  public HarvesterState state;
 
-  // Приватные поля для внутренней логики
-  private Asteroid _currentTarget;
-  private int _jobCounter;
+  // Внутренняя логика
+  private Asteroid currentTarget;
+  private int jobCounter;
 
-  // Конструктор для инициализации харвестера
+  // Конструктор
   public HarvesterShip(int id, string name) {
-    ID = id;
-    Name = name;
+    this.id = id;
+    this.name = name;
 
-    AsteroidsMined = 0;
-    CargoCurrent = 0;
-    State = HarvesterState.Idle;
+    asteroidsMined = 0;
+    cargoCurrent = 0;
+    state = HarvesterState.Idle;
 
-    // Значения по умолчанию
-    CargoCapacity = 500;
-    BiteSize = 50;
+    cargoCapacity = 500;
+    biteSize = 50;
 
-    _currentTarget = null;
-    _jobCounter = 0;
+    currentTarget = null;
+    jobCounter = 0;
   }
 
-  // Метод, вызываемый при каждом тике хронометра
+  // Обработка хрона
   public void OnChroneTick() {
-    if (State == HarvesterState.Mining && _currentTarget != null) {
-      Mine(_currentTarget);
+    if (state == HarvesterState.Mining && currentTarget != null) {
+      Mine(currentTarget);
     }
   }
 
-  // Логика добычи астероида
+  // Добыча астероида
   public void Mine(Asteroid asteroid) {
+
+    // Проверка валидности цели
     if (asteroid == null || asteroid.State != AsteroidState.Mining || asteroid.CurrentEchos <= 0) {
-      FinishMining();
+      FinishMining(false);
       return;
     }
 
-    // Вычисления кол-ва эхов можно добыть за один укус, не превышая текущий запас астероида и вместимость груза
-    int bite = Math.Min(BiteSize, asteroid.CurrentEchos);
-    asteroid.CurrentEchos -= bite;
-    CargoCurrent += bite;
+    // Расчет добычи за шаг
+    int biteAmount = Math.Min(biteSize, asteroid.CurrentEchos);
 
-    // Проверка, не закончился ли астероид или не переполнился ли груз
+    asteroid.CurrentEchos -= biteAmount;
+    cargoCurrent += biteAmount;
+
+    // Проверка завершения добычи
     if (asteroid.CurrentEchos <= 0) {
       asteroid.CurrentEchos = 0;
       asteroid.State = AsteroidState.Depleted;
+
       FinishMining(true);
     }
-    else if (CargoCurrent >= CargoCapacity) {
-      FinishMining();
+    else if (cargoCurrent >= cargoCapacity) {
+      FinishMining(false);
     }
   }
 
-  // Завершение добычи, разгрузка и подготовка к следующей задаче
-  private void FinishMining(bool asteroidDepleted = false) {
-    if (_currentTarget != null) {
-      if (CargoCurrent > 0) {
-        AsteroidsMined++;
+  // Завершение добычи (освобождение цели, обновление статистики и состояния)
+  private void FinishMining(bool isAsteroidDepleted) {
+    if (currentTarget != null) {
+      if (cargoCurrent > 0) {
+        asteroidsMined++;
       }
 
-      // Если астероид был полностью добыт, он уже помечен как Depleted, иначе возвращает его в Idle
-      _currentTarget = null;
+      currentTarget = null;
     }
 
-    // Разгрузка на станции
-    CargoCurrent = 0;
-    State = HarvesterState.Idle;
+    cargoCurrent = 0;
+    state = HarvesterState.Idle;
   }
 
-  // Метод для назначения цели харвестеру
+  // Назначение цели
   public bool TryAssignTarget(Asteroid asteroid) {
-    if (State != HarvesterState.Idle || asteroid.State != AsteroidState.Idle) {
+    if (state != HarvesterState.Idle || asteroid.State != AsteroidState.Idle) {
       return false;
     }
 
-    _currentTarget = asteroid;
+    currentTarget = asteroid;
+
     asteroid.State = AsteroidState.Mining;
-    State = HarvesterState.Mining;
-    _jobCounter++;
+    state = HarvesterState.Mining;
+
+    jobCounter++;
+
     return true;
   }
 
-  // Переопределение метода ToString для удобного отображения информации о харвестере
+  // Вывод информации о харвестере
   public override string ToString() {
-    return $"Harvester [{ID:D2}] {Name} | Status: {State} | Cargo: {CargoCurrent}/{CargoCapacity} | Mined: {AsteroidsMined}";
+    return $"Harvester [{id:D2}] {name} | Status: {state} | Cargo: {cargoCurrent}/{cargoCapacity} | Mined: {asteroidsMined}";
   }
 }

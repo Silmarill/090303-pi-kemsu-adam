@@ -1,17 +1,16 @@
-﻿public class Report {
-  public int JobNumber;
-  public int AsteroidSpawnID;
-  public int AmountMined;
+﻿// Класс для хранения отчёта о добыче астероида. Содержит номер задания, идентификатор спавна астероида и количество добытого ресурса.
+public class Report {
+  public int jobNumber;
+  public int asteroidSpawnId;
+  public int amountMined;
 
-  // Конструктор для создания отчета
-  public Report(int jobNumber, int asteroidSpawnID, int amountMined) {
-    JobNumber = jobNumber;
-    AsteroidSpawnID = asteroidSpawnID;
-    AmountMined = amountMined;
+  public Report(int jobNumber, int asteroidSpawnId, int amountMined) {
+    this.jobNumber = jobNumber;
+    this.asteroidSpawnId = asteroidSpawnId;
+    this.amountMined = amountMined;
   }
 
-  // Перегрузка метода ToString для удобного отображения информации о отчете
   public override string ToString() {
-    return $"Job #{JobNumber} | Asteroid SpawnID: {AsteroidSpawnID} | Mined: {AmountMined}";
+    return $"Job #{jobNumber} | Asteroid SpawnId: {asteroidSpawnId} | Mined: {amountMined}";
   }
 }

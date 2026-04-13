@@ -2,91 +2,132 @@
 using System.Collections.Generic;
 
 public class MotherShip : IChroneListener {
-  // Флот харвестеров и журнал работ
-  public List<HarvesterShip> Fleet { get; private set; } = new List<HarvesterShip>();
-  // Ключ — имя харвестера, значение - список его отчётов
-  public Dictionary<string, List<Report>> Worklog { get; private set; } = new Dictionary<string, List<Report>>();
-  // Список активных астероидов (будет передаваться из Program)
-  private const int FLEET_SIZE = 5;
+  // Флот харвестеров
+  public List<HarvesterShip> fleet { get; private set; }
 
-  // Для нумерации заданий
-  private int _globalJobCounter = 0;
+  // Журнал работ (ключ — имя харвестера)
+  public Dictionary<string, List<Report>> worklog { get; private set; }
 
-  // Конструктор для инициализации флота харвестеров и подписки на хроны
+  // Размер флота
+  private int fleetSize;
+
+  // Счетчик заданий
+  private int globalJobCounter;
+
+  // Конструктор
   public MotherShip() {
-    for (int i = 1; i <= FLEET_SIZE; i++) {
-      string name = $"Harvester-{i:D2}";
-      var ship = new HarvesterShip(i, name);
-      Fleet.Add(ship);
-      Worklog[name] = new List<Report>();
+    HarvesterShip ship;
+    string shipName;
 
-      // Харвестеры подписываются на хроны
+    fleet = new List<HarvesterShip>();
+    worklog = new Dictionary<string, List<Report>>();
+
+    fleetSize = 5;
+    globalJobCounter = 0;
+
+    for (int harvesterIndex = 1; harvesterIndex <= fleetSize; ++harvesterIndex) {
+      shipName = $"Harvester-{harvesterIndex:D2}";
+
+      ship = new HarvesterShip(harvesterIndex, shipName);
+
+      fleet.Add(ship);
+      worklog[shipName] = new List<Report>();
+
+      // Подписка харвестера на хроны
       ChroneManager.AddListener(ship);
     }
 
+    // Подписка материнского корабля
     ChroneManager.AddListener(this);
   }
 
-  /*
-   * Метод, вызываемый при каждом тике хронометра
-   * На 15-м хроне выводится полный Worklog (будет вызвано из Program)
-  */
+  // Обработка хрона
   public void OnChroneTick() {
-    // Логика назначения целей свободным харвестерам
     AssignTargets();
   }
 
-  // Метод для назначения целей свободным харвестерам
+  // Назначение целей харвестерам
   private void AssignTargets() {
-    // Cвободные харвестеры берут первый Idle астероид
-    foreach (var ship in Fleet) {
+    HarvesterShip ship;
+
+    for (int shipIndex = 0; shipIndex < fleet.Count; ++shipIndex) {
+      ship = fleet[shipIndex];
+
       if (ship.State != HarvesterState.Idle) {
         continue;
       }
     }
   }
 
+  // Передача астероидов материнскому кораблю
   public void SetActiveAsteroids(List<Asteroid> activeAsteroids) {
     // Пока пусто
   }
 
-  // Метод для разгрузки и создания отчёта (вызывается из HarvesterShip при необходимости)
-  public void DeliverReport(HarvesterShip ship, int asteroidSpawnID, int amountMined) {
+  // Отчёт
+  public void DeliverReport(HarvesterShip ship, int asteroidSpawnId, int amountMined) {
+    string shipName = ship.Name;
+
+    // Если ничего не было добыто, отчёт не создаётся
     if (amountMined <= 0) {
       return;
     }
 
-    _globalJobCounter++;
-    var report = new Report(_globalJobCounter, asteroidSpawnID, amountMined);
+    // Увеличение глобального счётчика заданий
+    globalJobCounter++;
 
-    string key = ship.Name;
-    if (Worklog.ContainsKey(key)) {
-      Worklog[key].Add(report);
+    Report report = new Report(globalJobCounter, asteroidSpawnId, amountMined);
+
+    // Сохранение отчёта в журнале
+    if (worklog.ContainsKey(shipName)) {
+      worklog[shipName].Add(report);
     }
   }
 
-  // Метод для вывода полного журнала работ
+  // Вывод журнала
   public void PrintFullWorklog() {
-    Console.WriteLine("\n=== ПОЛНЫЙ ЖУРНАЛ РАБОТ (Worklog) ===");
-    foreach (var entry in Worklog) {
-      Console.WriteLine($"Харвестер: {entry.Key} ({entry.Value.Count} отчётов)");
-      foreach (var r in entry.Value) {
-        Console.WriteLine($"   {r}");
+    Console.WriteLine("\n=== Full worklog ===");
+
+    // Получение списка имён харвестеров для упорядоченного вывода
+    List<string> harvesterNames = new List<string>(worklog.Keys);
+
+    // Сортировка имён харвестеров по алфавиту
+    for (int harvesterIndex = 0; harvesterIndex < harvesterNames.Count; ++harvesterIndex) {
+      string currentHarvesterName = harvesterNames[harvesterIndex];
+      List<Report> reports = worklog[currentHarvesterName];
+
+      Console.WriteLine($"Harvester: {currentHarvesterName} ({reports.Count} reports)");
+
+      // Вывод отчётов для текущего харвестера
+      for (int reportIndex = 0; reportIndex < reports.Count; ++reportIndex) {
+        Console.WriteLine($"  {reports[reportIndex]}");
       }
     }
+
     Console.WriteLine("====================================\n");
   }
 
+  // Вывод суммарной информации о добыче каждого харвестера
   public void PrintSummary() {
-    Console.WriteLine("\n=== СУММАРНАЯ ДОБЫЧА ===");
-    foreach (var ship in Fleet) {
-      int totalMined = 0;
-      if (Worklog.ContainsKey(ship.Name)) {
-        foreach (var r in Worklog[ship.Name]) {
-          totalMined += r.AmountMined;
+    int totalMined = 0;
+
+    Console.WriteLine("\n=== Summary ===");
+
+    // Вывод информации для каждого харвестера
+    for (int shipIndex = 0; shipIndex < fleet.Count; ++shipIndex) {
+      HarvesterShip ship = fleet[shipIndex];
+
+      // Подсчёт общего количества добытых эхов для текущего харвестера
+      if (worklog.ContainsKey(ship.Name)) {
+        List<Report> reports = worklog[ship.Name];
+
+        // Подсчёт общего количества добытых эхов для текущего харвестера
+        for (int reportIndex = 0; reportIndex < reports.Count; ++reportIndex) {
+          totalMined += reports[reportIndex].amountMined;
         }
       }
-      Console.WriteLine($"{ship.Name}: {totalMined} Echos | Астероидов добыто: {ship.AsteroidsMined}");
+
+      Console.WriteLine($"{ship.Name}: {totalMined} Echos | Asteroids mined: {ship.AsteroidsMined}");
     }
   }
 }

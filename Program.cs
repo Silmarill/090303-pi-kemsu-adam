@@ -3,98 +3,138 @@ using System.Collections.Generic;
 
 class Program {
   static void Main(string[] args) {
-    const int initialPoolSize = 5;
-    const int startAsteroidsCount = 3;
-    const int spawnInterval = 5;
-    const int minSpawn = 1;
-    const int maxSpawn = 4;
+    // Блок объявления
+    int initialPoolSize;
+    int startAsteroidsCount;
+    int spawnInterval;
+    int minSpawnCount;
+    int maxSpawnCount;
+    int fullLogInterval;
+    int newAsteroidsCount;
+    bool isSpawnTick;
 
-    // Инициализация
-    AsteroidEmitter emitter = new AsteroidEmitter(initialPoolSize);
-    List<Asteroid> activeAsteroids = new List<Asteroid>();
-    Random random = new Random();
-    int chroneCounter = 0;
+    AsteroidEmitter emitter;
+    List<Asteroid> activeAsteroids;
+    Random random;
+    int chroneCounter;
+    MotherShip motherShip;
 
-    // Создание станции-матриарха
-    MotherShip motherShip = new MotherShip();
+    // Блок инициализации
+    initialPoolSize = 5;
+    startAsteroidsCount = 3;
+    spawnInterval = 5;
+    minSpawnCount = 1;
+    maxSpawnCount = 4;
+    fullLogInterval = 15;
 
-    // Начальное наполнение
-    for (int i = 0; i < startAsteroidsCount; i++) {
+    emitter = new AsteroidEmitter(initialPoolSize);
+    activeAsteroids = new List<Asteroid>();
+    random = new Random();
+    chroneCounter = 0;
+    motherShip = new MotherShip();
+
+    // Начальный спавн астероидов
+    for (int asteroidIndex = 0; asteroidIndex < startAsteroidsCount; ++asteroidIndex) {
       activeAsteroids.Add(emitter.Spawn());
     }
 
-    // Для поиска целей
+    // Передача данных материнскому кораблю
     motherShip.SetActiveAsteroids(activeAsteroids);
 
     PrintInfo(chroneCounter, activeAsteroids, motherShip);
 
     // Основной цикл
     while (true) {
-      Console.WriteLine("\nНажмите [Enter] — следующий хрон | [R] — суммарная добыча | [Esc] — выход");
-      ConsoleKey key = Console.ReadKey(true).Key;
+      Console.WriteLine("\nPress [Enter] — next chrone | [R] — summary | [Esc] — exit");
 
-      if (key == ConsoleKey.Escape) {
+      ConsoleKey pressedKey = Console.ReadKey(true).Key;
+
+      if (pressedKey == ConsoleKey.Escape) {
         break;
       }
 
-      if (key == ConsoleKey.Enter) {
+      if (pressedKey == ConsoleKey.Enter) {
+        // Увеличение хрона
         chroneCounter++;
-        bool isSpawnTick = (chroneCounter % spawnInterval == 0);
 
+        // Проверка спавна
+        isSpawnTick = chroneCounter % spawnInterval == 0;
+
+        // Обновление системы
         ChroneManager.MakeChroneTick();
 
+        // Спавн новых астероидов
         if (isSpawnTick) {
-          int count = random.Next(minSpawn, maxSpawn);
-          for (int i = 0; i < count; i++) {
+          newAsteroidsCount = random.Next(minSpawnCount, maxSpawnCount);
+
+          for (int spawnIndex = 0; spawnIndex < newAsteroidsCount; ++spawnIndex) {
             activeAsteroids.Add(emitter.Spawn());
           }
         }
 
-        // Удаление Depleted
-        for (int i = activeAsteroids.Count - 1; i >= 0; i--) {
-          if (activeAsteroids[i].State == AsteroidState.Depleted) {
-            emitter.Recycle(activeAsteroids[i]);
-            activeAsteroids.RemoveAt(i);
+        // Удаление истощенных астероидов
+        for (int asteroidIndex = activeAsteroids.Count - 1; asteroidIndex >= 0; --asteroidIndex) {
+          if (activeAsteroids[asteroidIndex].state == AsteroidState.Depleted) {
+            emitter.Recycle(activeAsteroids[asteroidIndex]);
+            activeAsteroids.RemoveAt(asteroidIndex);
           }
         }
 
-        // Автоматический вывод полного журнала на 15-м хроне
-        if (chroneCounter % 15 == 0) {
+        // Лог
+        if (chroneCounter % fullLogInterval == 0) {
           motherShip.PrintFullWorklog();
         }
 
         PrintInfo(chroneCounter, activeAsteroids, motherShip);
       }
-      else if (key == ConsoleKey.R) {
+      else if (pressedKey == ConsoleKey.R) {
         motherShip.PrintSummary();
       }
     }
   }
 
   static void PrintInfo(int chrone, List<Asteroid> activeAsteroids, MotherShip motherShip) {
+    // Очистка консоли для нового кадра
     Console.Clear();
-    Console.WriteLine($"=== Хрон: {chrone} === Активных астероидов: {activeAsteroids.Count} === Матриарх активен ===");
-    Console.WriteLine(new string('-', 70));
 
-    Console.WriteLine("=== АСТЕРОИДЫ ===");
-    foreach (var ast in activeAsteroids) {
-      ConsoleColor color = ast.State == AsteroidState.Mining ? ConsoleColor.Cyan :
-                           ast.CurrentEchos <= 200 ? ConsoleColor.Red :
-                           ast.CurrentEchos <= 500 ? ConsoleColor.DarkYellow : ConsoleColor.Green;
+    // Заголовок
+    Console.WriteLine($"=== Chrone: {chrone} === Active asteroids: {activeAsteroids.Count} === MotherShip active ===\n" +
+                      $"{new string('-', 70)}\n" +
+                      $"=== ASTEROIDS ===");
 
-      Console.ForegroundColor = color;
-      Console.WriteLine(ast);
+    // Астероиды
+    for (int asteroidIndex = 0; asteroidIndex < activeAsteroids.Count; ++asteroidIndex) {
+      Asteroid asteroid = activeAsteroids[asteroidIndex];
+
+      ConsoleColor asteroidColor;
+
+      if (asteroid.state == AsteroidState.Mining) {
+        asteroidColor = ConsoleColor.Cyan;
+      }
+      else if (asteroid.currentEchos <= 200) {
+        asteroidColor = ConsoleColor.Red;
+      }
+      else if (asteroid.currentEchos <= 500) {
+        asteroidColor = ConsoleColor.DarkYellow;
+      }
+      else {
+        asteroidColor = ConsoleColor.Green;
+      }
+
+      Console.ForegroundColor = asteroidColor;
+      Console.WriteLine(asteroid);
       Console.ResetColor();
     }
 
-    Console.WriteLine(new string('-', 70));
-    Console.WriteLine("=== ФЛОТ ХАРВЕСТЕРОВ ===");
+    // Флот
+    Console.WriteLine($"{new string('-', 70)}\n=== HARVESTER FLEET ===");
 
-    foreach (var ship in motherShip.Fleet) {
+    for (int shipIndex = 0; shipIndex < motherShip.fleet.Count; ++shipIndex) {
+      HarvesterShip ship = motherShip.fleet[shipIndex];
       Console.WriteLine(ship);
     }
 
-    // Краткий вывод на каждый хрон
+    // Сводка
     motherShip.PrintSummary();
   }
 }
