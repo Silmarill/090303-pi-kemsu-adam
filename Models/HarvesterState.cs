@@ -1,7 +1,6 @@
 ﻿namespace AsteroidZoneSimulation.Models {
-  public enum AsteroidState {
+  public enum HarvesterState {
     Idle,
-    Mining,
-    Depleted
+    Mining
   }
 }

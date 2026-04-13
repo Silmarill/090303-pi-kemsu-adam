@@ -28,18 +28,22 @@ namespace AsteroidZoneSimulation.Models {
     }
 
     public void OnChroneTick() {
-      if (State == AsteroidState.Idle) {
-        CurrentEchos -= losingEchos;
-
-        if (CurrentEchos <= 0) {
-          CurrentEchos = 0;
-          State = AsteroidState.Depleted;
-        }
-      }
     }
 
     public void SetSpawnID(int id) {
       SpawnID = id;
+    }
+
+    public int ReduceEchos(int amount) {
+      int actualAmount = Math.Min(amount, CurrentEchos);
+      CurrentEchos -= actualAmount;
+
+      if (CurrentEchos <= 0) {
+        CurrentEchos = 0;
+        State = AsteroidState.Depleted;
+      }
+
+      return actualAmount;
     }
 
     public string GetAsteroidInformation() {
