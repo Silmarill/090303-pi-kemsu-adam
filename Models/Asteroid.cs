@@ -12,9 +12,16 @@ namespace AsteroidZoneSimulation.Models {
     public int CreateID;
 
     public static Random random = new Random();
+    private static readonly object _randomLock = new object();
+    
+    private static int GetRandom(int min, int max) {
+      lock (_randomLock) {
+        return random.Next(min, max);
+      }
+    }
 
     public Asteroid() {
-      MaxEchos = random.Next(100, 1001);
+      MaxEchos = GetRandom(100, 1001);
       CurrentEchos = MaxEchos;
       State = AsteroidState.Idle;
       CreateID = ++globalCreateCounter;
