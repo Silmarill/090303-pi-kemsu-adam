@@ -1,24 +1,22 @@
 ﻿using System;
 
 public class HarvesterShip : IChroneListener {
-  // Основные данные
   public readonly int id;
   public readonly string name;
   public int asteroidsMined;
 
-  // Параметры добычи
   public int cargoCapacity;
   public int biteSize;
 
-  // Состояние
   public int cargoCurrent;
   public HarvesterState state;
 
-  // Внутренняя логика
   private Asteroid currentTarget;
   private int jobCounter;
 
-  // Конструктор
+  // ВАЖНО: ссылка на станцию
+  private MotherShip motherShip;
+
   public HarvesterShip(int id, string name) {
     this.id = id;
     this.name = name;
@@ -34,45 +32,44 @@ public class HarvesterShip : IChroneListener {
     jobCounter = 0;
   }
 
-  // Обработка хрона
+  // подключение станции
+  public void SetMotherShip(MotherShip ship) {
+    motherShip = ship;
+  }
+
   public void OnChroneTick() {
     if (state == HarvesterState.Mining && currentTarget != null) {
       Mine(currentTarget);
     }
   }
 
-  // Добыча астероида
   public void Mine(Asteroid asteroid) {
-
-    // Проверка валидности цели
-    if (asteroid == null || asteroid.State != AsteroidState.Mining || asteroid.CurrentEchos <= 0) {
-      FinishMining(false);
+    if (asteroid == null || asteroid.state != AsteroidState.Mining || asteroid.currentEchos <= 0) {
+      FinishMining();
       return;
     }
 
-    // Расчет добычи за шаг
-    int biteAmount = Math.Min(biteSize, asteroid.CurrentEchos);
+    int biteAmount = Math.Min(biteSize, asteroid.currentEchos);
 
-    asteroid.CurrentEchos -= biteAmount;
+    asteroid.currentEchos -= biteAmount;
     cargoCurrent += biteAmount;
 
-    // Проверка завершения добычи
-    if (asteroid.CurrentEchos <= 0) {
-      asteroid.CurrentEchos = 0;
-      asteroid.State = AsteroidState.Depleted;
-
-      FinishMining(true);
-    }
-    else if (cargoCurrent >= cargoCapacity) {
-      FinishMining(false);
+    if (asteroid.currentEchos <= 0) {
+      asteroid.currentEchos = 0;
+      asteroid.state = AsteroidState.Depleted;
+      FinishMining();
+    } else if (cargoCurrent >= cargoCapacity) {
+      FinishMining();
     }
   }
 
-  // Завершение добычи (освобождение цели, обновление статистики и состояния)
-  private void FinishMining(bool isAsteroidDepleted) {
+  private void FinishMining() {
     if (currentTarget != null) {
       if (cargoCurrent > 0) {
         asteroidsMined++;
+
+        // ВАЖНО: создаём отчёт
+        motherShip?.DeliverReport(currentTarget, currentTarget.spawnId, cargoCurrent);
       }
 
       currentTarget = null;
@@ -82,15 +79,14 @@ public class HarvesterShip : IChroneListener {
     state = HarvesterState.Idle;
   }
 
-  // Назначение цели
   public bool TryAssignTarget(Asteroid asteroid) {
-    if (state != HarvesterState.Idle || asteroid.State != AsteroidState.Idle) {
+    if (state != HarvesterState.Idle || asteroid.state != AsteroidState.Idle) {
       return false;
     }
 
     currentTarget = asteroid;
 
-    asteroid.State = AsteroidState.Mining;
+    asteroid.state = AsteroidState.Mining;
     state = HarvesterState.Mining;
 
     jobCounter++;
@@ -98,7 +94,6 @@ public class HarvesterShip : IChroneListener {
     return true;
   }
 
-  // Вывод информации о харвестере
   public override string ToString() {
     return $"Harvester [{id:D2}] {name} | Status: {state} | Cargo: {cargoCurrent}/{cargoCapacity} | Mined: {asteroidsMined}";
   }

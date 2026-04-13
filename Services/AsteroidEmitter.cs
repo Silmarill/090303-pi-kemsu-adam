@@ -40,7 +40,7 @@ public class AsteroidEmitter {
     }
 
     // Присвоение уникального номера спавна
-    asteroid.SetSpawnID(++_spawnCounter);
+    asteroid.SetSpawnId(++_spawnCounter);
 
     // Подписка на уведомления о тактах времени
     ChroneManager.AddListener(asteroid);
