@@ -8,16 +8,19 @@ public class Asteroid : IChroneListener {
   public int spawnId;
   public int createId;
 
-  // Использовал на 1 этапе для фиксированной деградации астероидов. Dead code на момент 2 этапа.
-  // private const int echosDecreasePerChron = 100;
-
   // Глобальный счетчик для генерации уникальных CreateId
-  private static int globalCreateIdCounter = 0;
+  private static int globalCreateIdCounter;
+
   // Генератор случайных чисел для создания астероидов с разным количеством эхосов
-  private static Random random = new Random();
+  private static Random random;
 
   // Конструктор
   public Asteroid() {
+    if (random == null) {
+      random = new Random();
+      globalCreateIdCounter = 0;
+    }
+
     createId = ++globalCreateIdCounter;
 
     maxEchos = random.Next(100, 1001);

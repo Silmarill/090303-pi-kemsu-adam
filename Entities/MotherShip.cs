@@ -95,37 +95,19 @@ public class MotherShip : IChroneListener {
     this.activeAsteroids = activeAsteroids;
   }
 
-  public void DeliverReport(Asteroid asteroid, int spawnId, int amountMined) {
+  // Метод для получения отчета о выполненной работе от харвестера. Он принимает имя харвестера, идентификатор спавна астероида и количество добытых эхосов.
+  public void DeliverReport(HarvesterShip ship, Asteroid asteroid, int amountMined) {
     if (amountMined <= 0) {
       return;
     }
 
     globalJobCounter++;
 
-    // Создание нового отчета с использованием глобального счетчика заданий, идентификатора спавна астероида и количества добытых эхосов
-    Report report = new Report(globalJobCounter, spawnId, amountMined);
+    Report report = new Report(globalJobCounter, asteroid.spawnId, amountMined);
 
-    /*
-     * Поиск имени харвестера, который завершил задание, путем проверки каждого харвестера в флоте на наличие добытых астероидов.
-     * Если найден харвестер с добытыми астероидами, сохраняем его имя для добавления отчета в журнал работ.
-    */
-    string targetHarvesterName = null;
+    string harvesterName = ship.name;
 
-    // Проход по каждому харвестеру в флоте для поиска того, который завершил задание
-    for (int shipIndex = 0; shipIndex < fleet.Count; ++shipIndex) {
-      HarvesterShip ship = fleet[shipIndex];
-
-      if (ship.asteroidsMined > 0) {
-        targetHarvesterName = ship.name;
-        break;
-      }
-    }
-
-    if (targetHarvesterName != null) {
-      if (worklog.ContainsKey(targetHarvesterName)) {
-        worklog[targetHarvesterName].Add(report);
-      }
-    }
+    worklog[harvesterName].Add(report);
   }
 
   public void PrintFullWorklog() {

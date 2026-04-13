@@ -15,9 +15,8 @@ public class HarvesterShip : IChroneListener {
   // Состояние добычи: Idle (ожидание), Mining (добыча)
   public HarvesterState state;
 
-  // Текущий астероид, который добывает корабль, и счетчик выполненных заданий
+  // Текущий астероид, который добывает корабль
   private Asteroid currentTarget;
-  private int jobCounter;
 
   // Ссылка на MotherShip для отправки отчетов о добыче
   private MotherShip motherShip;
@@ -35,7 +34,6 @@ public class HarvesterShip : IChroneListener {
     biteSize = 50;
 
     currentTarget = null;
-    jobCounter = 0;
   }
 
   // Метод для установки ссылки на MotherShip, чтобы харвестер мог отправлять отчеты о добыче
@@ -87,7 +85,7 @@ public class HarvesterShip : IChroneListener {
 
         // Отправляется отчет о добыче в MotherShip, если был добыт ресурс
         if (motherShip != null) {
-          motherShip.DeliverReport(currentTarget, currentTarget.spawnId, cargoCurrent);
+          motherShip.DeliverReport(this, currentTarget, cargoCurrent);
         }
       }
 
@@ -107,7 +105,7 @@ public class HarvesterShip : IChroneListener {
    * Если назначение успешно, метод возвращает true; в противном случае возвращает false.
   */
   public bool TryAssignTarget(Asteroid asteroid) {
-    if (state != HarvesterState.Idle || asteroid.state != AsteroidState.Idle) {
+    if (state != HarvesterState.Idle || asteroid == null || asteroid.state != AsteroidState.Idle) {
       return false;
     }
 
