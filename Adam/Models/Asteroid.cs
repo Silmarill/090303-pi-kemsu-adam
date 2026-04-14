@@ -5,13 +5,8 @@ namespace AsteroidSimulation.Models
 {
   public class Asteroid : IChronListener
   {
-    public static int globalCreateCounter = 0;
-    public static int globalSpawnCounter = 0;
-    public static Random random = new Random();
-    public static int MaxEchosValue = 1000;
-    public static int echosLossPerTick = 100;
-    public static int rangeOffset = 1;
-
+    private static int globalCreateCounter = 0;
+    private static int globalSpawnCounter = 0;
 
     public int CurrentEchos;
     public int MaxEchos;
@@ -19,10 +14,13 @@ namespace AsteroidSimulation.Models
     public int SpawnID;
     public int CreateID;
 
+    private const int echosLossPerTick = 100;
+    private static readonly Random random = new Random();
+
     public Asteroid()
     {
       CreateID = ++globalCreateCounter;
-      MaxEchos = random.Next(echosLossPerTick, MaxEchosValue + rangeOffset);
+      MaxEchos = random.Next(100, 1001);
       Reset();
     }
 
