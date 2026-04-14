@@ -1,5 +1,3 @@
-using System;
-
 namespace AsteroidSimulation.Common
 {
     public class Report

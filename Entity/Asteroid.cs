@@ -1,5 +1,4 @@
 using AsteroidSimulation.Common;
-using System;
 
 namespace AsteroidSimulation.Entity
 {
@@ -10,8 +9,8 @@ namespace AsteroidSimulation.Entity
 
         private int MinRandom = 100;
         private int MaxRandom = 1001;
-        private int ResourceDamage = 100;
-
+        //private int ResourceDamage = 100;
+        
         public int CurrentEchos;
         public int MaxEchos;
         public int SpawnID;

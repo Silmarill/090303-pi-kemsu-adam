@@ -37,8 +37,8 @@ namespace AsteroidSimulation.Entity
 
         public void Mine()
         {
-            int space = 0;
-            int amountTake = 0;
+            int space;
+            int amountTake;
 
             space = CargoCapacity - CargoCurrent;
             amountTake = Math.Min(BiteSize, Math.Min(space, _targetAsteroid.CurrentEchos));

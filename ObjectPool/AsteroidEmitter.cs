@@ -1,5 +1,4 @@
 using AsteroidSimulation.Entity;
-using AsteroidSimulation.Observer;
 using System;
 using System.Collections.Generic;
 
