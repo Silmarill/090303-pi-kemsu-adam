@@ -24,9 +24,9 @@ namespace AsteroidSimulation.Observer
         {
             ++CurrentChrone;
             
-            foreach (var listener in _listenerList)
+            for (int index = _listenerList.Count - 1; index >= 0; --index)
             {
-                listener.OnChroneTick();
+                _listenerList[index].OnChroneTick();
             }
         }
     }

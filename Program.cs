@@ -11,19 +11,21 @@ namespace AsteroidSimulation
     {
         static void Main()
         {
-            int chroneCounter = 0;
+            //int chroneCounter = 0;
             int asteroidCount = 5;
             
             AsteroidEmitter uwuEmitter = new AsteroidEmitter(asteroidCount);
             List<Asteroid> activeAsteroids = new List<Asteroid>();
             Random rand = new Random();
 
+            MotherShip.InitializeFleet();
+
             for (int spawnIndex = 0; spawnIndex < 3; ++spawnIndex)
             {
                 activeAsteroids.Add(uwuEmitter.Spawn());
             }
 
-            Console.WriteLine("Симуляция астероидов запущена. Нажмите Enter для шага и Esc для выхода");
+            Console.WriteLine("Симуляция астероидов запущена. Нажмите Enter для шага, R - общая добыча, Esc для выхода");
 
             while (true)
             {
@@ -34,6 +36,12 @@ namespace AsteroidSimulation
                     break;
                 }
 
+                if (key == ConsoleKey.R)
+                {
+                    Console.WriteLine($"\n[Матриарх] Общая добыча флота: {MotherShip.ResourcesMined} Echos");
+                    continue;
+                }
+                
                 if (key != ConsoleKey.Enter)
                 {
                     continue;
@@ -41,17 +49,22 @@ namespace AsteroidSimulation
 
                 Console.Clear();
 
-                ++chroneCounter;
-                Console.WriteLine($"Хрон №{chroneCounter}");
+                ChroneManager.MakeChroneTick();
 
-                // Уведомление об изменении времени тиков
+                //++chroneCounter;
+
+                Console.WriteLine($"Хрон №{ChroneManager.CurrentChrone}");
+
+                MotherShip.AssignTasks(activeAsteroids);
+
+                /* Уведомление об изменении времени тиков
                 for (int tickIndex = 0; tickIndex < activeAsteroids.Count; ++tickIndex)
                 {
                     activeAsteroids[tickIndex].OnChroneTick();
-                }
+                }*/
 
                 // Каждые 5 тиков спавнятся 1-3 новых астероида
-                if (chroneCounter % 5 == 0)
+                if (ChroneManager.CurrentChrone % 5 == 0 && activeAsteroids.Count < 15)
                 {
                     int toSpawn = rand.Next(1, 4);
 
@@ -75,6 +88,11 @@ namespace AsteroidSimulation
                     }
                 }
 
+                if (ChroneManager.CurrentChrone % 15 == 0)
+                {
+                    MotherShip.ShowFullWorklog();
+                }
+
                 Console.WriteLine($"Активных объектов: {activeAsteroids.Count}");
 
                 for (int activeIndex = 0; activeIndex < activeAsteroids.Count; ++activeIndex)
@@ -82,7 +100,7 @@ namespace AsteroidSimulation
                     Asteroid asteroid = activeAsteroids[activeIndex];
 
                     Console.WriteLine($"[CreateID:{asteroid.CreateID} | SpawnID:{asteroid.SpawnID}] " +
-                                      $"Ресурс: {asteroid.CurrentEchos}/{asteroid.MaxEchos}");
+                                      $"Ресурс: {asteroid.CurrentEchos}/{asteroid.MaxEchos} | Статус: {asteroid.State}");
                 }
             }
         }

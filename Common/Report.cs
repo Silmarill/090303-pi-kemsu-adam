@@ -8,7 +8,6 @@ namespace AsteroidSimulation.Common
         public int AmountMined;
         public int AsteroidSpawnID;
 
-
         public Report(int job, int amount, int asteroidID)
         {
             JobNumber = job;

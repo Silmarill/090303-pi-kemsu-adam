@@ -1,4 +1,5 @@
 using AsteroidSimulation.Common;
+using AsteroidSimulation.Observer;
 using System;
 
 namespace AsteroidSimulation.Entity
@@ -57,6 +58,7 @@ namespace AsteroidSimulation.Entity
                     _targetAsteroid.State = AsteroidState.Idle;
                 }
 
+                Console.WriteLine($"{Name} копает: {amountTake} Echos. В трюме: {CargoCurrent}");
                 FinishMining();
             }
         }
@@ -73,8 +75,9 @@ namespace AsteroidSimulation.Entity
         {
             ++AsteroidMined;
 
-            Report report = new Report(Observer.ChroneManager.CurrentChrone, CargoCurrent, _targetAsteroid.SpawnID);
-            MotherShip.AddReport(Name, report);
+            Report report = new Report(ChroneManager.CurrentChrone, CargoCurrent, _targetAsteroid.SpawnID);
+            
+            MotherShip.ReceiveReport(Name, report, CargoCurrent);
 
             CargoCurrent = 0;
             _targetAsteroid = null;
