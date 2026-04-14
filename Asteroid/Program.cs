@@ -5,82 +5,162 @@ namespace Asteroid
 {
   class Program {
     static void Main() {
-      AsteroidEmitter emitter = new AsteroidEmitter(5);
-      List<Asteroid> active = new List<Asteroid>();
-      Random rnd = new Random();
+      Console.Title = "Asteroid Simulation with Harvesters";
+      Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-      int firstAstIndex;
-      firstAstIndex = 3;
+      int initialPoolSize;
+      initialPoolSize = 10;
 
-      int lifeMove;
-      lifeMove = 5;
+      AsteroidEmitter asteroidEmitter;
+      asteroidEmitter = new AsteroidEmitter(initialPoolSize);
 
-      int lifeCycleStart;
-      lifeCycleStart = 1;
+      List<Asteroid> activeAsteroids;
+      activeAsteroids = new List<Asteroid>();
 
-      int lifeCycleEnd;
-      lifeCycleEnd = 4;
+      int initialActiveCount;
+      initialActiveCount = 5;
 
-      int indexOffset;
-      indexOffset = 1;
+      for (int asteroidIndex = 0; asteroidIndex < initialActiveCount; ++asteroidIndex) {
+        Asteroid newAsteroid;
+        newAsteroid = asteroidEmitter.Spawn();
 
-      for (int index = 0; index < firstAstIndex; ++index) {
-        Asteroid firstAst = emitter.Spawn();
-        ChronManager.AddListener(firstAst);
-        active.Add(firstAst);
+        ChronManager.AddListener(newAsteroid);
+        activeAsteroids.Add(newAsteroid);
       }
 
+      MotherShip motherShip;
+      motherShip = new MotherShip(asteroidEmitter, activeAsteroids);
+
+      Random randomGenerator;
+      randomGenerator = new Random();
+
+      int spawnInterval;
+      spawnInterval = 5;
+
+      int minSpawnCount;
+      minSpawnCount = 1;
+
+      int maxSpawnCount;
+      maxSpawnCount = 3;
+
+      int fullWorklogChron;
+      fullWorklogChron = 15;
+
+      bool isRunning;
+      isRunning = true;
+
       Console.WriteLine(
-        "=== ASTEROID SIMULATION ===" +
-        "Press ENTER - next chron, ESC - exit\n"
+        "=== ASTEROID SIMULATION WITH HARVESTERS ===" +
+        $"Initial pool size: {initialPoolSize}" +
+        "Harvester fleet: 5 ships (Capacity: 500, BiteSize: 50)" +
+        "\nPress ENTER for next chron, R for harvester totals, ESC to exit\n"
         );
 
-      while (true) {
-        ConsoleKeyInfo key = Console.ReadKey(true);
+      while (isRunning) {
+        ConsoleKeyInfo keyInfo;
+        keyInfo = Console.ReadKey(true);
 
-        if (key.Key == ConsoleKey.Escape) break;
+        if (keyInfo.Key == ConsoleKey.Escape) {
+          isRunning = false;
 
-        if (key.Key != ConsoleKey.Enter) continue;
+          break;
+        }
+
+        if (keyInfo.Key == ConsoleKey.R) {
+          motherShip.PrintHarvesterTotals();
+
+          continue;
+        }
+
+        if (keyInfo.Key != ConsoleKey.Enter) {
+          continue;
+        }
 
         ChronManager.MakeChronTick();
-        int chron = ChronManager.GetCurrentChron();
 
-        if (chron % lifeMove == 0 && chron > 0) {
-          int count = rnd.Next(lifeCycleStart, lifeCycleEnd);
-          Console.WriteLine($"\n>>> Chron {chron}: +{count} new asteroids");
+        int currentChron;
+        currentChron = ChronManager.GetCurrentChron();
 
-          for (int index = 0; index < count; ++index) {
-            Asteroid firstAst = emitter.Spawn();
-            ChronManager.AddListener(firstAst);
-            active.Add(firstAst);
+        int increasingSpawn;
+        increasingSpawn = 1;
+
+        if (currentChron % spawnInterval == 0 && currentChron > 0) {
+          int spawnCount;
+          spawnCount = randomGenerator.Next(minSpawnCount, maxSpawnCount + increasingSpawn);
+
+          Console.WriteLine($"\n>>> Chron {currentChron}: spawning {spawnCount} new asteroid(s)");
+
+          for (int newIndex = 0; newIndex < spawnCount; ++newIndex) {
+            Asteroid newAsteroid;
+            newAsteroid = asteroidEmitter.Spawn();
+
+            ChronManager.AddListener(newAsteroid);
+            activeAsteroids.Add(newAsteroid);
           }
         }
 
-        List<Asteroid> toRemove = new List<Asteroid>();
-        foreach (Asteroid firstAst in active) {
-          if (firstAst.state == AsteroidState.Depleted) {
-            toRemove.Add(firstAst);
+        List<Asteroid> depletedAsteroids;
+        depletedAsteroids = new List<Asteroid>();
+
+        foreach (Asteroid asteroid in activeAsteroids) {
+          if (asteroid.state == AsteroidState.Depleted) {
+            depletedAsteroids.Add(asteroid);
           }
         }
 
-        foreach (Asteroid firstAst in toRemove) {
-          ChronManager.RemoveListener(firstAst);
-          emitter.Recycle(firstAst);
-          active.Remove(firstAst);
+        foreach (Asteroid depleted in depletedAsteroids) {
+          ChronManager.RemoveListener(depleted);
+          asteroidEmitter.Recycle(depleted);
+          activeAsteroids.Remove(depleted);
         }
 
         Console.Clear();
+
         Console.WriteLine(
-          $"=== CHRON {chron} ===" +
-          $"Active: {active.Count}, Pool: {emitter.AvailableCount()}\n"
+          $"=== CHRON {currentChron} ===" +
+          $"Active asteroids: {activeAsteroids.Count}" +
+          $"Available in pool: {asteroidEmitter.GetAvailableCount()}" +
+          "\n--- ACTIVE ASTEROIDS ---"
           );
 
-        for (int index = 0; index < active.Count; ++index) {
-          Console.WriteLine($"  {index + indexOffset}. {active[index]}");
+        int increasingAstInd;
+        increasingAstInd = 1;
+
+        if (activeAsteroids.Count == 0) {
+          Console.WriteLine("  No active asteroids");
+        } 
+        
+        else {
+          for (int asteroidIndex = 0; asteroidIndex < activeAsteroids.Count; ++asteroidIndex) {
+            int displayNumber;
+            displayNumber = asteroidIndex + increasingAstInd;
+
+            Console.WriteLine($"  {displayNumber,2}. {activeAsteroids[asteroidIndex]}");
+          }
         }
 
-        Console.WriteLine("\nPress ENTER for next chron, ESC to exit");
+        motherShip.PrintFleetStatus();
+        motherShip.PrintHarvesterTotals();
+
+        if (currentChron % fullWorklogChron == 0 && currentChron > 0) {
+          motherShip.PrintFullWorklog();
+        }
+
+        Console.WriteLine(
+          "\n--- POOL STATUS ---" +
+          $"  Available: {asteroidEmitter.GetAvailableCount()}" +
+          $"  Total spawned: {currentChron}" +
+          "\nPress ENTER for next chron, R for totals, ESC to exit"
+          );
       }
+
+      Console.Clear();
+      Console.WriteLine(
+        "=== SIMULATION ENDED ===" +
+        $"Total chrons passed: {ChronManager.GetCurrentChron()}" +
+        "\nPress any key to exit..."
+        );
+      Console.ReadKey();
     }
   }
 }

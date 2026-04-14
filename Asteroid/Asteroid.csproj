@@ -46,8 +46,11 @@
     <Compile Include="Asteroid.cs" />
     <Compile Include="AsteroidEmitter.cs" />
     <Compile Include="ChronManager.cs" />
+    <Compile Include="HarvesterShip.cs" />
+    <Compile Include="MotherShip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

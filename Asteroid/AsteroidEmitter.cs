@@ -3,39 +3,58 @@ using System.Collections.Generic;
 
 namespace Asteroid {
   public class AsteroidEmitter {
-    private Queue<Asteroid> _pool = new Queue<Asteroid>();
-    private int _totalSpawned = 0;
+    private Queue<Asteroid> _availablePool;
+    private int _totalSpawnCount;
+    private int _initialPoolSize;
 
     public AsteroidEmitter(int initialSize) {
-      for (int index = 0; index < initialSize; ++index) {
-        _pool.Enqueue(new Asteroid());
+      _initialPoolSize = initialSize;
+      _availablePool = new Queue<Asteroid>();
+      _totalSpawnCount = 0;
+
+      for (int asteroidIndex = 0; asteroidIndex < initialSize; ++asteroidIndex) {
+        Asteroid newAsteroid;
+        newAsteroid = new Asteroid();
+        _availablePool.Enqueue(newAsteroid);
       }
     }
 
     public Asteroid Spawn() {
       Asteroid asteroid;
 
-      if (_pool.Count == 0) {
+      int increasingCount;
+      increasingCount = 1;
+
+      if (_availablePool.Count == 0) {
         asteroid = new Asteroid();
-        Console.WriteLine("  [Pool expanded]");
+        Console.WriteLine("  [Pool warning: empty, creating new asteroid]");
       } 
       
       else {
-        asteroid = _pool.Dequeue();
+        asteroid = _availablePool.Dequeue();
       }
 
-      asteroid.SetSpawnId(++_totalSpawned);
+      _totalSpawnCount = _totalSpawnCount + increasingCount;
+      asteroid.SetSpawnId(_totalSpawnCount);
 
       return asteroid;
     }
 
     public void Recycle(Asteroid asteroid) {
+      if (asteroid == null) {
+        return;
+      }
+
       asteroid.Reset();
-      _pool.Enqueue(asteroid);
+      _availablePool.Enqueue(asteroid);
     }
 
-    public int AvailableCount() {
-      return _pool.Count;
+    public int GetAvailableCount() {
+      return _availablePool.Count;
+    }
+
+    public int GetInitialPoolSize() {
+      return _initialPoolSize;
     }
   }
 }
