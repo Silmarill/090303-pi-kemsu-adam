@@ -3,52 +3,45 @@
 namespace AsteroidSimulation {
 
   public class Asteroid : IChroneListener {
-    private const int MinMaxEchos = 100;
-    private const int MaxMaxEchos = 1000;
-    private const int EchosDecreasePerTick = 100;
-    private const int EmptyEchos = 0;
+    private static int _globalCreateCounter = 0;
 
-    private static int s_nextCreateId = 1;
-    private static int s_nextSpawnId = 1;
-    private static readonly Random s_random = new Random();
+    private int _currentEchos;
+    private int _maxEchos;
+    private AsteroidState _state;
+    private int _spawnId;
+    private int _createId;
 
-    public int CurrentEchos { get; private set; }
-    public int MaxEchos { get; private set; }
-    public AsteroidState State { get; private set; }
-    public int SpawnID { get; private set; }
-    public int CreateID { get; }
+    public int CurrentEchos { get; set; }
+    public int MaxEchos { get { return _maxEchos; } }
+    public AsteroidState State { get; set; }
+    public int SpawnId { get { return _spawnId; } }
+    public int CreateId { get { return _createId; } }
 
     public Asteroid() {
-      CreateID = s_nextCreateId;
-      s_nextCreateId++;
-
-      MaxEchos = s_random.Next(MinMaxEchos, MaxMaxEchos + 1);
-      CurrentEchos = MaxEchos;
-      State = AsteroidState.Idle;
-      SpawnID = EmptyEchos;
+      Random random = new Random();
+      _maxEchos = random.Next(100, 1001);
+      _currentEchos = _maxEchos;
+      _state = AsteroidState.Idle;
+      _createId = ++_globalCreateCounter;
+      _spawnId = 0;
     }
 
     public void Reset() {
-      CurrentEchos = MaxEchos;
-      State = AsteroidState.Idle;
+      _currentEchos = _maxEchos;
+      _state = AsteroidState.Idle;
     }
 
     public void OnChronTick() {
-      if (State != AsteroidState.Idle) {
-        return;
-      }
-
-      CurrentEchos -= EchosDecreasePerTick;
-
-      if (CurrentEchos <= EmptyEchos) {
-        CurrentEchos = EmptyEchos;
-        State = AsteroidState.Depleted;
-      }
+      // Деградация отключена, так как есть станция Матриарх
+      // Астероиды не теряют ресурс сами по себе
     }
 
-    public void OnSpawn() {
-      SpawnID = s_nextSpawnId;
-      s_nextSpawnId++;
+    public void SetSpawnId(int spawnId) {
+      _spawnId = spawnId;
+    }
+
+    public override string ToString() {
+      return $"ID(Создания:{_createId}, Появления:{_spawnId}) | Echos: {_currentEchos}/{_maxEchos} | Состояние: {_state}";
     }
   }
 }
