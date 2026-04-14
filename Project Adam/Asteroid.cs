@@ -27,15 +27,17 @@ namespace Project_Adam {
     }
 
     public void OnChroneTick() {
-      int echoReduction = 100;
+    }
 
-      if (State == AsteroidState.Idle) {
-        CurrentEchos -= echoReduction;
-        if (CurrentEchos <= 0) {
-          CurrentEchos = 0;
-          State = AsteroidState.Depleted;
-        }
+    public int Mine(int biteSize) {
+      int actualMine = Math.Min(biteSize, CurrentEchos);
+      CurrentEchos -= actualMine;
+
+      if (CurrentEchos == 0) {
+        State = AsteroidState.Depleted;
       }
+
+      return actualMine;
     }
   }
 }
