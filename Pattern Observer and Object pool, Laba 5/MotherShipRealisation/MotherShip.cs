@@ -23,7 +23,8 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
     }
 
 
-    public MotherShip(int harvesterCount, int cargoCapacity, int biteSize) {
+    public MotherShip() {
+      Fleet = new List<HarvesterShip>();
     }
 
     public Asteroid GetIdleAsteroid() {
@@ -46,6 +47,7 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
     public void FinishHarvest(HarvesterShip harvester) {
       for (int count = 0; count < Fleet.Count; ++count) {
         Fleet[count].state = HarvesterState.Idle;
+
       }
     }
   }

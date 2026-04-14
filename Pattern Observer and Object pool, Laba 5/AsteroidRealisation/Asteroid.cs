@@ -10,7 +10,8 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
     
     public enum AsteroidState {
       Idle,
-      Depleted
+      Depleted,
+      Mining
     }
 
     static Random random = new Random();
@@ -44,6 +45,9 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
           CurrentEchos = 0;
           State = AsteroidState.Depleted;
         }
+      }
+      else if (State == AsteroidState.Mining) {
+        CurrentEchos = CurrentEchos;
       }
     }
   }

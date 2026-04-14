@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="HarvesterShipRealisation\HarvesterShip.cs" />
     <Compile Include="MotherShipRealisation\MotherShip.cs" />
+    <Compile Include="ProgramReport\Report.cs" />
     <Compile Include="UserProgram\MainProgram.cs" />
     <Compile Include="AsteroidRealisation\Asteroid.cs" />
     <Compile Include="Observer\ChroneManager.cs" />
