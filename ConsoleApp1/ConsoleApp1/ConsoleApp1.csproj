@@ -47,12 +47,14 @@
     <Compile Include="ChroneManager.cs" />
     <Compile Include="AsteroidEmitter.cs" />
     <Compile Include="HarvesterShip.cs" />
+    <Compile Include="IChronListner.cs" />
     <Compile Include="MotherShip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
     <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

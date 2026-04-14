@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class AsteroidEmitter {
   private Queue<Asteroid> _available = new Queue<Asteroid>();
   public AsteroidEmitter(int initialSize) {
-    for (int i = 0; i < initialSize; i++) {
+    for (int idx = 0; idx < initialSize; idx++) {
       Asteroid asteroid = new Asteroid();
       _available.Enqueue(asteroid);
     }
