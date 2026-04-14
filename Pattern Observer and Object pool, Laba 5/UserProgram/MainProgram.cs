@@ -39,23 +39,22 @@ namespace Pattern_Observer_and_Object_pool__Laba_5 {
 
           for (int count = 0; count < activeAsteroid.Count; ++count) {
             Console.WriteLine($"{activeAsteroid[count].CreateID} asteroid Characteristics: Max Echo: {activeAsteroid[count].MaxEchos}, Current Echo: {activeAsteroid[count].CurrentEchos}, AsteroidState: {activeAsteroid[count].State}");
+          }
 
+          for (int count = activeAsteroid.Count - 1; count != 0; --count)
             if (activeAsteroid[count].CurrentEchos == 0) {
               ChroneManager.RemoveListener(activeAsteroid[count]);
               asteroid.Recycle(activeAsteroid[count]);
               activeAsteroid.Remove(activeAsteroid[count]);
             }
-
-
-            if (chroneCount % 5 == 0) {
-              for (count = 0; count < asteroidRandom; ++count) {
+            
+          if (chroneCount % 5 == 0) {
+              for (int count = 0; count < asteroidRandom; ++count) {
                 Asteroid asteroidNew = asteroid.Spawn();
                 ChroneManager.AddListener(asteroidNew);
                 activeAsteroid.Add(asteroidNew);
               }
-              break;
             }
-          }
           Console.WriteLine();
         }
         else if (key.Key == ConsoleKey.Escape) {
