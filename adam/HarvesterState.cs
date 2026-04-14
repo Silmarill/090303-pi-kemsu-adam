@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace adam {
-  internal class HarvesterState {
-  }
+public enum HarvesterState {
+  Idle,
+  Mining
 }

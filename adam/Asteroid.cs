@@ -27,12 +27,9 @@ public class Asteroid : IChroneListener {
   }
 
   public void OnChroneTick() {
-    if (State == AsteroidState.Idle) {
-      CurrentEchos -= 100;
-      if (CurrentEchos <= 0) {
-        CurrentEchos = 0;
-        State = AsteroidState.Depleted;
-      }
-    }
+  }
+
+  public void PrintInfo() {
+    Console.WriteLine($"Asteroid {SpawnID}: Echos {CurrentEchos}/{MaxEchos}, State: {State}");
   }
 }

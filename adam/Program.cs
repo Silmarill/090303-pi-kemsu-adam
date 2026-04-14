@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 internal class Program {
   static void Main(string[] args) {
@@ -22,16 +20,22 @@ internal class Program {
     ChroneManager.AddListener(asteroid3);
 
     foreach (Asteroid asteroid in activeAsteroids) {
-      Console.WriteLine($"Asteroid {asteroid.SpawnID}: Echos {asteroid.CurrentEchos}/{asteroid.MaxEchos}");
+      asteroid.PrintInfo();
     }
 
     while (true) {
       Console.Clear();
 
+      foreach (Asteroid asteroid in activeAsteroids) {
+        if (asteroid.State == AsteroidState.Idle) {
+          asteroid.OnChroneTick();
+        }
+      }
+
+
       if (chroneCounter > 0 && chroneCounter % 5 == 0) {
         int count = random.Next(1, 4);
-
-        for (int spawnedCount = 0; spawnedCount < count; ++spawnedCount) {
+        for (int spawnedCount = 0; spawnedCount < count; spawnedCount++) {
           Asteroid newAsteroid = asteroidEmitter.Spawn();
           activeAsteroids.Add(newAsteroid);
           ChroneManager.AddListener(newAsteroid);
@@ -46,19 +50,20 @@ internal class Program {
         }
       }
 
-      ++chroneCounter;
+      chroneCounter++;
 
       foreach (Asteroid asteroid in activeAsteroids) {
-        Console.WriteLine($"Asteroid {asteroid.SpawnID}: Echos {asteroid.CurrentEchos}/{asteroid.MaxEchos}");
+        asteroid.PrintInfo();
       }
 
-      ChroneManager.MakeChroneTick();
+    
 
       ConsoleKeyInfo key = Console.ReadKey(true);
 
       if (key.Key == ConsoleKey.Escape) {
         break;
-      }
+      } 
+      
     }
   }
 }

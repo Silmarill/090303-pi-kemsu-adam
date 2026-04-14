@@ -6,5 +6,6 @@ using System.Threading.Tasks;
 
 public enum AsteroidState {
   Idle,
+  Mining,
   Depleted
 }
