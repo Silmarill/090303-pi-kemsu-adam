@@ -1,35 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Project_Adam {
+namespace AsteroidSimulator.Models {
   public class AsteroidEmitter {
     public Queue<Asteroid> _available = new Queue<Asteroid>();
-    public int _totalSpawnedCount = 0;
 
     public AsteroidEmitter(int initialSize) {
       for (int asteroidIndex = 0; asteroidIndex < initialSize; ++asteroidIndex) {
-        Asteroid newAsteroid = new Asteroid();
-        _available.Enqueue(newAsteroid);
+        _available.Enqueue(new Asteroid());
       }
     }
 
     public Asteroid Spawn() {
-      Asteroid spawnedAsteroid;
-
       if (_available.Count == 0) {
-        spawnedAsteroid = new Asteroid();
-      } else {
-        spawnedAsteroid = _available.Dequeue();
+        Console.WriteLine("WARNING: Pool is empty! Creating new asteroid on the fly.");
+        return new Asteroid();
       }
 
-      spawnedAsteroid.SpawnID = ++_totalSpawnedCount;
-
-      return spawnedAsteroid;
+      return _available.Dequeue();
     }
 
-    public void Recycle(Asteroid asteroidToRecycle) {
-      asteroidToRecycle.Reset();
-      _available.Enqueue(asteroidToRecycle);
+    public void Recycle(Asteroid asteroid) {
+      asteroid.Reset();
+      _available.Enqueue(asteroid);
     }
+
+    public int PoolSize => _available.Count;
   }
 }
-

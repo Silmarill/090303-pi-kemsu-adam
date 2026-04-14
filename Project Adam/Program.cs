@@ -1,63 +1,121 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using AsteroidSimulator.Models;
 
-namespace Project_Adam {
+namespace AsteroidSimulator {
   class Program {
-    public static int MinAsteroidsPerSpawn = 1;
-    public static int MaxAsteroidsPerSpawn = 4;
-    public static int FifthSpawnIntervalInChrons = 5;
-    public static int InitialAsteroidsCount = 3;
-    static void Main() {
-      AsteroidEmitter asteroidEmitter = new AsteroidEmitter(5);
-      List<Asteroid> activeAsteroids = new List<Asteroid>(); 
-      int chroneCounter = 0;
-      Random random = new Random();
+    static void Main(string[] args) {
+      int stepValue;
+      int zeroValue;
+      int chronCounter;
+      int poolInitialSize;
+      int startAsteroidsCount;
+      int spawnIntervalTicks;
+      int minSpawnAmount;
+      int maxSpawnAmount;
+      int warningThreshold;
+      int warningStepValue;
+      int worklogPrintInterval;
+      int asteroidIndex;
+      int newAsteroidsCount;
+      int maxExclusiveValue;
+      int warningBaseValue;
+      Asteroid newAsteroid;
+      List<Asteroid> depletedAsteroids;
+      AsteroidEmitter asteroidPool;
+      List<Asteroid> activeAsteroids;
+      MotherShip motherStation;
+      Random randomGenerator;
 
-      for (int asteroidIndex = 0; asteroidIndex < InitialAsteroidsCount; ++asteroidIndex) {
-        Asteroid newAsteroid = asteroidEmitter.Spawn();
+      stepValue = 1;
+      zeroValue = 0;
+      chronCounter = zeroValue;
+      poolInitialSize = 10;
+      startAsteroidsCount = 5;
+      spawnIntervalTicks = 4;
+      minSpawnAmount = 1;
+      maxSpawnAmount = 2;
+      warningStepValue = 5;
+      worklogPrintInterval = 15;
+      warningBaseValue = poolInitialSize + warningStepValue;
+      warningThreshold = warningBaseValue;
+
+      asteroidPool = new AsteroidEmitter(poolInitialSize);
+      activeAsteroids = new List<Asteroid>();
+      motherStation = new MotherShip(5);
+      randomGenerator = new Random();
+
+      for (asteroidIndex = zeroValue; asteroidIndex < startAsteroidsCount; asteroidIndex = asteroidIndex + stepValue) {
+        newAsteroid = asteroidPool.Spawn();
         activeAsteroids.Add(newAsteroid);
-        ChroneManager.AddListener(newAsteroid);
       }
 
       while (true) {
         Console.Clear();
-        Console.WriteLine($"Chrone #{chroneCounter}");
-        Console.WriteLine($"Active asteroids: {activeAsteroids.Count}");
-        Console.WriteLine();
+        chronCounter = chronCounter + stepValue;
 
-        foreach (Asteroid asteroid in activeAsteroids) {
-          Console.WriteLine($"Asteroid #{asteroid.SpawnID} (CreateID:{asteroid.CreateID}) | Echos: {asteroid.CurrentEchos}/{asteroid.MaxEchos} | State: {asteroid.State}");
+        Console.WriteLine("===== CHRON #" + chronCounter + " =====");
+
+        motherStation.OnChronTick(activeAsteroids);
+
+        if (chronCounter % spawnIntervalTicks == zeroValue) {
+          maxExclusiveValue = maxSpawnAmount + stepValue;
+          newAsteroidsCount = randomGenerator.Next(minSpawnAmount, maxExclusiveValue);
+          Console.WriteLine("Spawning " + newAsteroidsCount + " new asteroids!");
+
+          for (asteroidIndex = zeroValue; asteroidIndex < newAsteroidsCount; asteroidIndex = asteroidIndex + stepValue) {
+            newAsteroid = asteroidPool.Spawn();
+            activeAsteroids.Add(newAsteroid);
+
+            if (newAsteroid.CreateId > warningThreshold) {
+              Console.WriteLine("WARNING: Pool was empty, created new asteroid.");
+              warningThreshold = warningThreshold + warningStepValue;
+            }
+          }
         }
 
-        Console.WriteLine();
-        Console.WriteLine("Press Enter for next chrone, Esc to exit");
-        ConsoleKeyInfo pressedKey = Console.ReadKey(true);
+        depletedAsteroids = new List<Asteroid>();
+
+        foreach (Asteroid currentAsteroid in activeAsteroids) {
+          if (currentAsteroid.State == AsteroidState.Depleted) {
+            depletedAsteroids.Add(currentAsteroid);
+          }
+        }
+
+        foreach (Asteroid deadAsteroid in depletedAsteroids) {
+          activeAsteroids.Remove(deadAsteroid);
+          asteroidPool.Recycle(deadAsteroid);
+        }
+
+        Console.WriteLine("\nActive asteroids: " + activeAsteroids.Count);
+
+        foreach (Asteroid currentAsteroid in activeAsteroids) {
+          Console.WriteLine("  " + currentAsteroid.ToString());
+        }
+
+        Console.WriteLine("\nHarvester Fleet:");
+
+        foreach (HarvesterShip currentShip in motherStation.Fleet) {
+          Console.WriteLine("  " + currentShip.ToString());
+        }
+
+        Console.WriteLine("\nTotal mined (Echos):");
+
+        foreach (KeyValuePair<string, int> miningEntry in motherStation.GetTotalMined()) {
+          Console.WriteLine("  " + miningEntry.Key + ": " + miningEntry.Value);
+        }
+
+        if (chronCounter % worklogPrintInterval == zeroValue) {
+          motherStation.PrintWorklog();
+        }
+
+        Console.WriteLine("\nPress Enter for next chron | ESC to exit");
+
+        ConsoleKeyInfo pressedKey;
+        pressedKey = Console.ReadKey(true);
 
         if (pressedKey.Key == ConsoleKey.Escape) {
           break;
-        }
-
-        if (pressedKey.Key == ConsoleKey.Enter) {
-          ++chroneCounter;
-          ChroneManager.MakeChroneTick();
-
-          if (chroneCounter % FifthSpawnIntervalInChrons == 0) {
-            int newAsteroidsCount = random.Next(MinAsteroidsPerSpawn, MaxAsteroidsPerSpawn);
-            for (int asteroidIndex = 0; asteroidIndex < newAsteroidsCount; ++asteroidIndex) {
-              Asteroid newAsteroid = asteroidEmitter.Spawn();
-              activeAsteroids.Add(newAsteroid);
-              ChroneManager.AddListener(newAsteroid);
-            }
-          }
-
-          List<Asteroid> depletedAsteroids = activeAsteroids.Where(asteroid => asteroid.State == AsteroidState.Depleted).ToList();
-
-          foreach (Asteroid depletedAsteroid in depletedAsteroids) {
-            ChroneManager.RemoveListener(depletedAsteroid);
-            asteroidEmitter.Recycle(depletedAsteroid);
-            activeAsteroids.Remove(depletedAsteroid);
-          }
         }
       }
     }

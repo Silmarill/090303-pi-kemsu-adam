@@ -1,6 +1,6 @@
-﻿namespace Project_Adam {
+﻿namespace AsteroidSimulator.Models {
   public enum HarvesterState {
     Idle,
-    Depleted
+    Mining
   }
 }
