@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{44DE773E-B85B-44BF-8C1B-5BB12FDB3649}</ProjectGuid>
+    <ProjectGuid>{030E486A-A40F-4720-B6FF-C70FC6F21003}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>ProjectAdam</RootNamespace>
     <AssemblyName>ProjectAdam</AssemblyName>
@@ -46,8 +46,8 @@
     <Compile Include="Asteroid.cs" />
     <Compile Include="AsteroidEmitter.cs" />
     <Compile Include="AsteroidState.cs" />
-    <Compile Include="ChroneManager.cs" />
-    <Compile Include="IChroneListener.cs" />
+    <Compile Include="ChronManager.cs" />
+    <Compile Include="IChronListener.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

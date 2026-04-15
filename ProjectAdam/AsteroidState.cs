@@ -1,7 +1,6 @@
-﻿namespace ProjectAdam;
-
-public enum AsteroidState
-{
-  Idle,
-  Depleted
+﻿namespace ProjectAdam {
+  public enum AsteroidState {
+    Idle,
+    Depleted
+  }
 }
