@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectAdam {
+﻿namespace ProjectAdam {
   public interface IChronListener {
     void OnChronTick();
   }

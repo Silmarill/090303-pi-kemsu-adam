@@ -18,7 +18,7 @@ namespace ProjectAdam {
       Asteroid asteroid;
       if (_available.Count == 0) {
         Console.WriteLine(
-          "[AsteroidEmitter] Warning: pool is empty; allocating new Asteroid().");
+            "[AsteroidEmitter] Warning: pool is empty; allocating new Asteroid().");
         asteroid = new Asteroid();
       } else {
         asteroid = _available.Dequeue();
