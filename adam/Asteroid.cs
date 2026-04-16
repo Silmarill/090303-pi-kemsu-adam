@@ -13,7 +13,7 @@ public class Asteroid : IChroneListener {
   public static int nextCreateId;
   public static int nextSpawnId;
   public static Random random = new Random();
-
+  public static MotherShip HomeStation;
   public Asteroid() {
     MaxEchos = random.Next(100, 1001);
     CurrentEchos = MaxEchos;
@@ -27,6 +27,13 @@ public class Asteroid : IChroneListener {
   }
 
   public void OnChroneTick() {
+    if (HomeStation != null && !HomeStation.IsStabilizing) {
+      CurrentEchos -= 100;
+      if (CurrentEchos <= 0) {
+        CurrentEchos = 0;
+        State = AsteroidState.Depleted;
+      }
+    }
   }
 
   public void PrintInfo() {

@@ -9,6 +9,7 @@ internal class Program {
     motherShip.SetEmitter(asteroidEmitter);
     int chroneCounter = 0;
     Random random = new Random();
+    Asteroid.HomeStation = motherShip;
 
     Asteroid asteroid1 = asteroidEmitter.Spawn();
     motherShip.AddAsteroid(asteroid1);
@@ -28,7 +29,7 @@ internal class Program {
       Console.WriteLine();
       motherShip.PrintHarvestersInfo();
       Console.WriteLine();
-      
+
       if (chroneCounter > 0 && chroneCounter % 15 == 0) {
         motherShip.PrintFullWorklog();
       }
@@ -45,7 +46,7 @@ internal class Program {
         ChroneManager.MakeChroneTick();
         ++chroneCounter;
 
-        if (chroneCounter > 0 && chroneCounter % 5 == 0) {
+        if (chroneCounter > 0 && chroneCounter % asteroidEmitter.SpawnInterval == 0) {
           int count = random.Next(4, 6);
           for (int spawnedCount = 0; spawnedCount < count; ++spawnedCount) {
             Asteroid newAsteroid = asteroidEmitter.Spawn();
@@ -56,4 +57,4 @@ internal class Program {
       }
     }
   }
- }
+}

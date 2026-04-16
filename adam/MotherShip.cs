@@ -9,11 +9,12 @@ public class MotherShip {
   public Dictionary<string, List<Report>> Worklog;
   private List<Asteroid> _activeAsteroids;
   private AsteroidEmitter _asteroidEmitter;
-
+  public bool IsStabilizing;
   public MotherShip(int harvesterCount, int cargoCapacity, int biteSize) {
     Fleet = new List<HarvesterShip>();
     Worklog = new Dictionary<string, List<Report>>();
     _activeAsteroids = new List<Asteroid>();
+    IsStabilizing = true;
 
     for (int harvesterNumber = 1; harvesterNumber <= harvesterCount; ++harvesterNumber) {
       string name = $"Harvester-{harvesterNumber}";
@@ -114,5 +115,9 @@ public class MotherShip {
 
   public int GetActiveAsteroidsCount() {
     return _activeAsteroids.Count;
+  }
+
+  public void SetStabilizing(bool active) {
+    IsStabilizing = active;
   }
 }
