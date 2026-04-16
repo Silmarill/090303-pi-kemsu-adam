@@ -8,21 +8,19 @@ class Program {
     var activeAsteroids = new List<Asteroid>();
     int chronCounter = 0;
 
-    // инициализируем первые три астероида через пул
-    for (int i = 0; i < 3; ++i) {
-      Asteroid a = asteroidEmitter.Spawn();
-      ChroneManager.AddListener(a);
-      activeAsteroids.Add(a);
+    for (int index = 0; index < 3; ++index) {
+      Asteroid asteroid = asteroidEmitter.Spawn();
+      ChroneManager.AddListener(asteroid);
+      activeAsteroids.Add(asteroid);
     }
 
     Console.Clear();
     Console.WriteLine("=== Asteroid Simulation ===");
-    Console.WriteLine("Enter — next chron | Esc - exit\n");
+    Console.WriteLine("Enter — next chron  |  Esc — exit\n");
     PrintActiveAsteroids(activeAsteroids, chronCounter);
 
-    // цикл обработки хронов
     while (true) {
-      ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+      ConsoleKeyInfo key = Console.ReadKey();
 
       if (key.Key == ConsoleKey.Escape) {
         Console.WriteLine("\nSimulation stopped.");
@@ -33,36 +31,31 @@ class Program {
         continue;
       }
 
-      // 1. увеличить счётчик хронов
       ++chronCounter;
 
-      // 2. вызвать OnChronTick() для каждого активного астероида через наблюдателя
       ChroneManager.MakeChroneTick();
 
-      // 3. каждые 5 хронов — спавн 1–3 новых астероидов
       if (chronCounter % 5 == 0) {
         int spawnCount = random.Next(1, 4);
-        for (int i = 0; i < spawnCount; ++i) {
-          Asteroid a = asteroidEmitter.Spawn();
-          ChroneManager.AddListener(a);
-          activeAsteroids.Add(a);
+        for (int index = 0; index < spawnCount; ++index) {
+          Asteroid asteroid = asteroidEmitter.Spawn();
+          ChroneManager.AddListener(asteroid);
+          activeAsteroids.Add(asteroid);
         }
       }
 
-      // 4. найти Depleted, вернуть в пул и удалить из активного списка
       var toRecycle = new List<Asteroid>();
-      foreach (var a in activeAsteroids) {
-        if (a.State == AsteroidState.Depleted) {
-          toRecycle.Add(a);
+      foreach (Asteroid asteroid in activeAsteroids) {
+        if (asteroid.state == AsteroidState.Depleted) {
+          toRecycle.Add(asteroid);
         }
       }
-      foreach (var a in toRecycle) {
-        ChroneManager.RemoveListener(a);
-        asteroidEmitter.Recycle(a);
-        activeAsteroids.Remove(a);
+      foreach (Asteroid asteroid in toRecycle) {
+        ChroneManager.RemoveListener(asteroid);
+        asteroidEmitter.Recycle(asteroid);
+        activeAsteroids.Remove(asteroid);
       }
 
-      // 5. обновить экран
       Console.Clear();
       PrintActiveAsteroids(activeAsteroids, chronCounter);
     }
@@ -71,12 +64,12 @@ class Program {
   static void PrintActiveAsteroids(List<Asteroid> activeAsteroids, int chron) {
     Console.WriteLine("=== Chron: " + chron + " | Active: " + activeAsteroids.Count + " ===\n");
     if (activeAsteroids.Count == 0) {
-      Console.WriteLine("(no active asteroids)");
+      Console.WriteLine("  (no active asteroids)");
     } else {
-      foreach (var a in activeAsteroids) {
-        a.PrintInfo();
+      foreach (Asteroid asteroid in activeAsteroids) {
+        asteroid.PrintInfo();
       }
     }
-    Console.WriteLine("\nEnter — next chron | Esc — exit");
+    Console.WriteLine("\nEnter — next chron  |  Esc — exit");
   }
 }

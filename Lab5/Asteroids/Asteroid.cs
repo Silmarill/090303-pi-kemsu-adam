@@ -5,50 +5,48 @@ public class Asteroid : IChronListener {
   private static int _createCounter = 0;
   private static int _spawnCounter = 0;
 
-  public int CurrentEchos { get; private set; }
-  public int MaxEchos { get; private set; }
-  public AsteroidState State { get; private set; }
-  public int SpawnID { get; private set; }
-  public int CreateID { get; private set; }
+  public int currentEchos;
+  public int maxEchos;
+  public AsteroidState state;
+  public int spawnID;
+  public int createID;
 
   public Asteroid() {
-    CreateID = ++_createCounter;
-    MaxEchos = _random.Next(100, 1001);
-    CurrentEchos = MaxEchos;
-    State = AsteroidState.Idle;
-    SpawnID = ++_spawnCounter;
+    createID = ++_createCounter;
+    maxEchos = _random.Next(100, 1001);
+    currentEchos = maxEchos;
+    state = AsteroidState.Idle;
+    spawnID = ++_spawnCounter;
   }
 
-  // сбрасывает состояние для возврата в пул, SpawnID обновляется при следующем спавне
   public void Reset() {
-    CurrentEchos = MaxEchos;
-    State = AsteroidState.Idle;
+    currentEchos = maxEchos;
+    state = AsteroidState.Idle;
   }
 
-  // вызывается из AsteroidEmitter.Spawn() — помечает факт извлечения из пула
   public void MarkSpawned() {
-    SpawnID = ++_spawnCounter;
+    spawnID = ++_spawnCounter;
   }
 
   public void OnChronTick() {
-    if (State != AsteroidState.Idle) {
+    if (state != AsteroidState.Idle) {
       return;
     }
 
-    CurrentEchos -= 100;
-    if (CurrentEchos < 0) {
-      CurrentEchos = 0;
+    currentEchos -= 100;
+    if (currentEchos < 0) {
+      currentEchos = 0;
     }
-    if (CurrentEchos == 0) {
-      State = AsteroidState.Depleted;
+    if (currentEchos == 0) {
+      state = AsteroidState.Depleted;
     }
   }
 
   public void PrintInfo() {
     Console.WriteLine(
-      "  [Spawn #" + SpawnID + " | Create #" + CreateID + "]" +
-      "  Echos: " + CurrentEchos + "/" + MaxEchos +
-      "  State: " + State
+      "  [Spawn #" + spawnID + " | Create #" + createID + "]" +
+      "  Echos: " + currentEchos + "/" + maxEchos +
+      "  State: " + state
     );
   }
 }
