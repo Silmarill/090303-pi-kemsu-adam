@@ -21,7 +21,7 @@ namespace AsteroidSimulator.Models {
       this.randomGenerator = new Random();
       this.chronCount = 0;
 
-      for (int i = 0; i < InitialHarvesterCount && i < names.Length; i++) {
+      for (int i = 0; i < InitialHarvesterCount && i < names.Length; ++i) {
         HarvesterShip newShip = new HarvesterShip(names[i]);
         this.Fleet.Add(newShip);
         this.Worklog.Add(newShip.Name, new List<Report>());
@@ -29,7 +29,7 @@ namespace AsteroidSimulator.Models {
     }
 
     public void OnChronTick(List<Asteroid> activeAsteroids) {
-      chronCount++;
+      ++chronCount;
 
       foreach (var ship in Fleet) {
         if (ship.State == HarvesterState.Mining) {
@@ -84,8 +84,9 @@ namespace AsteroidSimulator.Models {
     public Dictionary<string, int> GetTotalMined() {
       var result = new Dictionary<string, int>();
 
+      int total;
       foreach (var ship in Fleet) {
-        int total = 0;
+        total = 0;
         foreach (var report in Worklog[ship.Name]) {
           total += report.AmountMined;
         }

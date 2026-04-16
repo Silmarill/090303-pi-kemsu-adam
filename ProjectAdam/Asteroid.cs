@@ -44,7 +44,8 @@ namespace ProjectAdam {
     public int Mine(int biteSize) {
       if (State == AsteroidState.Depleted) return 0;
 
-      int mined = Math.Min(biteSize, CurrentEchos);
+      int mined;
+      mined = Math.Min(biteSize, CurrentEchos);
       CurrentEchos -= mined;
 
       if (CurrentEchos == 0) {

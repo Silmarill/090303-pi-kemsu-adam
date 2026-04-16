@@ -18,7 +18,7 @@ namespace ProjectAdam {
 
       int chronCounter = 0;
 
-      for (int i = 0; i < InitialAsteroidCount; i++) {
+      for (int i = 0; i < InitialAsteroidCount; ++i) {
         Asteroid asteroid = emitter.Spawn();
         activeAsteroids.Add(asteroid);
         ChronManager.AddListener(asteroid);
@@ -41,14 +41,14 @@ namespace ProjectAdam {
           continue;
         }
 
-        chronCounter++;
+        ++chronCounter;
 
         ChronManager.MakeChronTick();
         motherShip.OnChronTick(activeAsteroids);
 
         if (chronCounter % AsteroidSpawnInterval == 0) {
           int spawnCount = new Random().Next(MinAsteroidsToSpawn, MaxAsteroidsToSpawnExclusive);
-          for (int i = 0; i < spawnCount; i++) {
+          for (int i = 0; i < spawnCount; ++i) {
             Asteroid newAsteroid = emitter.Spawn();
             activeAsteroids.Add(newAsteroid);
             ChronManager.AddListener(newAsteroid);
