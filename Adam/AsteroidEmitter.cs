@@ -39,6 +39,7 @@ namespace Asteroids {
       }
 
       asteroid.Reset();
+      ChronoManager.AddListener(asteroid);
       return asteroid;
     }
 
@@ -46,6 +47,7 @@ namespace Asteroids {
       if (usedAsteroid.State != AsteroidState.Depleted) {
         Console.WriteLine($"Warning: recycling non-depleted asteroid #{usedAsteroid.CreateID}");
       }
+      ChronoManager.RemoveListener(usedAsteroid);
       usedAsteroid.Reset();
       _availableAsteroids.Enqueue(usedAsteroid);
     }

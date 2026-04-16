@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Adam {
   public enum AsteroidState {
     Idle,
+    Mining,
     Depleted
   }
 } 

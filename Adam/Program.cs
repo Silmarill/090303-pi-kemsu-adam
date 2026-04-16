@@ -13,50 +13,53 @@ namespace Asteroids {
 
       AsteroidEmitter asteroidEmitter = new AsteroidEmitter(poolInitialSize);
       List<Asteroid> activeAsteroidsList = new List<Asteroid>();
-      int chronTickCounter = 0;
       Random randomGenerator = new Random();
+
+      MotherShip motherShip = new MotherShip(5, 500, 50);
+      motherShip.SetEmitter(asteroidEmitter);
 
       for (int asteroidIndex = 0; asteroidIndex < startingAsteroidsCount; asteroidIndex++) {
         Asteroid newAsteroid = asteroidEmitter.Spawn();
         activeAsteroidsList.Add(newAsteroid);
+        motherShip.AddAsteroid(newAsteroid);
       }
 
-      Console.WriteLine("=== ASTEROIDS ===\n[Enter] Next\n[Esc] Exit\n");
+      Console.WriteLine("=== ASTEROIDS: MATRIARCH STATION ===");
+      Console.WriteLine("[Enter] Next chron | [R] Worklog | [Esc] Exit\n");
 
       bool isProgramRunning = true;
 
       while (isProgramRunning) {
         Console.Clear();
-        Console.WriteLine("=== ACTIVE ASTEROIDS ===\n");
+        Console.WriteLine($"=== CHRON #{ChronoManager.CurrentTick} ===\n");
 
-        if (activeAsteroidsList.Count == 0) {
-          Console.WriteLine("No active asteroids");
-        } else {
-          foreach (Asteroid currentAsteroid in activeAsteroidsList) {
-            currentAsteroid.PrintInfo();
-          }
-        }
-
-        Console.WriteLine($"\nChron #{chronTickCounter} | Active: {activeAsteroidsList.Count} | Pool: {asteroidEmitter.AvailableCount}");
-        Console.Write("[Enter] Next chron | [Esc] Exit: ");
+        motherShip.PrintAsteroidsInfo();
+        Console.WriteLine();
+        motherShip.PrintHarvestersInfo();
+        Console.WriteLine();
+        motherShip.PrintTotalMined();
+        Console.WriteLine($"\nActive: {motherShip.GetActiveAsteroidsCount()} | Pool: {asteroidEmitter.AvailableCount}");
+        Console.Write("\n[Enter] Next | [R] Full Worklog | [Esc] Exit: ");
 
         ConsoleKeyInfo pressedKey = Console.ReadKey(true);
 
         if (pressedKey.Key == ConsoleKey.Escape) {
           isProgramRunning = false;
+        } else if (pressedKey.Key == ConsoleKey.R) {
+          motherShip.PrintFullWorklog();
+          Console.WriteLine("\nPress any key...");
+          Console.ReadKey(true);
         } else if (pressedKey.Key == ConsoleKey.Enter) {
-          chronTickCounter++;
 
-          foreach (Asteroid asteroid in activeAsteroidsList) {
-            asteroid.OnChronTick();
-          }
+          ChronoManager.MakeChronTick();
 
-          if (chronTickCounter % spawnInterval == 0) {
+          if (ChronoManager.CurrentTick % spawnInterval == 0) {
             int newAsteroidsAmount = randomGenerator.Next(minSpawnAmount, maxSpawnAmount + 1);
 
             for (int asteroidIndex = 0; asteroidIndex < newAsteroidsAmount; asteroidIndex++) {
               Asteroid newAsteroid = asteroidEmitter.Spawn();
               activeAsteroidsList.Add(newAsteroid);
+              motherShip.AddAsteroid(newAsteroid);
             }
           }
 
@@ -70,11 +73,19 @@ namespace Asteroids {
 
           foreach (Asteroid depletedAsteroid in depletedAsteroidsList) {
             activeAsteroidsList.Remove(depletedAsteroid);
-            asteroidEmitter.Recycle(depletedAsteroid);
+          }
+
+          if (ChronoManager.CurrentTick % 15 == 0) {
+            Console.Clear();
+            Console.WriteLine($"=== CHRON #{ChronoManager.CurrentTick} - WORKLOG ===\n");
+            motherShip.PrintFullWorklog();
+            Console.WriteLine("\nPress any key...");
+            Console.ReadKey(true);
           }
         }
       }
 
+      ChronoManager.ClearAllListeners();
       Console.WriteLine("\nProgram finished.");
     }
   }
