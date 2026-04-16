@@ -30,6 +30,6 @@ public class Asteroid : IChroneListener {
   }
 
   public void PrintInfo() {
-    Console.WriteLine($"Asteroid {SpawnID}: Echos {CurrentEchos}/{MaxEchos}, State: {State}");
+    Console.WriteLine($"Asteroid {SpawnID}: Echos {CurrentEchos}/{MaxEchos}, State: {State}.");
   }
 }

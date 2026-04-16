@@ -11,6 +11,7 @@ public class HarvesterShip : IChroneListener {
   public Asteroid CurrentAsteroid;
   public MotherShip HomeStation;
   public static int nextId;
+  public int jobCounter;
 
   public HarvesterShip(string name, int cargoCapacity, int biteSize, MotherShip station) {
     ID = ++nextId;
@@ -21,7 +22,7 @@ public class HarvesterShip : IChroneListener {
     HomeStation = station;
   }
 
-  public void OnChronTick() {
+  public void OnChroneTick() {
     if (State == HarvesterState.Mining && CurrentAsteroid != null) {
       int biteAmount = BiteSize;
 
@@ -48,6 +49,20 @@ public class HarvesterShip : IChroneListener {
     State = HarvesterState.Mining;
     CurrentAsteroid = asteroid;
     asteroid.State = AsteroidState.Mining;
+  }
+
+  public Report CreateReport() {
+    ++jobCounter;
+    Report report = new Report(jobCounter, CurrentAsteroid.SpawnID, CargoCurrent);
+    return report;
+  }
+
+  public void PrintInfo() {
+    if (State == HarvesterState.Idle) {
+      Console.WriteLine($"{Name} (ID:{ID}) Idle, Cargo: {CargoCurrent}/{CargoCapacity}, Asteroids mined: {AsteroidsMined}.");
+    } else {
+      Console.WriteLine($"{Name} (ID:{ID}) Mining asteroid {CurrentAsteroid.SpawnID}, Cargo: {CargoCurrent}/{CargoCapacity}, Asteroids mined: {AsteroidsMined}.");
+    }
   }
 
 

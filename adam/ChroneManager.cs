@@ -16,7 +16,8 @@ public static class ChroneManager {
   }
 
   public static void MakeChroneTick() {
-    foreach (var listener in _listenerList) {
+    List<IChroneListener> copy = new List<IChroneListener>(_listenerList);
+    foreach (IChroneListener listener in copy) {
       listener.OnChroneTick();
     }
   }
