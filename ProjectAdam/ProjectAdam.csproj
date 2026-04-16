@@ -45,8 +45,11 @@
   <ItemGroup>
     <Compile Include="Asteroid.cs" />
     <Compile Include="AsteroidEmitter.cs" />
+    <Compile Include="HarvesterShip.cs" />
     <Compile Include="IChroneListener.cs" />
+    <Compile Include="MotherShip.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Report.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />

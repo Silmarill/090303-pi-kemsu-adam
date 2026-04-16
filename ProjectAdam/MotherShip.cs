@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ProjectAdam {
-  internal class MotherShip {
+  public class MotherShip {
+    public List<HarvesterShip> Fleet = new List<HarvesterShip>();
+    public bool isZoneStabilized = true;
+    public Dictionary<string, List<Report>> Worklog = new Dictionary<string, List<Report>>();
+
   }
 }

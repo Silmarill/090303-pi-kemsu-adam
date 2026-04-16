@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace ProjectAdam {
   public enum AsteroidState {
     Idle,
+    Mining,
     Depleted
   }
   public class Asteroid : IChroneListener {
