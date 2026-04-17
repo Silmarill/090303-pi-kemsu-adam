@@ -1,23 +1,30 @@
 ﻿using System.Collections.Generic;
 
-namespace ProjectAdam {
-  public static class ChronManager {
+namespace ProjectAdam
+{
+  public static class ChronManager
+  {
     private static List<IChronListener> s_listeners;
 
-    static ChronManager() {
+    static ChronManager()
+    {
       s_listeners = new List<IChronListener>();
     }
 
-    public static void AddListener(IChronListener listener) {
+    public static void AddListener(IChronListener listener)
+    {
       s_listeners.Add(listener);
     }
 
-    public static void RemoveListener(IChronListener listener) {
+    public static void RemoveListener(IChronListener listener)
+    {
       s_listeners.Remove(listener);
     }
 
-    public static void MakeChronTick() {
-      for (int listenerIndex = 0; listenerIndex < s_listeners.Count; ++listenerIndex) {
+    public static void MakeChronTick()
+    {
+      for (int listenerIndex = 0; listenerIndex < s_listeners.Count; ++listenerIndex)
+      {
         IChronListener listener = s_listeners[listenerIndex];
         listener.OnChronTick();
       }

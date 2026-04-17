@@ -1,5 +1,7 @@
-﻿namespace ProjectAdam {
-  public interface IChronListener {
+﻿namespace ProjectAdam
+{
+  public interface IChronListener
+  {
     void OnChronTick();
   }
 }
