@@ -93,7 +93,13 @@ public class HarvesterShip : IChroneListener
     int amount;
     Report report;
 
-    spawnId = CurrentAsteroid != null ? CurrentAsteroid.SpawnId : 0;
+    spawnId = 0;
+
+    if (CurrentAsteroid != null)
+    {
+      spawnId = CurrentAsteroid.SpawnId;
+    }
+
     amount = CargoCurrent;
     ++_nextJobNumber;
     report = new Report(_nextJobNumber, spawnId, amount);

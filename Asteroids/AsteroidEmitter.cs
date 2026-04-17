@@ -62,7 +62,10 @@ public class AsteroidEmitter : IChroneListener
       return;
     }
 
-    nextExclusive = _maxSpawnAmount + 1;
+    int exclusiveBoundOffset;
+    exclusiveBoundOffset = 1;
+
+    nextExclusive = _maxSpawnAmount + exclusiveBoundOffset;
     spawnCount = _random.Next(_minSpawnAmount, nextExclusive);
 
     for (spawnBatchIndex = 0; spawnBatchIndex < spawnCount; ++spawnBatchIndex)
