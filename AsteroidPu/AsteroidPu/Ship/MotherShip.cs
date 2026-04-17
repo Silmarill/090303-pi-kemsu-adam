@@ -59,8 +59,10 @@ namespace AsteroidPu.Ship {
 
     public void PrintTotalMined() {
       for (int indexI = 0; indexI <= fleet.Count; ++indexI) {
-        Console.WriteLine();
+        Console.WriteLine($"{fleet[indexI].nameHarvester} harvester got {fleet[indexI].asteroidItemsMined} asteroids");
       }
     }
+
+    
   }
 }

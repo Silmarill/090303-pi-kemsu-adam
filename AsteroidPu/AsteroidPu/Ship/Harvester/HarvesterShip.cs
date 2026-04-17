@@ -8,8 +8,8 @@ namespace AsteroidPu.Ship {
       cargoCapasity = 10,
       cargoCurrent = 0,
       biteSize;
-    string nameHarvester;
-    int asteroidItemsMined = 0;
+    public string nameHarvester;
+    public int asteroidItemsMined = 0;
     HarvesterState state;
     public Asteroid currentAsteroid;
     MotherShip HomeStation;
