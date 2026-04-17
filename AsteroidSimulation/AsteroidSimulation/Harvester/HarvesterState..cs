@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AsteroidSimulation.Harvester {
-  internal class HarvesterState {
+namespace AsteroidSimulation {
+  public enum HarvesterState {
+    Idle,
+    Mining
   }
 }

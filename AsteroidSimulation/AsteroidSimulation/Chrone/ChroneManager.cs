@@ -8,18 +8,18 @@ namespace AsteroidSimulation {
   public static class ChroneManager {
     private static List<IChroneListener> _listenerList = new List<IChroneListener>();
 
-    static public void AddListener(IChroneListener listener) {
+    public static void AddListener(IChroneListener listener) {
       _listenerList.Add(listener);
     }
 
-    static public void RemoveListener(IChroneListener listener) {
+    public static void RemoveListener(IChroneListener listener) {
       _listenerList.Remove(listener);
     }
 
-    static public void MakeChroneTick() {
+    public static void MakeChroneTick() {
       foreach (var listener in _listenerList) {
         listener.OnChronTick();
       }
     }
   }
-} 
+}

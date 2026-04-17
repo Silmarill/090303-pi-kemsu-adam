@@ -48,8 +48,12 @@
     <Compile Include="Core\AsteroidState.cs" />
     <Compile Include="Chrone\ChroneManager.cs" />
     <Compile Include="Chrone\IChroneListener.cs" />
+    <Compile Include="Harvester\HarvesterShip.cs" />
+    <Compile Include="Harvester\HarvesterState..cs" />
+    <Compile Include="MotherShip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
