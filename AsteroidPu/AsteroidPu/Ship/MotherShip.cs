@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AsteroidPu.Ship {
   public class MotherShip {
@@ -41,5 +38,29 @@ namespace AsteroidPu.Ship {
       return null;
     }
 
+    public void AssignIdleHarvesters() {
+
+    }
+
+    public void FinishHarvest(HarvesterShip harvester) {
+    
+    }
+
+    public void PrintAsteroidItemsInfo() {
+      for (int indexI = 0; indexI <= _activeAsteroidItems.Count; ++indexI) {
+        Console.WriteLine(_activeAsteroidItems[indexI]);
+      }
+    }
+    public void PrintHarvesterItemsInfo() {
+      for (int indexI = 0; indexI <= fleet.Count; ++indexI) {
+        Console.WriteLine(fleet[indexI]);
+      }
+    }
+
+    public void PrintTotalMined() {
+      for (int indexI = 0; indexI <= fleet.Count; ++indexI) {
+        Console.WriteLine();
+      }
+    }
   }
 }
