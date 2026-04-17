@@ -1,7 +1,5 @@
-namespace AsteroidSimulation.Common
-{
-    public interface IChroneListener
-    {
+namespace AsteroidSimulation.Common {
+    public interface IChroneListener {
         void OnChroneTick();
     }
 }
