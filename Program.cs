@@ -4,12 +4,9 @@ using AsteroidSimulation.Observer;
 using System;
 using System.Collections.Generic;
 
-namespace AsteroidSimulation
-{
-    class Program
-    {
-        static void Main()
-        {
+namespace AsteroidSimulation {
+    class Program {
+        static void Main() {
             //int chroneCounter = 0;
             int asteroidCount = 5;
 
@@ -19,30 +16,25 @@ namespace AsteroidSimulation
 
             MotherShip.InitializeFleet();//sss
 
-            for (int spawnIndex = 0; spawnIndex < 3; ++spawnIndex)
-            {
+            for (int spawnIndex = 0; spawnIndex < 3; ++spawnIndex) {
                 activeAsteroids.Add(uwuEmitter.Spawn());
             }
 
             Console.WriteLine("Симуляция астероидов запущена. Нажмите Enter для шага, R - общая добыча, Esc для выхода");
 
-            while (true)
-            {
+            while (true) {
                 ConsoleKey key = Console.ReadKey().Key;
 
-                if (key == ConsoleKey.Escape)
-                {
+                if (key == ConsoleKey.Escape) {
                     break;
                 }
 
-                if (key == ConsoleKey.R)
-                {
+                if (key == ConsoleKey.R) {
                     Console.WriteLine($"\n[Матриарх] Общая добыча флота: {MotherShip.ResourcesMined} Echos");
                     continue;
                 }
 
-                if (key != ConsoleKey.Enter)
-                {
+                if (key != ConsoleKey.Enter) {
                     continue;
                 }
 
@@ -63,12 +55,10 @@ namespace AsteroidSimulation
                 }*/
 
                 // Каждые 5 тиков спавнятся 1-3 новых астероида
-                if (ChroneManager.CurrentChrone % 5 == 0 && activeAsteroids.Count < 15)
-                {
+                if (ChroneManager.CurrentChrone % 5 == 0 && activeAsteroids.Count < 15) {
                     int toSpawn = rand.Next(1, 4);
 
-                    for (int spawnIndex = 0; spawnIndex < toSpawn; ++spawnIndex)
-                    {
+                    for (int spawnIndex = 0; spawnIndex < toSpawn; ++spawnIndex) {
                         activeAsteroids.Add(uwuEmitter.Spawn());
                     }
 
@@ -78,24 +68,20 @@ namespace AsteroidSimulation
                 // Астероиды со статусом Depleted удаляются и возвращаются в пул
                 // Цикл работает от конца к началу, чтобы не пропустить объект и
                 // не влиять на порядок объектов, которые ещё не проверены
-                for (int removeIndex = activeAsteroids.Count - 1; removeIndex >= 0; --removeIndex)
-                {
-                    if (activeAsteroids[removeIndex].State == AsteroidState.Depleted)
-                    {
+                for (int removeIndex = activeAsteroids.Count - 1; removeIndex >= 0; --removeIndex) {
+                    if (activeAsteroids[removeIndex].State == AsteroidState.Depleted) {
                         uwuEmitter.Recycle(activeAsteroids[removeIndex]);
                         activeAsteroids.RemoveAt(removeIndex);
                     }
                 }
 
-                if (ChroneManager.CurrentChrone % 15 == 0)
-                {
+                if (ChroneManager.CurrentChrone % 15 == 0) {
                     MotherShip.ShowFullWorklog();
                 }
 
                 Console.WriteLine($"Активных объектов: {activeAsteroids.Count}");
 
-                for (int activeIndex = 0; activeIndex < activeAsteroids.Count; ++activeIndex)
-                {
+                for (int activeIndex = 0; activeIndex < activeAsteroids.Count; ++activeIndex) {
                     Asteroid asteroid = activeAsteroids[activeIndex];
 
                     Console.WriteLine($"[CreateID:{asteroid.CreateID} | SpawnID:{asteroid.SpawnID}] " +
