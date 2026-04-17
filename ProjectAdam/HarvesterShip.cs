@@ -19,6 +19,11 @@ namespace ProjectAdam {
     public int BiteSize = 50;
     public int JobCounter;
 
+    public HarvesterShip(int id, string name) {
+      ID = id;
+      Name = name;
+    }
+
     public Report Mine(Asteroid asteroid) {
      
       if (asteroid == null || asteroid.State == AsteroidState.Depleted)
