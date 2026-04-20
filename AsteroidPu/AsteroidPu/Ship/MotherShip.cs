@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AsteroidPu.Ship.Harvester;
+using System;
 using System.Collections.Generic;
 
 namespace AsteroidPu.Ship {
@@ -32,6 +33,7 @@ namespace AsteroidPu.Ship {
     public Asteroid GetIdleAsteroid() {
       for (int indexI = 0; indexI < _activeAsteroidItems.Count; ++indexI) {
         if (_activeAsteroidItems[indexI].State == AsteroidState.Idle) {
+          _activeAsteroidItems[indexI].State = AsteroidState.Mining;
           return _activeAsteroidItems[indexI];
         }
       }
@@ -39,11 +41,17 @@ namespace AsteroidPu.Ship {
     }
 
     public void AssignIdleHarvesters() {
-
+      for (int indexI = 0; indexI < fleet.Count; ++indexI) {
+        if (fleet[indexI].state == HarvesterState.Idle) {
+          fleet[indexI].currentAsteroid = GetIdleAsteroid();
+        }
+      }
     }
 
     public void FinishHarvest(HarvesterShip harvester) {
-    
+      harvester.state = HarvesterState.Idle;
+      workLog
+
     }
 
     public void PrintAsteroidItemsInfo() {
@@ -63,6 +71,12 @@ namespace AsteroidPu.Ship {
       }
     }
 
-    
+    public void PrintFullWorklog() {
+
+    }
+
+    public int GetActiveAsteroidItemsCount() {
+      return _activeAsteroidItems.Count;
+    }
   }
 }
