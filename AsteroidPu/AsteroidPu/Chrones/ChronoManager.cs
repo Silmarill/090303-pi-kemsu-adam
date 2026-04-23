@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace AsteroidPu.Chrones {
-  public static class ChroneManager {
+  public static class ChronoManager {
     private static List<IChroneListener> _listenerList = new List<IChroneListener>();
 
     public static void Addlistener(IChroneListener listener) {
@@ -12,7 +12,7 @@ namespace AsteroidPu.Chrones {
       _listenerList.Remove(listener);
     }
 
-    public static void MakeCgroneTick() {
+    public static void MakeChronTick() {
       foreach (var listener in _listenerList) {
         listener.OnChroneTick();
       }

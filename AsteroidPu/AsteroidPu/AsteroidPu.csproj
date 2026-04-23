@@ -46,7 +46,7 @@
     <Compile Include="Asteroid\AsteroidEmitter.cs" />
     <Compile Include="Asteroid\Asteroid.cs" />
     <Compile Include="Asteroid\AsteroidState.cs" />
-    <Compile Include="Chrones\ChroneManager.cs" />
+    <Compile Include="Chrones\ChronoManager.cs" />
     <Compile Include="Chrones\IChroneListener.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

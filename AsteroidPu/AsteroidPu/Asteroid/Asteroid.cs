@@ -43,7 +43,7 @@ namespace AsteroidPu {
       Console.WriteLine($"CurrentEchos: {this.CurrentEchos}\n" +
                       $"Asteroid Create ID: {this.CreateID}\n" +
                       $"Asteroid Spawn ID: {this.SpawnID}");
-      Console.WriteLine("\nEnter esc for exit or enter to contine");
+      Console.WriteLine("\nEnter esc for exit, enter to continue and R for output total production");
     }
   }
 }

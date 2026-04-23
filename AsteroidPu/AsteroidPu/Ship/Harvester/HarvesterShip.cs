@@ -4,10 +4,10 @@ using System;
 
 namespace AsteroidPu.Ship {
   public class HarvesterShip : IChroneListener {
-    int harvesterID = 0,
-      cargoCapasity = 10,
-      cargoCurrent = 0,
-      biteSize;
+    public int harvesterID = 0,
+      cargoCurrent = 0;
+    int biteSize, 
+      cargoCapasity;
     public string nameHarvester;
     public int asteroidItemsMined = 0;
     public HarvesterState state;
@@ -47,7 +47,9 @@ namespace AsteroidPu.Ship {
     }
 
     public Report CreateReport() {
-
+      Report report = new Report(harvesterID, currentAsteroid.SpawnID, cargoCurrent);
+      ++cargoCurrent;
+      return report;
     }
 
     public void PrintInfo() {

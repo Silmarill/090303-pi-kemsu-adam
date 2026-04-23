@@ -13,7 +13,7 @@ namespace AsteroidPu.Ship {
 
     public MotherShip(int harvesterCount, int capasityOfCargo, int sizeOfBite) {
       for (int indexI = 0; indexI < harvesterCount; ++indexI) {
-        fleet[indexI] = new HarvesterShip($"Harvester{indexI}", capasityOfCargo, sizeOfBite, this);
+        fleet.Add(new HarvesterShip($"Harvester{indexI}", capasityOfCargo, sizeOfBite, this));
       }
     }
 
@@ -49,29 +49,47 @@ namespace AsteroidPu.Ship {
     }
 
     public void FinishHarvest(HarvesterShip harvester) {
+      Report report = new Report(harvester.harvesterID, harvester.currentAsteroid.SpawnID, harvester.cargoCurrent);
+      if (!workLog.ContainsKey(harvester.nameHarvester)) {
+        workLog[harvester.nameHarvester] = new List<Report>();
+      }
+      workLog[harvester.nameHarvester].Add(report);
+      harvester.cargoCurrent = 0;
+      if(harvester.currentAsteroid.State == AsteroidState.Depleted) {
+        _asteroidEmitter.Recycle(harvester.currentAsteroid);
+      }
       harvester.state = HarvesterState.Idle;
-      workLog
-
     }
 
     public void PrintAsteroidItemsInfo() {
-      for (int indexI = 0; indexI <= _activeAsteroidItems.Count; ++indexI) {
-        Console.WriteLine(_activeAsteroidItems[indexI]);
+      Console.WriteLine($"Active asteroid:\n");
+      for (int indexI = 0; indexI < _activeAsteroidItems.Count; ++indexI) {
+        Console.WriteLine($"{_activeAsteroidItems[indexI]}\n");
       }
     }
     public void PrintHarvesterItemsInfo() {
-      for (int indexI = 0; indexI <= fleet.Count; ++indexI) {
-        Console.WriteLine(fleet[indexI]);
+      Console.WriteLine("Harvesters:\n");
+      for (int indexI = 0; indexI < fleet.Count; ++indexI) {
+        Console.WriteLine($"{fleet[indexI]}\n");
       }
     }
 
     public void PrintTotalMined() {
-      for (int indexI = 0; indexI <= fleet.Count; ++indexI) {
-        Console.WriteLine($"{fleet[indexI].nameHarvester} harvester got {fleet[indexI].asteroidItemsMined} asteroids");
+      Console.WriteLine("Total mined:\n");
+      for (int indexI = 0; indexI < fleet.Count; ++indexI) {
+        Console.WriteLine($"{fleet[indexI].nameHarvester} harvester got {fleet[indexI].asteroidItemsMined} asteroids.\n");
       }
     }
 
     public void PrintFullWorklog() {
+      List<string> fullNamesHarvesters = new List<string>(workLog.Keys);
+      for(int indexI = 0; indexI < workLog.Count; ++indexI) {
+        string newName = fullNamesHarvesters[indexI];
+        List<Report> reports = workLog[newName];
+        for (int indexJ = 0; indexJ < fullNamesHarvesters.Count; ++indexJ) {
+          reports[indexJ].Print();
+        }
+      }
 
     }
 
