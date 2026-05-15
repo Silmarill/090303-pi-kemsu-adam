@@ -4,12 +4,11 @@ using System.Linq;
 
 internal class Program {
   static void Main(string[] args) {
-    AsteroidEmitter asteroidEmitter = new AsteroidEmitter(5);
     MotherShip motherShip = new MotherShip(5, 500, 50);
-    motherShip.SetEmitter(asteroidEmitter);
     int chroneCounter = 0;
     Random random = new Random();
-    Asteroid.HomeStation = motherShip;
+    AsteroidEmitter asteroidEmitter = new AsteroidEmitter(5, motherShip, 5, 4, 5);
+    motherShip.SetEmitter(asteroidEmitter);
 
     Asteroid asteroid1 = asteroidEmitter.Spawn();
     motherShip.AddAsteroid(asteroid1);
@@ -22,12 +21,13 @@ internal class Program {
     ChroneManager.AddListener(asteroid3);
 
     while (true) {
-
       Console.WriteLine($"=== Chron {chroneCounter} ===");
       Console.WriteLine();
       motherShip.PrintAsteroidsInfo();
       Console.WriteLine();
       motherShip.PrintHarvestersInfo();
+      Console.WriteLine();
+      motherShip.PrintTotalMined();
       Console.WriteLine();
 
       if (chroneCounter > 0 && chroneCounter % 15 == 0) {
@@ -42,18 +42,9 @@ internal class Program {
         motherShip.PrintTotalMined();
         Console.ReadKey(true);
       } else if (key.Key == ConsoleKey.Enter) {
-        motherShip.AssignIdleHarvesters();
         ChroneManager.MakeChroneTick();
+        motherShip.AssignIdleHarvesters();
         ++chroneCounter;
-
-        if (chroneCounter > 0 && chroneCounter % asteroidEmitter.SpawnInterval == 0) {
-          int count = random.Next(4, 6);
-          for (int spawnedCount = 0; spawnedCount < count; ++spawnedCount) {
-            Asteroid newAsteroid = asteroidEmitter.Spawn();
-            motherShip.AddAsteroid(newAsteroid);
-            ChroneManager.AddListener(newAsteroid);
-          }
-        }
       }
     }
   }

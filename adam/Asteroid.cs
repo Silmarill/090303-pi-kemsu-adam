@@ -13,8 +13,10 @@ public class Asteroid : IChroneListener {
   public static int nextCreateId;
   public static int nextSpawnId;
   public static Random random = new Random();
-  public static MotherShip HomeStation;
-  public Asteroid() {
+  public MotherShip HomeStation;
+
+  public Asteroid(MotherShip homeStation) {
+    HomeStation = homeStation;
     MaxEchos = random.Next(100, 1001);
     CurrentEchos = MaxEchos;
     State = AsteroidState.Idle;

@@ -22,27 +22,35 @@ public class HarvesterShip : IChroneListener {
     HomeStation = station;
   }
 
+  public void Mine(Asteroid asteroid) {
+    if (asteroid == null) {
+      return;
+    }
+
+    int biteAmount = BiteSize;
+
+    if (biteAmount > asteroid.CurrentEchos) {
+      biteAmount = asteroid.CurrentEchos;
+    }
+
+    if (biteAmount > CargoCapacity - CargoCurrent) {
+      biteAmount = CargoCapacity - CargoCurrent;
+    }
+
+    asteroid.CurrentEchos -= biteAmount;
+    CargoCurrent += biteAmount;
+
+    if (asteroid.CurrentEchos <= 0) {
+      asteroid.State = AsteroidState.Depleted;
+      HomeStation.FinishHarvest(this);
+    } else if (CargoCurrent >= CargoCapacity) {
+      HomeStation.FinishHarvest(this);
+    }
+  }
+
   public void OnChroneTick() {
     if (State == HarvesterState.Mining && CurrentAsteroid != null) {
-      int biteAmount = BiteSize;
-
-      if (biteAmount > CurrentAsteroid.CurrentEchos) {
-        biteAmount = CurrentAsteroid.CurrentEchos;
-      }
-
-      if (biteAmount > CargoCapacity - CargoCurrent) {
-        biteAmount = CargoCapacity - CargoCurrent;
-      }
-
-      CurrentAsteroid.CurrentEchos -= biteAmount;
-      CargoCurrent += biteAmount;
-
-      if (CurrentAsteroid.CurrentEchos <= 0) {
-        CurrentAsteroid.State = AsteroidState.Depleted;
-        HomeStation.FinishHarvest(this);
-      } else if (CargoCurrent >= CargoCapacity) {
-        HomeStation.FinishHarvest(this);
-      }
+      Mine(CurrentAsteroid);
     }
   }
   public void StartMining(Asteroid asteroid) {
