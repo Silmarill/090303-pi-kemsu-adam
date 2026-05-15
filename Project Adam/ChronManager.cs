@@ -1,16 +1,14 @@
-﻿using AsteroidSimulator.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using AsteroidSimulator.Interfaces;
 
 namespace AsteroidSimulator.Managers {
   public static class ChronManager {
-    public static List<IChronListener> Listeners;
-
-    static ChronManager() {
-      Listeners = new List<IChronListener>();
-    }
+    private static readonly List<IChronListener> Listeners = new List<IChronListener>();
 
     public static void AddListener(IChronListener listener) {
-      Listeners.Add(listener);
+      if (!Listeners.Contains(listener)) {
+        Listeners.Add(listener);
+      }
     }
 
     public static void RemoveListener(IChronListener listener) {
@@ -18,9 +16,16 @@ namespace AsteroidSimulator.Managers {
     }
 
     public static void MakeChronTick() {
-      foreach (IChronListener currentListener in Listeners) {
-        currentListener.OnChronTick();
+      IChronListener[] snapshot;
+      snapshot = Listeners.ToArray();
+
+      for (int index = 0; index < snapshot.Length; ++index) {
+        snapshot[index].OnChronTick();
       }
+    }
+
+    public static void ClearListeners() {
+      Listeners.Clear();
     }
   }
 }

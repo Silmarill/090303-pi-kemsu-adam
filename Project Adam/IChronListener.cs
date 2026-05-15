@@ -1,4 +1,4 @@
-﻿namespace AsteroidSimulator.Interfaces {
+namespace AsteroidSimulator.Interfaces {
   public interface IChronListener {
     void OnChronTick();
   }

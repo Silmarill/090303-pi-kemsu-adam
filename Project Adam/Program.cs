@@ -1,122 +1,202 @@
 ﻿using System;
 using System.Collections.Generic;
+using AsteroidSimulator.Managers;
 using AsteroidSimulator.Models;
 
 namespace AsteroidSimulator {
-  class Program {
-    static void Main(string[] args) {
-      int stepValue;
-      int zeroValue;
-      int chronCounter;
-      int poolInitialSize;
-      int startAsteroidsCount;
-      int spawnIntervalTicks;
-      int minSpawnAmount;
-      int maxSpawnAmount;
-      int warningThreshold;
-      int warningStepValue;
-      int worklogPrintInterval;
-      int asteroidIndex;
-      int newAsteroidsCount;
-      int maxExclusiveValue;
-      int warningBaseValue;
-      Asteroid newAsteroid;
-      List<Asteroid> depletedAsteroids;
-      AsteroidEmitter asteroidPool;
-      List<Asteroid> activeAsteroids;
-      MotherShip motherStation;
-      Random randomGenerator;
-
-      stepValue = 1;
-      zeroValue = 0;
-      chronCounter = zeroValue;
-      poolInitialSize = 10;
-      startAsteroidsCount = 5;
-      spawnIntervalTicks = 4;
-      minSpawnAmount = 1;
-      maxSpawnAmount = 2;
-      warningStepValue = 5;
-      worklogPrintInterval = 15;
-      warningBaseValue = poolInitialSize + warningStepValue;
-      warningThreshold = warningBaseValue;
-
-      asteroidPool = new AsteroidEmitter(poolInitialSize);
-      activeAsteroids = new List<Asteroid>();
-      motherStation = new MotherShip(5);
-      randomGenerator = new Random();
-
-      for (asteroidIndex = zeroValue; asteroidIndex < startAsteroidsCount; asteroidIndex = asteroidIndex + stepValue) {
-        newAsteroid = asteroidPool.Spawn();
-        activeAsteroids.Add(newAsteroid);
-      }
+  internal static class Program {
+    private static void Main(string[] args) {
+      ConsoleKeyInfo menuKey;
 
       while (true) {
         Console.Clear();
-        chronCounter = chronCounter + stepValue;
+        Console.WriteLine("Asteroid simulator — выберите лабораторную:");
+        Console.WriteLine("  1 — Этап 5: базовая симуляция");
+        Console.WriteLine("  2 — Этап 6 «Матриарх»");
+        Console.WriteLine("  Esc — выход из программы");
+        menuKey = Console.ReadKey(true);
 
-        Console.WriteLine("===== CHRON #" + chronCounter + " =====");
-
-        motherStation.OnChronTick(activeAsteroids);
-
-        if (chronCounter % spawnIntervalTicks == zeroValue) {
-          maxExclusiveValue = maxSpawnAmount + stepValue;
-          newAsteroidsCount = randomGenerator.Next(minSpawnAmount, maxExclusiveValue);
-          Console.WriteLine("Spawning " + newAsteroidsCount + " new asteroids!");
-
-          for (asteroidIndex = zeroValue; asteroidIndex < newAsteroidsCount; asteroidIndex = asteroidIndex + stepValue) {
-            newAsteroid = asteroidPool.Spawn();
-            activeAsteroids.Add(newAsteroid);
-
-            if (newAsteroid.CreateId > warningThreshold) {
-              Console.WriteLine("WARNING: Pool was empty, created new asteroid.");
-              warningThreshold = warningThreshold + warningStepValue;
-            }
-          }
+        if (menuKey.Key == ConsoleKey.Escape) {
+          return;
         }
 
-        depletedAsteroids = new List<Asteroid>();
+        if (menuKey.Key == ConsoleKey.D1 || menuKey.Key == ConsoleKey.NumPad1) {
+          RunLabBasicSimulation();
+        } else if (menuKey.Key == ConsoleKey.D2 || menuKey.Key == ConsoleKey.NumPad2) {
+          RunLabMatriarchSimulation();
+        }
+      }
+    }
 
-        foreach (Asteroid currentAsteroid in activeAsteroids) {
-          if (currentAsteroid.State == AsteroidState.Depleted) {
-            depletedAsteroids.Add(currentAsteroid);
-          }
+    private static void RunLabBasicSimulation() {
+      List<Asteroid> activeAsteroids;
+      AsteroidEmitter pool;
+      Random randomGenerator;
+
+      ChronManager.ClearListeners();
+      Asteroid.ResetCounters();
+      SimulationClock.CurrentChron = 0;
+
+      activeAsteroids = new List<Asteroid>();
+      randomGenerator = new Random();
+      pool = new AsteroidEmitter(SimulationConstants.PoolInitialSize, activeAsteroids, randomGenerator, subscribeSpawnedAsteroidsToChron: true);
+
+      BootstrapInitialAsteroids(activeAsteroids, pool, registerAsteroidsForChronTicks: true);
+      pool.RegisterWithChronManager();
+
+      RunChronLoop(activeAsteroids, pool, null);
+    }
+
+    private static void RunLabMatriarchSimulation() {
+      List<Asteroid> activeAsteroids;
+      AsteroidEmitter pool;
+      Random randomGenerator;
+      MotherShip motherShip;
+
+      ChronManager.ClearListeners();
+      Asteroid.ResetCounters();
+      SimulationClock.CurrentChron = 0;
+
+      activeAsteroids = new List<Asteroid>();
+      randomGenerator = new Random();
+      pool = new AsteroidEmitter(SimulationConstants.PoolInitialSize, activeAsteroids, randomGenerator, subscribeSpawnedAsteroidsToChron: false);
+
+      BootstrapInitialAsteroids(activeAsteroids, pool, registerAsteroidsForChronTicks: false);
+
+      motherShip = new MotherShip(5, activeAsteroids, randomGenerator);
+      motherShip.RegisterWithChronManager();
+      pool.RegisterWithChronManager();
+
+      RunChronLoop(activeAsteroids, pool, motherShip);
+    }
+
+    private static void BootstrapInitialAsteroids(List<Asteroid> activeAsteroids, AsteroidEmitter pool, bool registerAsteroidsForChronTicks) {
+      int index;
+
+      for (index = 0; index < SimulationConstants.InitialActiveAsteroids; ++index) {
+        Asteroid spawned;
+        spawned = pool.Spawn();
+        activeAsteroids.Add(spawned);
+        if (registerAsteroidsForChronTicks) {
+          ChronManager.AddListener(spawned);
+        }
+      }
+    }
+
+    private static void RunChronLoop(List<Asteroid> activeAsteroids, AsteroidEmitter pool, MotherShip motherShip) {
+      int completedChrons;
+      bool advanceChron;
+
+      completedChrons = 0;
+
+      while (true) {
+        advanceChron = false;
+        Console.Clear();
+        Console.WriteLine("===== Завершено хронов: " + completedChrons + " =====\n");
+
+        Console.WriteLine("Активные астероиды: " + activeAsteroids.Count);
+        PrintAsteroidList(activeAsteroids);
+
+        if (motherShip != null) {
+          Console.WriteLine("\nФлот харвестеров (пояс стабилизирован — астероиды не «сыпятся» сами):");
+          PrintHarvesterFleet(motherShip);
+          Console.WriteLine("\nСуммарная добыча по журналу (каждый хрон):");
+          PrintCumulativeMined(motherShip);
         }
 
-        foreach (Asteroid deadAsteroid in depletedAsteroids) {
-          activeAsteroids.Remove(deadAsteroid);
-          asteroidPool.Recycle(deadAsteroid);
-        }
-
-        Console.WriteLine("\nActive asteroids: " + activeAsteroids.Count);
-
-        foreach (Asteroid currentAsteroid in activeAsteroids) {
-          Console.WriteLine("  " + currentAsteroid.ToString());
-        }
-
-        Console.WriteLine("\nHarvester Fleet:");
-
-        foreach (HarvesterShip currentShip in motherStation.Fleet) {
-          Console.WriteLine("  " + currentShip.ToString());
-        }
-
-        Console.WriteLine("\nTotal mined (Echos):");
-
-        foreach (KeyValuePair<string, int> miningEntry in motherStation.GetTotalMined()) {
-          Console.WriteLine("  " + miningEntry.Key + ": " + miningEntry.Value);
-        }
-
-        if (chronCounter % worklogPrintInterval == zeroValue) {
-          motherStation.PrintWorklog();
-        }
-
-        Console.WriteLine("\nPress Enter for next chron | ESC to exit");
+        Console.WriteLine("\nEnter — следующий хрон | R — суммарная добыча по харвестерам | Esc — в меню");
 
         ConsoleKeyInfo pressedKey;
         pressedKey = Console.ReadKey(true);
 
         if (pressedKey.Key == ConsoleKey.Escape) {
-          break;
+          ChronManager.ClearListeners();
+          return;
         }
+
+        if (pressedKey.Key == ConsoleKey.R) {
+          if (motherShip != null) {
+            motherShip.PrintTotalMinedByHarvester();
+          } else {
+            Console.WriteLine("(суммарная добыча — только в режиме «Матриарх»)");
+          }
+
+          Console.WriteLine("\nНажмите любую клавишу…");
+          Console.ReadKey(true);
+          continue;
+        }
+
+        if (pressedKey.Key == ConsoleKey.Enter) {
+          advanceChron = true;
+        }
+
+        if (!advanceChron) {
+          continue;
+        }
+
+        completedChrons = completedChrons + 1;
+        SimulationClock.CurrentChron = completedChrons;
+        ChronManager.MakeChronTick();
+        CleanupDepletedAsteroids(activeAsteroids, pool, motherShip);
+
+        if (motherShip != null && completedChrons % SimulationConstants.WorklogPrintIntervalChrons == 0) {
+          Console.Clear();
+          Console.WriteLine("===== Хрон " + completedChrons + " — полный Worklog (по методичке) =====\n");
+          motherShip.PrintFullWorklog();
+          Console.WriteLine("\nНажмите любую клавишу…");
+          Console.ReadKey(true);
+        }
+      }
+    }
+
+    private static void PrintCumulativeMined(MotherShip motherShip) {
+      Dictionary<string, int> snapshot;
+      snapshot = motherShip.GetLifetimeMinedSnapshot();
+
+      foreach (KeyValuePair<string, int> entry in snapshot) {
+        Console.WriteLine("  " + entry.Key + ": " + entry.Value);
+      }
+    }
+
+    private static void PrintAsteroidList(List<Asteroid> activeAsteroids) {
+      int index;
+
+      for (index = 0; index < activeAsteroids.Count; ++index) {
+        Console.WriteLine("  " + activeAsteroids[index].ToString());
+      }
+    }
+
+    private static void PrintHarvesterFleet(MotherShip motherShip) {
+      int index;
+
+      for (index = 0; index < motherShip.Fleet.Count; ++index) {
+        Console.WriteLine("  " + motherShip.Fleet[index].ToString());
+      }
+    }
+
+    private static void CleanupDepletedAsteroids(List<Asteroid> activeAsteroids, AsteroidEmitter pool, MotherShip motherShip) {
+      List<Asteroid> depletedBuffer;
+      int index;
+
+      depletedBuffer = new List<Asteroid>();
+
+      for (index = 0; index < activeAsteroids.Count; ++index) {
+        if (activeAsteroids[index].State == AsteroidState.Depleted) {
+          depletedBuffer.Add(activeAsteroids[index]);
+        }
+      }
+
+      for (index = 0; index < depletedBuffer.Count; ++index) {
+        Asteroid deadAsteroid;
+        deadAsteroid = depletedBuffer[index];
+
+        if (motherShip != null) {
+          motherShip.NotifyAsteroidLeavingBelt(deadAsteroid);
+        }
+
+        ChronManager.RemoveListener(deadAsteroid);
+        activeAsteroids.Remove(deadAsteroid);
+        pool.Recycle(deadAsteroid);
       }
     }
   }

@@ -1,103 +1,117 @@
 ﻿using System;
+using AsteroidSimulator.Interfaces;
 
 namespace AsteroidSimulator.Models {
-  public class Asteroid {
+  public class Asteroid : IChronListener {
+    private const int MinEchos = 100;
+    private const int MaxEchosExclusive = 1001;
+    private const int ChronDepletionStep = 100;
+
+    private static readonly Random SharedRandom = new Random();
+
     public static int GlobalSpawnCounter;
     public static int GlobalCreateCounter;
 
-    public int CurrentEchos;
-    public int MaxEchos;
-    public AsteroidState State;
-    public int CreateId;
-    public int SpawnId;
+    public int CurrentEchos { get; private set; }
+    public int MaxEchos { get; private set; }
+    public AsteroidState State { get; private set; }
+    public int CreateId { get; private set; }
+    public int SpawnId { get; private set; }
+
+    public static void ResetCounters() {
+      GlobalSpawnCounter = 0;
+      GlobalCreateCounter = 0;
+    }
 
     public Asteroid() {
-      int minEchos;
-      int maxEchos;
-      int rangeOffset;
-      int maxInclusive;
-      int stepOne;
-      Random randomGenerator;
-
-      minEchos = 100;
-      maxEchos = 1000;
-      rangeOffset = 1;
-      stepOne = 1;
-      maxInclusive = maxEchos + rangeOffset;
-      randomGenerator = new Random();
-
-      this.MaxEchos = randomGenerator.Next(minEchos, maxInclusive);
-      this.CurrentEchos = this.MaxEchos;
-      this.State = AsteroidState.Idle;
-      this.CreateId = GlobalCreateCounter + stepOne;
-      GlobalCreateCounter = this.CreateId;
-      this.SpawnId = 0;
+      AssignNewIdentity();
+      ApplyRandomCapacity();
+      RestoreIdleWithFullEchos();
+      SpawnId = 0;
     }
 
     public void Reset() {
-      int minEchos;
-      int maxEchos;
-      int rangeOffset;
-      int maxInclusive;
-      int stepOne;
-      Random randomGenerator;
+      RestoreIdleWithFullEchos();
+      GlobalSpawnCounter = GlobalSpawnCounter + 1;
+      SpawnId = GlobalSpawnCounter;
+    }
 
-      minEchos = 100;
-      maxEchos = 1000;
-      rangeOffset = 1;
-      stepOne = 1;
-      maxInclusive = maxEchos + rangeOffset;
-      randomGenerator = new Random();
+    private void RestoreIdleWithFullEchos() {
+      CurrentEchos = MaxEchos;
+      State = AsteroidState.Idle;
+    }
 
-      this.MaxEchos = randomGenerator.Next(minEchos, maxInclusive);
-      this.CurrentEchos = this.MaxEchos;
-      this.State = AsteroidState.Idle;
-      this.SpawnId = GlobalSpawnCounter + stepOne;
-      GlobalSpawnCounter = this.SpawnId;
+    public void OnChronTick() {
+      if (State != AsteroidState.Idle) {
+        return;
+      }
+
+      int nextEchos;
+      nextEchos = CurrentEchos - ChronDepletionStep;
+
+      if (nextEchos <= 0) {
+        CurrentEchos = 0;
+        State = AsteroidState.Depleted;
+      } else {
+        CurrentEchos = nextEchos;
+      }
     }
 
     public int Mine(int biteSize) {
-      int minedAmount;
       int zero;
+      int minedAmount;
 
       zero = 0;
 
-      if (this.State != AsteroidState.Mining) {
+      if (State != AsteroidState.Mining) {
         return zero;
       }
 
-      if (biteSize < this.CurrentEchos) {
+      if (biteSize < CurrentEchos) {
         minedAmount = biteSize;
       } else {
-        minedAmount = this.CurrentEchos;
+        minedAmount = CurrentEchos;
       }
 
-      this.CurrentEchos = this.CurrentEchos - minedAmount;
+      CurrentEchos = CurrentEchos - minedAmount;
 
-      if (this.CurrentEchos == zero) {
-        this.State = AsteroidState.Depleted;
+      if (CurrentEchos == zero) {
+        State = AsteroidState.Depleted;
       }
 
       return minedAmount;
     }
 
     public void StartMining() {
-      if (this.State == AsteroidState.Idle) {
-        this.State = AsteroidState.Mining;
+      if (State == AsteroidState.Idle) {
+        State = AsteroidState.Mining;
       }
     }
 
     public void StopMining() {
-      if (this.State == AsteroidState.Mining) {
-        this.State = AsteroidState.Idle;
+      if (State == AsteroidState.Mining) {
+        if (CurrentEchos <= 0) {
+          CurrentEchos = 0;
+          State = AsteroidState.Depleted;
+        } else {
+          State = AsteroidState.Idle;
+        }
       }
     }
 
-    public override string ToString() {
-      string result;
+    private void AssignNewIdentity() {
+      int nextCreateId;
+      nextCreateId = GlobalCreateCounter + 1;
+      GlobalCreateCounter = nextCreateId;
+      CreateId = nextCreateId;
+    }
 
-      result = "Asteroid #" + this.SpawnId + " (Created:" + this.CreateId + ") | " + this.CurrentEchos + "/" + this.MaxEchos + " | " + this.State;
-      return result;
+    private void ApplyRandomCapacity() {
+      MaxEchos = SharedRandom.Next(MinEchos, MaxEchosExclusive);
+    }
+
+    public override string ToString() {
+      return "Asteroid #" + SpawnId + " (Created:" + CreateId + ") | " + CurrentEchos + "/" + MaxEchos + " | " + State;
     }
   }
 }

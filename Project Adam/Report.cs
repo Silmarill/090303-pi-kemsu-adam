@@ -1,14 +1,18 @@
 ﻿namespace AsteroidSimulator.Models {
+  /// <summary>Отчёт о завершённой «смене» добычи (по методичке).</summary>
   public class Report {
-    public int JobNumber;
-    public int AsteroidSpawnID;
-    public int AmountMined;
+    public int JobNumber { get; }
+    public int AsteroidSpawnID { get; }
+    public int AmountMined { get; }
+
+    public Report(int jobNumber, int asteroidSpawnID, int amountMined) {
+      JobNumber = jobNumber;
+      AsteroidSpawnID = asteroidSpawnID;
+      AmountMined = amountMined;
+    }
 
     public override string ToString() {
-      string result;
-
-      result = "Job #" + this.JobNumber + " | Asteroid #" + this.AsteroidSpawnID + " | Mined " + this.AmountMined;
-      return result;
+      return "Job #" + JobNumber + " | SpawnId=" + AsteroidSpawnID + " | amount " + AmountMined + " Echos";
     }
   }
 }

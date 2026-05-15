@@ -1,165 +1,180 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
+using AsteroidSimulator;
+using AsteroidSimulator.Interfaces;
+using AsteroidSimulator.Managers;
 
 namespace AsteroidSimulator.Models {
-  public class MotherShip {
-    public List<HarvesterShip> Fleet;
-    public Dictionary<string, List<Report>> Worklog;
+  public class MotherShip : IChronListener {
+    private readonly List<Asteroid> _belt;
+    private readonly Random _random;
+    private readonly Dictionary<string, int> _lifetimeMinedByHarvester;
 
-    private Random randomGenerator;
+    public List<HarvesterShip> Fleet { get; }
+    public Dictionary<string, List<Report>> Worklog { get; }
 
-    public MotherShip(int harvesterCount) {
-      int shipIndex;
-      int stepOne;
-      int zero;
+    public MotherShip(int harvesterCount, List<Asteroid> belt, Random random) {
       string[] names;
+      int shipIndex;
+      int maxHarvesterSlots;
 
-      stepOne = 1;
-      zero = 0;
       names = new string[] { "Alpha", "Beta", "Gamma", "Delta", "Epsilon" };
+      maxHarvesterSlots = names.Length;
 
-      this.Fleet = new List<HarvesterShip>();
-      this.Worklog = new Dictionary<string, List<Report>>();
-      this.randomGenerator = new Random();
+      _belt = belt;
+      _random = random;
+      Fleet = new List<HarvesterShip>();
+      Worklog = new Dictionary<string, List<Report>>();
+      _lifetimeMinedByHarvester = new Dictionary<string, int>();
 
-      for (shipIndex = zero; shipIndex < harvesterCount; shipIndex = shipIndex + stepOne) {
-        HarvesterShip newShip;
+      for (shipIndex = 0; shipIndex < harvesterCount && shipIndex < maxHarvesterSlots; ++shipIndex) {
+        HarvesterShip ship;
+        string harvesterName;
+        int harvesterId;
 
-        newShip = new HarvesterShip(names[shipIndex]);
-        this.Fleet.Add(newShip);
-        this.Worklog.Add(newShip.Name, new List<Report>());
+        harvesterName = names[shipIndex];
+        harvesterId = shipIndex + 1;
+        ship = new HarvesterShip(
+          harvesterId,
+          harvesterName,
+          SimulationConstants.HarvesterCargoCapacity,
+          SimulationConstants.HarvesterBiteSize);
+        ship.BindMotherShip(this);
+        Fleet.Add(ship);
+        Worklog[harvesterName] = new List<Report>();
+        _lifetimeMinedByHarvester[harvesterName] = 0;
       }
     }
 
-    public void OnChronTick(List<Asteroid> activeAsteroids) {
-      int shipIndex;
-      int asteroidIndex;
-      int stepOne;
-      int zero;
+    public void RegisterWithChronManager() {
+      ChronManager.AddListener(this);
+    }
 
-      stepOne = 1;
-      zero = 0;
+    public void AppendHarvesterJobReport(HarvesterShip ship, int asteroidSpawnId, int amountMined, bool asteroidFullyConsumed) {
+      int jobNumber;
+      Report report;
 
-      for (shipIndex = zero; shipIndex < this.Fleet.Count; shipIndex = shipIndex + stepOne) {
-        HarvesterShip currentShip;
-
-        currentShip = this.Fleet[shipIndex];
-
-        if (currentShip.State == HarvesterState.Mining) {
-          currentShip.MineTick();
-        }
+      if (amountMined <= 0) {
+        return;
       }
 
-      for (shipIndex = zero; shipIndex < this.Fleet.Count; shipIndex = shipIndex + stepOne) {
-        HarvesterShip currentShip;
+      jobNumber = Worklog[ship.Name].Count + 1;
+      report = new Report(jobNumber, asteroidSpawnId, amountMined);
+      Worklog[ship.Name].Add(report);
+      _lifetimeMinedByHarvester[ship.Name] = _lifetimeMinedByHarvester[ship.Name] + amountMined;
 
-        currentShip = this.Fleet[shipIndex];
-
-        if (currentShip.State == HarvesterState.Idle) {
-          if (currentShip.CargoCurrent > zero) {
-            int jobNumber;
-            Report unloadReport;
-
-            jobNumber = this.Worklog[currentShip.Name].Count + stepOne;
-            unloadReport = currentShip.Unload(jobNumber);
-            this.Worklog[currentShip.Name].Add(unloadReport);
-          }
-        }
+      if (asteroidFullyConsumed) {
+        ship.RegisterAsteroidFullyProcessed();
       }
+    }
 
-      for (shipIndex = zero; shipIndex < this.Fleet.Count; shipIndex = shipIndex + stepOne) {
-        HarvesterShip currentShip;
-        List<Asteroid> freeAsteroids;
+    public void NotifyAsteroidLeavingBelt(Asteroid asteroid) {
+      int fleetIndex;
 
-        currentShip = this.Fleet[shipIndex];
-        freeAsteroids = new List<Asteroid>();
+      for (fleetIndex = 0; fleetIndex < Fleet.Count; ++fleetIndex) {
+        Fleet[fleetIndex].ForcedRetreatFromLostAsteroid(this, asteroid);
+      }
+    }
 
-        if (currentShip.IsIdle()) {
-          for (asteroidIndex = zero; asteroidIndex < activeAsteroids.Count; asteroidIndex = asteroidIndex + stepOne) {
-            Asteroid currentAsteroid;
+    public Dictionary<string, int> GetLifetimeMinedSnapshot() {
+      return new Dictionary<string, int>(_lifetimeMinedByHarvester);
+    }
 
-            currentAsteroid = activeAsteroids[asteroidIndex];
+    public void OnChronTick() {
+      AssignIdleHarvestersToBelt();
+      ProcessMiningForFleet();
+    }
 
-            if (currentAsteroid.State == AsteroidState.Idle) {
-              freeAsteroids.Add(currentAsteroid);
-            }
-          }
+    private void ProcessMiningForFleet() {
+      int fleetIndex;
 
-          if (freeAsteroids.Count > zero) {
-            int targetIndex;
-            Asteroid target;
+      for (fleetIndex = 0; fleetIndex < Fleet.Count; ++fleetIndex) {
+        HarvesterShip ship;
+        Asteroid target;
 
-            targetIndex = this.randomGenerator.Next(zero, freeAsteroids.Count);
-            target = freeAsteroids[targetIndex];
-            currentShip.AssignAsteroid(target);
-          }
+        ship = Fleet[fleetIndex];
+        target = ship.AssignedAsteroid;
+
+        if (ship.State == HarvesterState.Mining && target != null) {
+          ship.Mine(target);
         }
       }
     }
 
-    public Dictionary<string, int> GetTotalMined() {
-      int shipIndex;
-      int stepOne;
-      int zero;
-      Dictionary<string, int> result;
+    private void AssignIdleHarvestersToBelt() {
+      int fleetIndex;
 
-      stepOne = 1;
-      zero = 0;
-      result = new Dictionary<string, int>();
+      for (fleetIndex = 0; fleetIndex < Fleet.Count; ++fleetIndex) {
+        HarvesterShip ship;
+        Asteroid candidate;
 
-      for (shipIndex = zero; shipIndex < this.Fleet.Count; shipIndex = shipIndex + stepOne) {
-        HarvesterShip currentShip;
-        int total;
+        ship = Fleet[fleetIndex];
+
+        if (ship.State != HarvesterState.Idle) {
+          continue;
+        }
+
+        candidate = PickRandomUnassignedIdleAsteroid();
+        if (candidate != null) {
+          ship.AssignToAsteroid(candidate);
+        }
+      }
+    }
+
+    private Asteroid PickRandomUnassignedIdleAsteroid() {
+      List<Asteroid> candidates;
+      int beltIndex;
+      int fleetIndex;
+      int pickIndex;
+
+      candidates = new List<Asteroid>();
+
+      for (beltIndex = 0; beltIndex < _belt.Count; ++beltIndex) {
+        Asteroid rock;
+        bool alreadyTaken;
+
+        rock = _belt[beltIndex];
+        if (rock.State != AsteroidState.Idle) {
+          continue;
+        }
+
+        alreadyTaken = false;
+        for (fleetIndex = 0; fleetIndex < Fleet.Count; ++fleetIndex) {
+          if (Fleet[fleetIndex].AssignedAsteroid == rock) {
+            alreadyTaken = true;
+            break;
+          }
+        }
+
+        if (!alreadyTaken) {
+          candidates.Add(rock);
+        }
+      }
+
+      if (candidates.Count == 0) {
+        return null;
+      }
+
+      pickIndex = _random.Next(candidates.Count);
+      return candidates[pickIndex];
+    }
+
+    public void PrintFullWorklog() {
+      foreach (KeyValuePair<string, List<Report>> entry in Worklog) {
         int reportIndex;
 
-        currentShip = this.Fleet[shipIndex];
-        total = zero;
-
-        for (reportIndex = zero; reportIndex < this.Worklog[currentShip.Name].Count; reportIndex = reportIndex + stepOne) {
-          Report currentReport;
-
-          currentReport = this.Worklog[currentShip.Name][reportIndex];
-          total = total + currentReport.AmountMined;
+        Console.WriteLine("Harvester " + entry.Key + " — полный журнал (" + entry.Value.Count + "):");
+        for (reportIndex = 0; reportIndex < entry.Value.Count; ++reportIndex) {
+          Console.WriteLine("  " + entry.Value[reportIndex]);
         }
-
-        result.Add(currentShip.Name, total);
       }
-
-      return result;
     }
 
-    public void PrintWorklog() {
-      int shipIndex;
-      int stepOne;
-      int zero;
-
-      stepOne = 1;
-      zero = 0;
-
-      Console.WriteLine("\n=== FULL WORKLOG ===");
-
-      for (shipIndex = zero; shipIndex < this.Fleet.Count; shipIndex = shipIndex + stepOne) {
-        HarvesterShip currentShip;
-        int reportIndex;
-
-        currentShip = this.Fleet[shipIndex];
-
-        Console.WriteLine("\n" + currentShip.Name + " (ID:" + currentShip.Id + "):");
-
-        if (this.Worklog[currentShip.Name].Count == zero) {
-          Console.WriteLine("  No jobs yet");
-        } else {
-          for (reportIndex = zero; reportIndex < this.Worklog[currentShip.Name].Count; reportIndex = reportIndex + stepOne) {
-            Report currentReport;
-
-            currentReport = this.Worklog[currentShip.Name][reportIndex];
-            Console.WriteLine("  " + currentReport.ToString());
-          }
-        }
+    public void PrintTotalMinedByHarvester() {
+      Console.WriteLine("--- Суммарная добыча (Echos) по харвестерам ---");
+      foreach (KeyValuePair<string, int> entry in _lifetimeMinedByHarvester) {
+        Console.WriteLine("  " + entry.Key + ": " + entry.Value);
       }
-
-      Console.WriteLine("===================\n");
     }
   }
 }
