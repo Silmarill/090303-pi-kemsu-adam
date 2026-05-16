@@ -42,7 +42,12 @@ namespace AsteroidSimulation {
 
     public void RemoveAsteroid(Asteroid asteroid) {
       _activeAsteroidItems.Remove(asteroid);
+      ChroneManager.RemoveListener(asteroid);
       _asteroidEmitter.Recycle(asteroid);
+    }
+
+    public List<Asteroid> GetActiveAsteroids() {
+      return _activeAsteroidItems;
     }
 
     public Asteroid GetIdleAsteroid() {
@@ -55,13 +60,13 @@ namespace AsteroidSimulation {
     }
 
     public void FinishHarvest(HarvesterShip harvester) {
-      if (harvester.currentAsteroid != null) {
+      if (harvester.CurrentAsteroid != null) {
         int newJobNumber = _workLog[harvester.GetName()].Count + 1;
         Report newReport = harvester.CreateReport(newJobNumber);
         _workLog[harvester.GetName()].Add(newReport);
 
-        if (harvester.currentAsteroid.State == AsteroidState.Depleted) {
-          RemoveAsteroid(harvester.currentAsteroid);
+        if (harvester.CurrentAsteroid.State == AsteroidState.Depleted) {
+          RemoveAsteroid(harvester.CurrentAsteroid);
         }
       }
       harvester.Unload();

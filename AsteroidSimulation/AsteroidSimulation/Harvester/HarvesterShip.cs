@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AsteroidSimulation {
   public class HarvesterShip : IChroneListener {
@@ -16,7 +12,9 @@ namespace AsteroidSimulation {
     private int _asteroidsMined = 0;
     private HarvesterState _state = HarvesterState.Idle;
 
-    public Asteroid currentAsteroid = null;
+    private Asteroid _currentAsteroid = null;
+    public Asteroid CurrentAsteroid { get { return _currentAsteroid; } }
+
     private MotherShip _homeStation;
 
     public HarvesterShip(string name, int capacity, int biteSizeValue, MotherShip station) {
@@ -28,14 +26,14 @@ namespace AsteroidSimulation {
     }
 
     public void OnChronTick() {
-      if (_state == HarvesterState.Mining && currentAsteroid != null) {
-        int mineAmount = Math.Min(_biteSize, currentAsteroid.CurrentEchos);
-        currentAsteroid.CurrentEchos -= mineAmount;
+      if (_state == HarvesterState.Mining && _currentAsteroid != null) {
+        int mineAmount = Math.Min(_biteSize, _currentAsteroid.CurrentEchos);
+        _currentAsteroid.CurrentEchos -= mineAmount;
         _cargoCurrent += mineAmount;
 
-        if (currentAsteroid.CurrentEchos <= 0) {
-          currentAsteroid.CurrentEchos = 0;
-          currentAsteroid.State = AsteroidState.Depleted;
+        if (_currentAsteroid.CurrentEchos <= 0) {
+          _currentAsteroid.CurrentEchos = 0;
+          _currentAsteroid.State = AsteroidState.Depleted;
           _homeStation.FinishHarvest(this);
         }
         else if (_cargoCurrent >= _cargoCapacity) {
@@ -45,29 +43,29 @@ namespace AsteroidSimulation {
     }
 
     public void StartMining(Asteroid asteroid) {
-      currentAsteroid = asteroid;
+      _currentAsteroid = asteroid;
       asteroid.State = AsteroidState.Mining;
       _state = HarvesterState.Mining;
     }
 
     public Report CreateReport(int jobNumber) {
-      return new Report(jobNumber, currentAsteroid.SpawnId, _cargoCurrent);
+      return new Report(jobNumber, _currentAsteroid.SpawnId, _cargoCurrent);
     }
 
     public void Unload() {
       _asteroidsMined++;
       _cargoCurrent = 0;
-      currentAsteroid = null;
+      _currentAsteroid = null;
       _state = HarvesterState.Idle;
     }
 
     public void PrintInfo() {
       Console.Write($"\nInfo about {_harvesterId} harvester: ");
       Console.WriteLine($"\nName: {_harvesterName}" +
-                        $"\nCapacity: {_cargoCapacity}" +
-                        $"\nCurrent: {_cargoCurrent}" +
-                        $"\nMined asteroids: {_asteroidsMined}" +
-                        $"\nState: {_state}");
+      $"\nCapacity: {_cargoCapacity}" +
+      $"\nCurrent: {_cargoCurrent}" +
+      $"\nMined asteroids: {_asteroidsMined}" +
+      $"\nState: {_state}");
     }
 
     public string GetName() {

@@ -5,12 +5,9 @@ namespace AsteroidSimulation {
   internal class Program {
     static void Main(string[] args) {
       int countChrons = 0;
-      int countAsteroidItems = 5;
       int countSpawnID = 0;
-      int minCorrectNum = 0;
 
-      AsteroidEmitter asteroidItems = new AsteroidEmitter(countAsteroidItems);
-      List<Asteroid> activeAsteroid = new List<Asteroid>();
+      AsteroidEmitter asteroidItems = new AsteroidEmitter(5);
       MotherShip motherShip = new MotherShip(5, 500, 50);
       bool isRun = true;
       Random random = new Random();
@@ -21,7 +18,6 @@ namespace AsteroidSimulation {
         Asteroid newAsteroid = asteroidItems.Spawn();
         ++countSpawnID;
         newAsteroid.SetSpawnId(countSpawnID);
-        activeAsteroid.Add(newAsteroid);
         motherShip.AddAsteroid(newAsteroid);
         ChroneManager.AddListener(newAsteroid);
       }
@@ -51,7 +47,7 @@ namespace AsteroidSimulation {
 
           motherShip.UpdateHarvesters();
 
-          if (countChrons % 5 == minCorrectNum && countChrons > 0) {
+          if (countChrons % 5 == 0) {
             int createdAsteroid = random.Next(1, 4);
             Console.WriteLine($"✨ NEW ASTEROIDS: +{createdAsteroid} ✨\n");
 
@@ -59,25 +55,23 @@ namespace AsteroidSimulation {
               Asteroid newAsteroid = asteroidItems.Spawn();
               ++countSpawnID;
               newAsteroid.SetSpawnId(countSpawnID);
-              activeAsteroid.Add(newAsteroid);
               motherShip.AddAsteroid(newAsteroid);
               ChroneManager.AddListener(newAsteroid);
             }
           }
 
-          for (int indexI = activeAsteroid.Count - 1; indexI >= minCorrectNum; --indexI) {
-            if (activeAsteroid[indexI].State == AsteroidState.Depleted) {
-              ChroneManager.RemoveListener(activeAsteroid[indexI]);
-              motherShip.RemoveAsteroid(activeAsteroid[indexI]);
-              activeAsteroid.RemoveAt(indexI);
+          List<Asteroid> activeAsteroids = motherShip.GetActiveAsteroids();
+          for (int indexI = activeAsteroids.Count - 1; indexI >= 0; --indexI) {
+            if (activeAsteroids[indexI].State == AsteroidState.Depleted) {
+              motherShip.RemoveAsteroid(activeAsteroids[indexI]);
             }
           }
 
-          PrintAsteroidsInfo(activeAsteroid);
+          PrintAsteroidsInfo(motherShip);
           PrintHarvestersInfo(motherShip);
           motherShip.PrintTotalMined();
 
-          if (countChrons % 15 == minCorrectNum && countChrons > 0) {
+          if (countChrons % 15 == 0) {
             motherShip.PrintWorkLog();
           }
 
@@ -93,7 +87,8 @@ namespace AsteroidSimulation {
       }
     }
 
-    static void PrintAsteroidsInfo(List<Asteroid> asteroids) {
+    static void PrintAsteroidsInfo(MotherShip motherShip) {
+      List<Asteroid> asteroids = motherShip.GetActiveAsteroids();
       Console.WriteLine($"\nACTIVE ASTEROIDS: {asteroids.Count}");
       Console.WriteLine("----------------------------------------");
 
@@ -114,8 +109,12 @@ namespace AsteroidSimulation {
 
       foreach (var harvester in motherShip.Fleet) {
         string status = harvester.GetState() == HarvesterState.Mining ? "⛏️ Mining" : "💤 Idle";
-        string asteroidInfo = harvester.currentAsteroid != null ? $" | Asteroid SpawnID: {harvester.currentAsteroid.SpawnId}" : "";
-        Console.WriteLine($"{harvester.GetName()}: {status} | Cargo: {harvester.GetCargoCurrent()}/500{asteroidInfo}");
+
+        string asteroidInfo = harvester.CurrentAsteroid != null
+          ? $" | Asteroid SpawnID: {harvester.CurrentAsteroid.SpawnId}"
+          : "";
+
+        Console.WriteLine($"{harvester.GetName()}: {status} | Cargo: {harvester.GetCargoCurrent()}/500 | Mined: {harvester.GetAsteroidsMined()}{asteroidInfo}");
       }
       Console.WriteLine("----------------------------------------\n");
     }

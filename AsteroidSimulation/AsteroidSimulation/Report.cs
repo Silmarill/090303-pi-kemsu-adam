@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AsteroidSimulation {
+﻿namespace AsteroidSimulation {
   public class Report {
     private int _jobNumber;
     private int _asteroidSpawnId;

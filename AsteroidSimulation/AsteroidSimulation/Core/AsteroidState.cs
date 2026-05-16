@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AsteroidSimulation {
+﻿namespace AsteroidSimulation {
 
   public enum AsteroidState {
     Idle,
