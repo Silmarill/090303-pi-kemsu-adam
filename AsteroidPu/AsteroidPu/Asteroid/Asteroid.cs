@@ -1,12 +1,13 @@
 ﻿using System;
+using AsteroidPu.Chrones;
 
 namespace AsteroidPu {
-  public class Asteroid {
+  public class Asteroid : IChroneListener {
 
     public int CurrentEchos;
     int stepEchos = 100,
       MaxEchos;
-    public int minСorrectNum = 0;
+    public int minCorrectNum = 0;
     public AsteroidState State;
     public int SpawnID;
     public int CreateID;
@@ -19,6 +20,17 @@ namespace AsteroidPu {
       State = AsteroidState.Idle;
       //Genius CreateID
       ++CreateID;
+
+      ChronoManager.AddListener(this);
+    }
+
+    public void TakeResourse(int biteSize) {
+      CurrentEchos -= biteSize;
+      if (CurrentEchos <= minCorrectNum) {
+        CurrentEchos = minCorrectNum;
+        State = AsteroidState.Depleted;
+        ChronoManager.RemoveListener(this);
+      }
     }
 
     public void Reset() {
@@ -26,15 +38,17 @@ namespace AsteroidPu {
       State = AsteroidState.Idle;
     }
 
-    public void OnChoneTick() {
+    public void OnChroneTick() {
       if (State == AsteroidState.Idle) {
         CurrentEchos -= stepEchos;
-        if (CurrentEchos < minСorrectNum) {
-          CurrentEchos = minСorrectNum;
+        if (CurrentEchos < minCorrectNum) {
+          CurrentEchos = minCorrectNum;
         }
-        if (CurrentEchos == minСorrectNum) {
-          State = AsteroidState.Depleted;
-        }
+      }
+
+      if (CurrentEchos == minCorrectNum) {
+        State = AsteroidState.Depleted;
+        ChronoManager.RemoveListener(this);
       }
     }
 

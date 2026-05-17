@@ -1,5 +1,5 @@
-﻿using AsteroidPu.Ship.Harvester;
-using System;
+﻿using System;
+using AsteroidPu.Ship.Harvester;
 using System.Collections.Generic;
 
 namespace AsteroidPu.Ship {

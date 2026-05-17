@@ -1,6 +1,6 @@
-﻿using AsteroidPu.Chrones;
+﻿using System;
+using AsteroidPu.Chrones;
 using AsteroidPu.Ship;
-using System;
 using System.Collections.Generic;
 
 namespace AsteroidPu {
@@ -38,9 +38,6 @@ namespace AsteroidPu {
             ++countChrons;
           ChronoManager.MakeChronTick();
           motherShip.AssignIdleHarvesters();
-          foreach(Asteroid asteroid in activeAsteroid) {
-            asteroid.OnChoneTick();
-          }
 
           if (countChrons % countAsteroidItems == minCorrectNum) {
             int createdAsteroid = random.Next(4, 5);

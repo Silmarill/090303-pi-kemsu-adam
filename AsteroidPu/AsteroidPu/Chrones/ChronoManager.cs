@@ -4,7 +4,7 @@ namespace AsteroidPu.Chrones {
   public static class ChronoManager {
     private static List<IChroneListener> _listenerList = new List<IChroneListener>();
 
-    public static void Addlistener(IChroneListener listener) {
+    public static void AddListener(IChroneListener listener) {
       _listenerList.Add(listener);
     }
 

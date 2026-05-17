@@ -1,6 +1,6 @@
-﻿using AsteroidPu.Chrones;
+﻿using System;
+using AsteroidPu.Chrones;
 using AsteroidPu.Ship.Harvester;
-using System;
 
 namespace AsteroidPu.Ship {
   public class HarvesterShip : IChroneListener {
@@ -20,16 +20,13 @@ namespace AsteroidPu.Ship {
       biteSize = sizeForBites;
       HomeStation = station;
       ++harvesterID;
+
+      ChronoManager.AddListener(this);
     }
 
     public void OnChroneTick() {
       if (state == HarvesterState.Mining && currentAsteroid != null) {
-
-        currentAsteroid.CurrentEchos -= biteSize;
-
-        if (currentAsteroid.CurrentEchos < currentAsteroid.minСorrectNum) {
-          currentAsteroid.CurrentEchos = currentAsteroid.minСorrectNum;
-        }
+        currentAsteroid.TakeResourse(biteSize);
 
         ++cargoCurrent;
 

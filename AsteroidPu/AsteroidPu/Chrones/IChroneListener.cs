@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AsteroidPu.Chrones {
+﻿namespace AsteroidPu.Chrones {
   public interface IChroneListener {
     void OnChroneTick();
   }
